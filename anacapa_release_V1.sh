@@ -169,7 +169,6 @@ i=1
 source $3/split_on_primer_files/split_primers_config.txt
 for prim in $3/split_on_primer_files/primer_sort_file_*.txt
 do
- source $3/split_on_primer_files/split_primers_config_$i.txt
  echo "time to split round "$i #${primer_sort_file_1}
  for f in $2/primer_split/{assembled,unassembled_forward,unassembled_reverse,discarded}/
  do
@@ -205,7 +204,7 @@ do
  	mkdir -p $2/taxon_summaries/${j}
  	mkdir -p $2/Qiime_open_ref/Params
  	printf "pick_otus:enable_rev_strand_match True \nassign_taxonomy:id_to_taxonomy_fp $3/${j}/${j}_taxonomy.txt \nassign_taxonomy:reference_seqs_fp $3/${j}/${j}_qiime.fasta \nassign_taxonomy:uclust_min_consensus_fraction .75 \nassign_taxonomy:uclust_max_accepts 50 \n" > "$2/Qiime_open_ref/Params/Params${j}_pick_open.txt" 
- 	qsub -l highp,h_rt=48:00:00,h_data=32G -pe shared 2 -N pick${j}_open -cwd -m bea -o $2/Qiime_open_ref/err_log/${j}1P_4.out -e $2/Qiime_open_ref/err_log/${j}1P_4.err -M $4 $3/scripts/pick_open_otus_and_summ.sh ${j} $2 $3 $5
+ 	qsub -l highp,h_rt=48:00:00,h_data=60G -pe shared 2 -N pick${j}_open -cwd -m bea -o $2/Qiime_open_ref/err_log/${j}1P_4.out -e $2/Qiime_open_ref/err_log/${j}1P_4.err -M $4 $3/scripts/pick_open_otus_and_summ.sh ${j} $2 $3 $5
 done
 echo "check!"
 date
