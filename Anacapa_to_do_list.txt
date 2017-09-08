@@ -6,6 +6,7 @@ Small stuff to do list for Anacapa:
 	* sed is pattern matching to too many locations
 	* Jesse is on the problem
 3. Check that merging cutadapt and fastqtofasta worked
+4. Check the names for ref files
 
 
 
