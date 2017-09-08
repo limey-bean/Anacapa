@@ -5,8 +5,7 @@ Small stuff to do list for Anacapa:
 2. lines 79 to 87 - Preprocessing: 4) Renaming reads
 	* sed is pattern matching to too many locations
 	* Jesse is on the problem
-3. Check that merging cutadapt and fastqtofasta worked
-4. Check the names for ref files
+3. Check the names for ref files
 
 
 
