@@ -39,6 +39,7 @@ module load qiime
 module load fastx_toolkit
 module load anaconda/python2-4.2
 module load bowtie2
+module load ATS
 date
 ###
 
@@ -86,9 +87,9 @@ for str in `ls $2/fastq/*_1.fastq`
 do
  str1=${str%_1*}
  FILE=${str1#$2/fastq/}
- awk -v filename="${FILE}_" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
+ awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
  mv ${str1}_1.fastq.tmp ${str1}_1.fastq
- awk -v filename="${FILE}_" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_1.fastq.tmp
+ awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_1.fastq.tmp
  mv ${str1}_1.fastq.tmp ${str1}_1.fastq
 done
 date
