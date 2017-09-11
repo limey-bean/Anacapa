@@ -6,7 +6,7 @@ if [ $# -ne 5 ]; then
 
 fi
 ####################################script & software
-# This pipeline was developed and written by Emily Curd (eecurd@g.ucla.edu) and Baochen Shi (biosbc@gmail.com), with contributions from Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), and (Rachel Meyer (rsmeyer@ucla.edu).
+# This pipeline was developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), with contributions from Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), and (Rachel Meyer (rsmeyer@ucla.edu).
 # Last Updated 9-07-2017
 #
 # The purpose of this script is to process raw fastq.gz files from an Illumina sequencing and generate summarized taxonomic assignment tables for multiple metabardocing targets.
@@ -174,7 +174,6 @@ cp $2/fasta/all.unassembled.rc.reverse.fasta  $2/primer_split/unassembled_revers
 cp $2/fasta/all.discarded.fasta  $2/primer_split/discarded/all.discarded_qc.fasta
 ###
 i=1
-source $3/split_on_primer_files/split_primers_config.txt
 for prim in $3/split_on_primer_files/primer_sort_file_*.txt
 do
  echo "time to split round "$i #${primer_sort_file_1}
@@ -184,6 +183,7 @@ do
    for str in $2/primer_split/${k}*qc.fasta
    do
     str1=${str%_qc.fasta}
+    source $3/split_on_primer_files/split_primers_config_$i.txt
     echo ${k}" reads...."
     python $3/scripts/Split_on_primers_2.py -f ${str1}_qc.fasta -p ${prim} ${parameters}
     echo ${k}" reads....   check!"
@@ -195,7 +195,6 @@ do
  i=$((i+1))
  echo ${i}
 done
-
 
 #################
 #Processes metabarcode reads for taxonomy
