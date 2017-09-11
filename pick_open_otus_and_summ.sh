@@ -14,7 +14,10 @@ cutadapt=/u/local/apps/python/2.7.13/bin/cutadapt
 source /u/local/Modules/default/init/bash
 
 module load qiime
-
+	
+	cat $2/primer_split/assembled/$1_F.fasta $2/primer_split/assembled/$1_R.fasta >> $2/primer_split/assembled/$1_assembled.fasta
+	cat $2/primer_split/unassembled_forward/$1_F.fasta $2/primer_split/unassembled_forward/$1_R.fasta >> $2/primer_split/unassembled_forward/$1_unassembled_F.fasta
+	cat $2/primer_split/unassembled_reverse/$1_F.fasta $2/primer_split/unassembled_reverse/$1_R.fasta >> $2/primer_split/unassembled_reverse/$1_unassembled_R.fasta
 
 	echo "Pick_open_reference: mapping merged-reads to refs"
 	echo "Up next $1"
