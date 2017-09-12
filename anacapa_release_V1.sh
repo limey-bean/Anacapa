@@ -77,6 +77,7 @@ gunzip $2/fastq/*
 date
 ###
 
+
 echo "Preprocessing: 4) Rename each read in each file to reflect the sample ID"
 #this is an awk program that does the following:
 #if the line is the first of 4 (starting count of 1) do the substitution
@@ -87,14 +88,13 @@ for str in `ls $2/fastq/*_1.fastq`
 do
  str1=${str%_1*}
  FILE=${str1#$2/fastq/}
- awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
+ awk -v filename="@${FILE}" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
  mv ${str1}_1.fastq.tmp ${str1}_1.fastq
- awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_1.fastq.tmp
- mv ${str1}_1.fastq.tmp ${str1}_1.fastq
+ awk -v filename="@${FILE}" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_2.fastq.tmp
+ mv ${str1}_2.fastq.tmp ${str1}_2.fastq
 done
 date
 ###
-
 
 ################################
 # QC the preprocessed .fastq files
