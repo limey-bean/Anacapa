@@ -211,7 +211,7 @@ do
  	mkdir -p $2/taxon_summaries/${j}
  	mkdir -p $2/Qiime_open_ref/Params
  	printf "pick_otus:enable_rev_strand_match True \nassign_taxonomy:id_to_taxonomy_fp $3/${j}/${j}_taxonomy.txt \nassign_taxonomy:reference_seqs_fp $3/${j}/${j}_qiime.fasta \nassign_taxonomy:uclust_min_consensus_fraction .75 \nassign_taxonomy:uclust_max_accepts 50 \n" > "$2/Qiime_open_ref/Params/Params${j}_pick_open.txt" 
- 	qsub -l highp,h_rt=48:00:00,h_data=60G -pe shared 2 -N pick${j}_open -cwd -m bea -o $2/Qiime_open_ref/err_log/${j}1P_4.out -e $2/Qiime_open_ref/err_log/${j}1P_4.err -M $4 $3/scripts/pick_open_otus_and_summ.sh ${j} $2 $3 $5
+ 	qsub -l highp,h_rt=48:00:00,h_data=60G -pe shared 2 -N pick${j}_open -cwd -m bea -o $2/Qiime_open_ref/err_log/${j}.out -e $2/Qiime_open_ref/err_log/${j}.err -M $4 $3/scripts/pick_open_otus_and_summ.sh ${j} $2 $3 $5
 done
 echo "check!"
 date
