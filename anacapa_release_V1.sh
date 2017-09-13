@@ -88,9 +88,9 @@ for str in `ls $2/fastq/*_1.fastq`
 do
  str1=${str%_1*}
  FILE=${str1#$2/fastq/}
- awk -v filename="@${FILE}" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
+ awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
  mv ${str1}_1.fastq.tmp ${str1}_1.fastq
- awk -v filename="@${FILE}" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_2.fastq.tmp
+ awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_2.fastq.tmp
  mv ${str1}_2.fastq.tmp ${str1}_2.fastq
 done
 date
