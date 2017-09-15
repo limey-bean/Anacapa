@@ -23,7 +23,7 @@ PEAR="module load pear"									#or what ever code is used to load pear in a bas
 FASTX_TOOLKIT="module load fastx_toolkit"				#or what ever code is used to load fastx_toolkit in a bash shell, or path to fastx_toolkit 
 
 #load anaconda/python2-4.2
-ANACONDA_PYTHON2-4.2="module load anaconda/python2-4.2"				#or what ever code is used to load anaconda/python2-4.2 in a bash shell, or path to anaconda/python2-4.2 
+ANACONDA_PYTHON2_4.2="module load anaconda/python2-4.2"				#or what ever code is used to load anaconda/python2-4.2 in a bash shell, or path to anaconda/python2-4.2 
 
 #load bowtie2
 BOWTIE2="module load bowtie2"							#or what ever code is used to load bowtie2 in a bash shell, or path to bowtie2 
