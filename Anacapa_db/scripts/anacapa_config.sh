@@ -1,7 +1,7 @@
-# Config file for CRUX_release_V1		09-01-2017
-# Written by Emily Curd (eecurd@g.ucla.edu) and Gaurav Kandlikar (gkandlikar@ucla.edu)
+# Config file for Anacapa_release_V1		09-15-2017
+# Developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), with contributions from Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
 # Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
-
+# Last Updated 9-15-2017
 
 
 #############################
