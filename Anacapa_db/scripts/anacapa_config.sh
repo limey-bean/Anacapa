@@ -11,7 +11,7 @@
 MODULE_SOURCE="source /u/local/Modules/default/init/bash" 	#if none, leave empty <- for HPC
 SCRIPTS="script=./scripts"									#if have program scripts in a specific folder
 
-### if not loading modules, need a way to not not run lines ~65 - 70 (module load bit...)
+### if not loading modules, need a way to not not run lines ~65 - 70 (module load bit...) and a way to run programs from load names not paths...
 
 #load cutadapt
 CUTADAPT="/u/local/apps/python/2.7.13/bin/cutadapt" 		#path to cutadapt binary. see documentation for how to obtain this script
