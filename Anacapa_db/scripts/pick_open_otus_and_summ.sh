@@ -7,13 +7,14 @@ if [ $# -ne 4 ]; then
 fi
 ####################################script & software
 # need to fix the order at some point
-script=./scripts
-cutadapt=/u/local/apps/python/2.7.13/bin/cutadapt
+# location of the config and var files
+source $3/scripts/anacapa_vars.sh
+source $3/scripts/anacapa_config.sh
+
 
 ##load module
-source /u/local/Modules/default/init/bash
-
-module load qiime
+${MODULE_SOURCE} # use if you need to load modules from an HPC
+${QIIME} #load qiime
 
 
 	echo "Pick_open_reference: mapping merged-reads to refs"
