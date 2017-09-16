@@ -30,11 +30,12 @@ Once you download these folders, transfer the reference library folders to the A
 The script to run Anacapa is in the scripts directory.  It is called: anacapa_release_V1.sh
 
 To run the script you need to run the following command:
- sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -s <uclust_percent> 
+
+sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -s <uclust_percent> 
  * for <uclust_percent> use proportion (e.g. 97% = .97)
  
 ### More to come, and it might be a bit buggy.
-* if you choose to take this on...  # Good Luck!
+* if you choose to take this on...  Good Luck!
 
 
 
