@@ -1,7 +1,7 @@
 # Anacapa
 
-### Anacapa_release_V1		09-07-2017
-#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), and Rachel Meyer (rsmeyer@ucla.edu). 
+### Anacapa_release_V1		09-15-2017
+#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Rachel Turba (rturba@ucla.edu ) and Rachel Meyer (rsmeyer@ucla.edu). 
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
 
 ## Introduction
