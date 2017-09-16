@@ -10,9 +10,32 @@ Anacapa Island's name is derived from the Chumash __Ennepah__ or __Anyapakh__ wh
 Anacapa is an automated metabarcoding read processing pipeline.  It is designed to analyze multiple samples and metabarcodes simultaneously. The input is raw Illumina metabarcode sequence data and outputs are species count data for multiple samples and metabarcoes. Sucessful implementaion of Anacap requires: 1) raw illumina data, 2) primers for the metabrcodes of interest, 3) reference libraries for the metabrcodes of interest (for custom libraries check out CRUX), and 4) the dependencies indicated below. Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (md5sum), uncompresses (gunzip), and renam files and reads within files.  Reads are next processed for quality control.  PEAR (Zhang et al., 2013) is used to merge quality trimmed reads (Q ≥ 30) of at least 125bp.  Sequencing adapters are removed and fastq files are converted to fasta files with cutadapt (Martin, 2011), and some reads are reverse complemented using Fastx-toolkit (Gordon and Hannon, 2010).  Metabarcoded reads generated using different primer sets are then sorted by primer set using split primers (https://github.com/jessegomer/Split_on_Primer). The resulting reads are assigned taxonomy using an open reference implementation of Uclust (Edgar, 2010) in Qiime (Caporaso et al., 2010).  
 
 
-# Warning
-As of 9-8-2017 at 10:28 am...
-This script has plenty of problems, and the documentation is still a work in progress.  Check back soon...
+## Running this sucker...
+
+This is a preliminary attempt a documentation...  To run the latest version of Anacapa using the 6 primer sets that are commonly used for CALeDNA projects, you will need to download the following:
+* Download the Anacapa_db folder
+* Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
+
+Once you download these folders, transfer the reference library folders to the Anacapa_db folder.  You should have the following subdirectories in the Anacapa_db folder:
+* 12S  
+* 16S  
+* 18S  
+* adapters_and_PrimAdapt_rc  
+* CO1  
+* FITS  
+* PITS  
+* primers  
+* scripts
+
+The script to run Anacapa is in the scripts directory.  It is called: anacapa_release_V1.sh
+
+To run the script you need to run the following command:
+ sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -s <uclust_percent> 
+ * for <uclust_percent> use proportion (e.g. 97% = .97)
+ 
+### More to come, and it might be a bit buggy.
+* if you choose to take this on...  # Good Luck!
+
 
 
 ## References
