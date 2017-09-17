@@ -211,7 +211,7 @@ echo "discarded forward..."
 ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM} -o ${OUT}/primer_sort/discarded_F/{name}_all.discarded_F.fasta  ${OUT}/primer_sort/discarded_F/all.discarded_F.fastq >> ${OUT}/primer_sort/discarded_F/cutadapt-report.txt
 echo "check"
 echo "discarded reverse..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/discarded_R/{name}_all.discarded_F.fasta  ${OUT}/primer_sort/discarded_R/all.discarded_R.fastq >> ${OUT}/primer_sort/discarded_R/cutadapt-report.txt
+${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/discarded_R/{name}_all.discarded_R.fasta  ${OUT}/primer_sort/discarded_R/all.discarded_R.fastq >> ${OUT}/primer_sort/discarded_R/cutadapt-report.txt
 echo "check"
 date
 
