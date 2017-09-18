@@ -5,6 +5,9 @@
 import re
 import sys
 
+import re
+import sys
+
 class SamEntry(object):
     def __init__(self, raw_row):
         self.qname = raw_row[0]
@@ -88,11 +91,14 @@ class BowtieSorter(object):
         # keep all files open until the end because opening and closing is very slow
         self.file_cache = {}
 
+
+
     def send_to_reject_file(self, prefix, entry):
         # calculate cutoff
         for cutoff_value, possible_group_name in self.cutoffs:
             if entry.identity_ratio >= cutoff_value:
                 group_name = possible_group_name
+                break
 
         file_name = "{}{}{}{}.fasta".format(self.directory, self.general_reject_prefix,
                                       prefix, group_name)
@@ -101,10 +107,10 @@ class BowtieSorter(object):
 
         self.write_with_cache(file_name, content)
 
+
     def send_to_good_file(self, entry):
         file_name = self.directory + self.good_file_name
         content = "{}\t{}\t{:0.4f}\n".format(entry.qname, entry.rname, entry.identity_ratio)
-        print content
         self.write_with_cache(file_name, content)
 
     def clean_up_file_cache(self):
@@ -127,6 +133,7 @@ class BowtieSorter(object):
                 pieces = line.strip().split('\t')
                 entry = SamEntry(pieces)
                 self.choose_to_keep_or_reject(entry)
+        self.clean_up_file_cache()
 
 
 
