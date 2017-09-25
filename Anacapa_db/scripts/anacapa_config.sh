@@ -33,4 +33,3 @@ ATS="module load ATS"									#or what ever code is used to load ATS in a bash s
 #load Qiime
 QIIME="module load qiime" 								#or what ever code is used to load qiime in a bash shell (e.g. on a mac it might be "macqiime")
 
-
