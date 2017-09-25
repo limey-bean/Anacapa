@@ -123,7 +123,7 @@ date
 # QC the preprocessed .fastq files
 #############################
 
-echo "QC: 1) Run cutadapt to remove 5'sequncing adapters and 3'primers + sequencing adapters, sort for length, and quality. Paired reads that pass QC will go to the paired file, Pairs that did not pass filter will go to the unpaired file"
+echo "QC: 1) Run cutadapt to remove 5'sequncing adapters and 3'primers + sequencing adapters, sort for length, and quality. Paired reads that pass QC will go to the paired file, Paires that did not pass filter will go to the unpaired file"
 mkdir -p ${OUT}/cutadapt_fastq
 mkdir -p ${OUT}/cutadapt_fastq/paired
 mkdir -p ${OUT}/cutadapt_fastq/unpaired
@@ -211,7 +211,7 @@ echo "discarded forward..."
 ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM} -o ${OUT}/primer_sort/discarded_F/{name}_all.discarded_F.fasta  ${OUT}/primer_sort/discarded_F/all.discarded_F.fastq >> ${OUT}/primer_sort/discarded_F/cutadapt-report.txt
 echo "check"
 echo "discarded reverse..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/discarded_R/{name}_all.discarded_R.fasta  ${OUT}/primer_sort/discarded_R/all.discarded_R.fastq >> ${OUT}/primer_sort/discarded_R/cutadapt-report.txt
+${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/discarded_R/{name}_all.discarded_F.fasta  ${OUT}/primer_sort/discarded_R/all.discarded_R.fastq >> ${OUT}/primer_sort/discarded_R/cutadapt-report.txt
 echo "check"
 date
 
