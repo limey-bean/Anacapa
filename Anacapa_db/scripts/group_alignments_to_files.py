@@ -1,12 +1,9 @@
 # Written by Jesse Gomer (jessegomer@gmail.com)
 # for the University of California Conservation Consortium's CALeDNA Program
 
-
 import re
 import sys
-
-import re
-import sys
+import argparse
 
 class SamEntry(object):
     def __init__(self, raw_row):
@@ -66,20 +63,32 @@ class BowtieSorter(object):
         '''This function decides where to keep or reject a sequence'''
 
         if entry.cigar_max_s() > self.max_allowable_cigar_s:
+            if self.verbose:
+                print 'Writing {} to reject file due to cigar score'.format(entry.qname)
+
             self.send_to_reject_file('not_mapped_at_ends', entry)
 
         elif entry.alignment_scores[0] <= entry.alignment_scores[1]:
+            if self.verbose:
+                print 'Writing {} to reject due to best match not being better than second best'.format(entry.qname)
+
             self.send_to_reject_file('multiple_hits', entry)
 
         elif entry.identity_ratio < self.identity_cutoff_to_keep:
+            if self.verbose:
+                print 'Writing {} to reject due to identity ratio too low'.format(entry.qname)
+
             self.send_to_reject_file('low_percent_id', entry)
 
         else:
+            if self.verbose:
+                print 'Writing {} to good file'.format(entry.qname)
+
             self.send_to_good_file(entry)
 
 
     def __init__(self, directory, good_file_name='bowtie2_good_hits.txt',
-                 general_reject_prefix='bowtie2_rejects_', max_allowable_cigar_s=25):
+                 general_reject_prefix='bowtie2_rejects_', max_allowable_cigar_s=25, verbose=False):
 
         self.directory = directory
         self.good_file_name = good_file_name
@@ -88,9 +97,9 @@ class BowtieSorter(object):
         self.general_reject_prefix = general_reject_prefix
         self.max_allowable_cigar_s = max_allowable_cigar_s
         self.identity_cutoff_to_keep = 0.97
+        self.verbose = verbose
         # keep all files open until the end because opening and closing is very slow
         self.file_cache = {}
-
 
 
     def send_to_reject_file(self, prefix, entry):
@@ -114,7 +123,9 @@ class BowtieSorter(object):
         self.write_with_cache(file_name, content)
 
     def clean_up_file_cache(self):
-        for f in self.file_cache.values():
+        for name, f in self.file_cache.items():
+            if self.verbose:
+                print 'Saving file {}'.format(name)
             f.close()
         self.file_cache = {}
 
@@ -137,11 +148,25 @@ class BowtieSorter(object):
 
 
 
-if __name__ == 'main':
-    # TODO: use argparse
-    output_directory = sys.argv[1]
-    sam_file_name = sys.argv[2]
-    bowtie_sorter = BowtieSorter(output_directory)
+
+
+parser = argparse.ArgumentParser(description='Groups output of bowtie2 into files')
+parser.add_argument('-v', '--verbose', help='Print out debugging information',
+                    action='store_true')
+parser.add_argument('output_directory', type=str, help='Directory where output will be written')
+parser.add_argument('input_file', type=str, help='The SAM file to be read')
+
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+
+    output_directory = args.output_directory
+    if not output_directory.endswith('/'):
+        output_directory = output_directory + '/'
+
+    sam_file_name = args.input_file
+
+    bowtie_sorter = BowtieSorter(output_directory, verbose=args.verbose)
     bowtie_sorter.process_sam_file(sam_file_name)
 
 
