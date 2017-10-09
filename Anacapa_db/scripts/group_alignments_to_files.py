@@ -167,8 +167,8 @@ class BowtieSorter(object):
                 line2 = sam_file.readline().strip()
                 if not line2:
                     break
-                forward = SamEntry(line1)
-                backward = SamEntry(line2)
+                forward = SamEntry(line1.split('\t'))
+                backward = SamEntry(line2.split('\t'))
                 self.choose_to_keep_or_reject_pair(forward, backward)
         self.clean_up_file_cache()
 
