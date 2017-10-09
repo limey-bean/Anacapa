@@ -57,35 +57,47 @@ class SamEntry(object):
 
 
 class BowtieSorter(object):
+
     ##########################################
     # Modify this function to change criteria !
-    def choose_to_keep_or_reject(self, entry):
+    def should_keep_or_reject(self, entry):
         '''This function decides where to keep or reject a sequence'''
 
         if entry.cigar_max_s() > self.max_allowable_cigar_s:
-            if self.verbose:
-                print 'Writing {} to reject file due to cigar score'.format(entry.qname)
-
-            self.send_to_reject_file('not_mapped_at_ends', entry)
+            return False, 'not_mapped_at_ends'
 
         elif entry.alignment_scores[0] <= entry.alignment_scores[1]:
-            if self.verbose:
-                print 'Writing {} to reject due to best match not being better than second best'.format(entry.qname)
-
-            self.send_to_reject_file('multiple_hits', entry)
+            return False, 'multiple_hits'
 
         elif entry.identity_ratio < self.identity_cutoff_to_keep:
-            if self.verbose:
-                print 'Writing {} to reject due to identity ratio too low'.format(entry.qname)
-
-            self.send_to_reject_file('low_percent_id', entry)
+            return False, 'low_percent_id'
 
         else:
+            return True, None
+
+    def choose_to_keep_or_reject(self, entry):
+        should_keep, reason = self.should_keep_or_reject(entry)
+        if should_keep:
             if self.verbose:
                 print 'Writing {} to good file'.format(entry.qname)
-
             self.send_to_good_file(entry)
+        else:
+            if self.verbose:
+                print 'Writing {} to reject file with reason {}'.format(entry.qname, reason)
+            self.send_to_reject_file(reason, entry)
 
+    def choose_to_keep_or_reject_pair(self, forward, backward):
+        should_keep_forward, forward_reason = self.should_keep_or_reject(forward)
+        should_keep_backward, backward_reason = self.should_keep_or_reject(backward)
+
+        if should_keep_forward and should_keep_backward:
+            if self.verbose:
+                print 'Writing {}/{} to good file'.format(forward.qname, backward.qname)
+            self.send_to_good_file(forward)
+        else:
+            if self.verbose:
+                print 'Writing {}/{} to bad file with reason {}'.format(forward.qname, backward.qname, forward_reason or backward_reason)
+            self.send_pair_to_reject_file(forward_reason or backward_reason, forward, backward)
 
     def __init__(self, directory, good_file_name='bowtie2_good_hits.txt',
                  general_reject_prefix='bowtie2_rejects_', max_allowable_cigar_s=25, verbose=False):
@@ -101,21 +113,23 @@ class BowtieSorter(object):
         # keep all files open until the end because opening and closing is very slow
         self.file_cache = {}
 
+    def send_pair_to_reject_file(self, prefix, forward, reverse):
+        self.send_to_reject_file(prefix, forward, postfix='_forward')
+        self.send_to_reject_file(prefix, reverse, postfix='_reverse')
 
-    def send_to_reject_file(self, prefix, entry):
+    def send_to_reject_file(self, prefix, entry, postfix=''):
         # calculate cutoff
         for cutoff_value, possible_group_name in self.cutoffs:
             if entry.identity_ratio >= cutoff_value:
                 group_name = possible_group_name
                 break
 
-        file_name = "{}{}{}{}.fasta".format(self.directory, self.general_reject_prefix,
-                                      prefix, group_name)
+        file_name = "{}{}{}{}{}.fasta".format(self.directory, self.general_reject_prefix,
+                                            prefix, group_name, postfix)
 
         content = ">{}\n{}\n".format(entry.qname, entry.seq)
 
         self.write_with_cache(file_name, content)
-
 
     def send_to_good_file(self, entry):
         file_name = self.directory + self.good_file_name
@@ -146,12 +160,24 @@ class BowtieSorter(object):
                 self.choose_to_keep_or_reject(entry)
         self.clean_up_file_cache()
 
-
-
+    def process_paired_sam_file(self, sam_file_name):
+        with open(sam_file_name) as sam_file:
+            while True:
+                line1 = sam_file.readline().strip()
+                line2 = sam_file.readline().strip()
+                if not line2:
+                    break
+                forward = SamEntry(line1.split('\t'))
+                backward = SamEntry(line2.split('\t'))
+                self.choose_to_keep_or_reject_pair(forward, backward)
+        self.clean_up_file_cache()
 
 
 parser = argparse.ArgumentParser(description='Groups output of bowtie2 into files')
 parser.add_argument('-v', '--verbose', help='Print out debugging information',
+                    action='store_true')
+parser.add_argument('-p', '--paired', help='Paired mode, input file is treated as '
+                                           'pairs of forward and backward sequences',
                     action='store_true')
 parser.add_argument('output_directory', type=str, help='Directory where output will be written')
 parser.add_argument('input_file', type=str, help='The SAM file to be read')
@@ -167,7 +193,11 @@ if __name__ == '__main__':
     sam_file_name = args.input_file
 
     bowtie_sorter = BowtieSorter(output_directory, verbose=args.verbose)
-    bowtie_sorter.process_sam_file(sam_file_name)
+    if args.paired:
+        bowtie_sorter.process_paired_sam_file(sam_file_name)
+    else:
+        bowtie_sorter.process_sam_file(sam_file_name)
+
 
 
 
