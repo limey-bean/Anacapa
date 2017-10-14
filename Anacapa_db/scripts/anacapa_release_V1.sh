@@ -1,14 +1,17 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -s <uclust_percent> # for <uclust_percent> use proportion (e.g. 97% = .97)
+# sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -s <uclust_percent> # for <uclust_percent> use proportion (e.g. 97% = .97) -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  
 IN=""
 OUT=""
 DB=""
 UN=""
 SIM=""
+FP=""
+RP=""
+ADPT=""
 
-while getopts "i:o:d:u:s:" opt; do
+while getopts "i:o:d:u:s:f:r:a:" opt; do
     case $opt in
         i) IN="$OPTARG" # path to raw .fastq.gz files
         ;;
@@ -19,6 +22,12 @@ while getopts "i:o:d:u:s:" opt; do
         u) UN="$OPTARG"  # need username for submitting sequencing job
         ;;
         s) SIM="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
+        ;;
+        f) FP="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
+        ;;
+        r) RP="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
+        ;;
+        a) ADPT="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
         ;;
     esac
 done
@@ -62,6 +71,7 @@ ${FASTX_TOOLKIT} #load fastx_toolkit
 ${QIIME} #load qiime
 ${ANACONDA_PYTHON} #load anaconda/python2-4.2
 ${BOWTIE2} #load bowtie2
+${PERL} #load perl
 ${ATS} #load ATS
 date
 ###
@@ -118,6 +128,15 @@ do
 done
 date
 ###
+
+################################
+# Generate cut adapt primer files
+#############################
+mkdir -p ${DB}/adapters_and_PrimAdapt_rc
+mkdir -p ${DB}/primers
+echo " "
+echo "Generating Primer and Primer + Adapter files for for cutadapt steps.  If not using nextera indexes, please check the primer seqeunces"
+python ${DB}/scripts/anacapa_format_primers_cutadapt.py ${ADPT} ${FP} ${RP} ${DB}
 
 ################################
 # QC the preprocessed .fastq files
@@ -208,30 +227,65 @@ echo "unassembled reverse..."
 ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/unassembled_R/{name}_pear_unassembled_R.fasta ${OUT}/primer_sort/unassembled_R/all.unassembled.R_rc.fastq >> ${OUT}/primer_sort/unassembled_R/cutadapt-report.txt
 echo "check"
 echo "discarded forward..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM} -o ${OUT}/primer_sort/discarded_F/{name}_all.discarded_F.fasta  ${OUT}/primer_sort/discarded_F/all.discarded_F.fastq >> ${OUT}/primer_sort/discarded_F/cutadapt-report.txt
+${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM} -o ${OUT}/primer_sort/discarded_F/{name}_discarded_F.fasta  ${OUT}/primer_sort/discarded_F/all.discarded_F.fastq >> ${OUT}/primer_sort/discarded_F/cutadapt-report.txt
 echo "check"
 echo "discarded reverse..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/discarded_R/{name}_all.discarded_F.fasta  ${OUT}/primer_sort/discarded_R/all.discarded_R.fastq >> ${OUT}/primer_sort/discarded_R/cutadapt-report.txt
+${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/discarded_R/{name}_discarded_R.fasta  ${OUT}/primer_sort/discarded_R/all.discarded_R.fastq >> ${OUT}/primer_sort/discarded_R/cutadapt-report.txt
 echo "check"
 date
+
+###############################
+# Make sure unassembled reads are still paired
+###############################
+date
+echo "Checking that Paired reads are still paired: 1) Use  Armin PEYMANN perl script (https://www.biostars.org/p/56171/) to make sure that unassembled reads are still paired"
+for str in `ls ${OUT}/primer_sort/unassembled_F/*_pear_unassembled_F.fasta`
+do
+ str1=${str%_pear_unassembled_F.fasta}
+ j=${str1#${OUT}/primer_sort/unassembled_F/}
+ echo ${j} "..."
+ perl ${DB}/scripts/check_paired.pl ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F.fasta ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R.fasta
+ echo ${j} "...check!"
+done
+date
+echo "Merge unpaired unassembled reads with discarded reads"
+for str in `ls ${OUT}/primer_sort/unassembled_F/*_pear_unassembled_F.fasta`
+do
+ str1=${str%_pear_unassembled_F.fasta}
+ j=${str1#${OUT}/primer_sort/unassembled_F/}
+ echo ${j} "..."
+ cat ${OUT}/primer_sort/discarded_F/${j}_discarded_F.fasta ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_singletons.fastq > ${OUT}/primer_sort/discarded_F/${j}_all.discarded_F.fasta
+ cat ${OUT}/primer_sort/discarded_R/${j}_discarded_R.fasta ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R_singletons.fastq > ${OUT}/primer_sort/discarded_R/${j}_all.discarded_R.fasta
+ echo ${j} "...check!"
+done
+date
+
 
 #################
 #Processes metabarcode reads for taxonomy
 #################
-echo "Process metabarcode reads for taxonomy: 1) submit pick_open_reference_otus job for each metabarcode"
-mkdir -p ${OUT}/Qiime_open_ref/
+echo "Process metabarcode reads for taxonomy: 1) submit bowtie2 read for each metabarcode"
+mkdir -p ${OUT}/bowtie2_runs/
+mkdir -p ${OUT}/bowtie2_runs/runlog
 mkdir -p ${OUT}/taxon_summaries
-mkdir -p ${OUT}/Qiime_open_ref/err_log/
-mv ${OUT}/primer_sort/assembled/unknown_all.clean_assembled.fasta ${OUT}/primer_sort/assembled/unknownallclean_assembled.fasta
 ###
 for str in `ls ${OUT}/primer_sort/assembled/*_all.clean_assembled.fasta`
 do
  str1=${str%_all.clean_assembled.fasta}
  j=${str1#${OUT}/primer_sort/assembled/}
  	mkdir -p ${OUT}/taxon_summaries/${j}
- 	mkdir -p ${OUT}/Qiime_open_ref/Params
- 	printf "pick_otus:enable_rev_strand_match True \nassign_taxonomy:id_to_taxonomy_fp ${DB}/${j}/${j}_taxonomy.txt \nassign_taxonomy:reference_seqs_fp ${DB}/${j}/${j}_qiime.fasta \nassign_taxonomy:uclust_min_consensus_fraction .75 \nassign_taxonomy:uclust_max_accepts 50 \n" > "${OUT}/Qiime_open_ref/Params/Params${j}_pick_open.txt" 
- 	qsub -l highp,h_rt=48:00:00,h_data=60G -pe shared 2 -N pick${j}_open -cwd -m bea -o ${OUT}/Qiime_open_ref/err_log/${j}.out -e ${OUT}/Qiime_open_ref/err_log/${j}.err -M ${UN} ${DB}/scripts/pick_open_otus_and_summ.sh ${j} ${OUT} ${DB} ${SIM}
+ 	mkdir -p ${OUT}/bowtie2_runs/${j}
+ 	mkdir -p ${OUT}/bowtie2_runs/${j}/assembled
+ 	mkdir -p ${OUT}/bowtie2_runs/${j}/unassembled_F
+ 	mkdir -p ${OUT}/bowtie2_runs/${j}/unassembled_R
+ 	mkdir -p ${OUT}/bowtie2_runs/${j}/discarded_F
+ 	mkdir -p ${OUT}/bowtie2_runs/${j}/discarded_R
+	cp ${OUT}/primer_sort/discarded_F/${j}_all.discarded_F.fasta ${OUT}/bowtie2_runs/${j}/discarded_F/${j}_all.discarded_F.fasta
+	cp ${OUT}/primer_sort/discarded_R/${j}_all.discarded_R.fasta ${OUT}/bowtie2_runs/${j}/discarded_R/${j}_all.discarded_R.fasta
+	cp ${OUT}/primer_sort/assembled/${j}_all.clean_assembled.fasta ${OUT}/bowtie2_runs/${j}/assembled/${j}_all.clean_assembled.fasta
+    cp ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled_F/${j}_pear_unassembled_F.fasta
+    cp ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/${j}_pear_unassembled_R.fasta
+ 	qsub -l highp,h_rt=6:00:00,h_data=12G  -N pick${j}_open -cwd -m bea -o ${OUT}/bowtie2_runs/runlog/{j}.out -e ${OUT}/bowtie2_runs/runlog/${j}.err -M ${UN} ${DB}/scripts/run_bowtie2_make_3_Sfolders.sh  -o ${OUT} -d ${DB} -n ${str}
 done
 echo "check!"
 date
