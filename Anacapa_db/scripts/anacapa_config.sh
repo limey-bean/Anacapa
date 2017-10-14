@@ -33,3 +33,5 @@ ATS="module load ATS"									#or what ever code is used to load ATS in a bash s
 #load Qiime
 QIIME="module load qiime" 								#or what ever code is used to load qiime in a bash shell (e.g. on a mac it might be "macqiime")
 
+#load perl
+PERL="module load perl"							#or what ever code is used to load perl in a bash shell, or path to perl/5.10.1
