@@ -10,7 +10,7 @@ FP=""
 RP=""
 ADPT=""
 
-while getopts "i:o:d:u:s:f:r:a:" opt; do
+while getopts "i:o:d:u:f:r:a:" opt; do
     case $opt in
         i) IN="$OPTARG" # path to raw .fastq.gz files
         ;;
@@ -273,14 +273,13 @@ do
  	mkdir -p ${OUT}/taxon_summaries/${j}
  	mkdir -p ${OUT}/bowtie2_runs/${j}
  	mkdir -p ${OUT}/bowtie2_runs/${j}/assembled
- 	mkdir -p ${OUT}/bowtie2_runs/${j}/unassembled_F
- 	mkdir -p ${OUT}/bowtie2_runs/${j}/unassembled_R
+ 	mkdir -p ${OUT}/bowtie2_runs/${j}/unassembled
  	mkdir -p ${OUT}/bowtie2_runs/${j}/discarded_F
  	mkdir -p ${OUT}/bowtie2_runs/${j}/discarded_R
 	cp ${OUT}/primer_sort/discarded_F/${j}_all.discarded_F.fasta ${OUT}/bowtie2_runs/${j}/discarded_F/${j}_all.discarded_F.fasta
 	cp ${OUT}/primer_sort/discarded_R/${j}_all.discarded_R.fasta ${OUT}/bowtie2_runs/${j}/discarded_R/${j}_all.discarded_R.fasta
 	cp ${OUT}/primer_sort/assembled/${j}_all.clean_assembled.fasta ${OUT}/bowtie2_runs/${j}/assembled/${j}_all.clean_assembled.fasta
-    cp ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled_F/${j}_pear_unassembled_F.fasta
+    cp ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/${j}_pear_unassembled_F.fasta
     cp ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/${j}_pear_unassembled_R.fasta
  	qsub -l highp,h_rt=6:00:00,h_data=12G  -N pick${j}_open -cwd -m bea -o ${OUT}/bowtie2_runs/runlog/{j}.out -e ${OUT}/bowtie2_runs/runlog/${j}.err -M ${UN} ${DB}/scripts/run_bowtie2_make_3_Sfolders.sh  -o ${OUT} -d ${DB} -n ${str}
 done
