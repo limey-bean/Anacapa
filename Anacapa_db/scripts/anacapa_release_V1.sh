@@ -1,12 +1,11 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -s <uclust_percent> # for <uclust_percent> use proportion (e.g. 97% = .97) -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  
+# sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  
 IN=""
 OUT=""
 DB=""
 UN=""
-SIM=""
 FP=""
 RP=""
 ADPT=""
@@ -20,8 +19,6 @@ while getopts "i:o:d:u:s:f:r:a:" opt; do
         d) DB="$OPTARG"  # path to Anacapa_db
         ;;
         u) UN="$OPTARG"  # need username for submitting sequencing job
-        ;;
-        s) SIM="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
         ;;
         f) FP="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
         ;;
