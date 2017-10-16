@@ -186,27 +186,6 @@ do
 done
 
 # now summarize this stuff!
-
-
-mkdir -p ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/merged
-
-#make biom tables
-list=""
-for hang in ${ALLOVER}
-do
- for perc in ${FINSIM}
- do
-  biom convert -i ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/single_best/single_best${NAME}_${perc}_single_best.txt -o ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/single_best/single_best${NAME}_${perc}_single_best.biom --table-type "otu table"
- done
- for f in `ls ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/single_best/*.biom`
-  do
-   list="${f} ${list}"
- done
- merge_otu_tables.py -i ${list} -o ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom
- biom convert -i ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom -o ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.txt -b --header-key="taxonomy" --output-metadata-id="Consensus Lineage"
- biom summarize_table -i ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom -o ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom.sum_table.txt
-done
-
 #make biom tables
 for hang in ${ALLOVER}
 do
