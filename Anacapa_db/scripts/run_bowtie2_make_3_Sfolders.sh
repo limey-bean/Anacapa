@@ -259,6 +259,120 @@ biom summarize_table -i ${OUT}/bowtie2_runs/${NAME}/${folder}/all_overhang_merge
 
 done
 
+#############################################
+# process the paired reads
+#############################################
+
+###   no mixed!!!!!!!!!!
+
+nextF=""
+nextR=""
+for hang in ${ALLOVER}
+do 
+ mkdir -p ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/
+ mkdir -p ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/single_best 
+ mkdir -p ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/merged
+ for perc in ${FINSIM}
+ do
+  mkdir -p ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}
+  mkdir -p ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/fasta_to_process/
+  if [ "x$nextF" != "x"  ];
+  then
+   mv $nextF ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/fasta_to_process/${NAME}_pear_unassembled_F.fasta
+   mv $nextR ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/fasta_to_process/${NAME}_pear_unassembled_R.fasta
+  fi
+  echo "...bowtie2 running"
+  bowtie2 -x ${DB}/${NAME}/${NAME}_bowtie2_databases/${NAME}_bowtie2_${perc}/${NAME}_${perc}_bowtie2_index -f -1 ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/fasta_to_process/${NAME}_pear_unassembled_F.fasta  -2 ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/fasta_to_process/${NAME}_pear_unassembled_R.fasta --un-conc ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/fasta_to_process/${NAME}_all.clean_unassembled_bowtie2_rejects.fasta -S ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/${NAME}_all.clean_unassembled_bowtie2.sam --no-hd --no-sq --very-sensitive-local --no-mixed --no-unal -p 120 #run Bowtie2 on the entire dataset usng 99% ref lib
+  echo "...bowtie2 finished"
+  date
+  echo " "
+  python ${DB}/scripts/group_alignments_to_files_p_mod.py ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/ ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/${NAME}_all.clean_unassembled_bowtie2.sam ${hang} ${perc} -p          # sort reads into -> single best hits, multiple hits, to short.  Also sort my percent similarity to the 99% reference
+  echo "Summarizing single best hits for ${perc} with up to ${hang} basepair overhand "
+   # get best hits for 99% at S25
+  python ${DB}/scripts/summarize_bowtie2_hits_full_taxonomy.py ${DB}/${NAME}/${NAME}_final_database/${NAME}_taxonomy_${perc}.txt ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/bowtie2_good_hits.txt ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/single_best/single_best${NAME}_${perc}_single_best.txt
+  biom convert -i ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/single_best/single_best${NAME}_${perc}_single_best.txt -o ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/single_best/single_best${NAME}_${perc}_single_best.biom --table-type "otu table"
+  cat ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/*_forward.fasta > ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/${NAME}_pear_unassembled_F.fasta
+  rm ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/*_forward.fasta
+  nextF=${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/${NAME}_pear_unassembled_F.fasta
+  cat ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/*_reverse.fasta > ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/${NAME}_pear_unassembled_R.fasta
+  rm ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/*_reverse.fasta
+  nextR=${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/bowtie2_at_${perc}/${NAME}_pear_unassembled_R.fasta
+ done
+done  
+
+
+
+#merge biom tables for unasembled reads
+for hang in ${ALLOVER}
+do
+list=""
+mkdir -p ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/merged
+ for f in `ls ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/single_best/*.biom`
+ do
+  if [ "x$f" != "x"  ] && [ "x$list" != "x"  ];
+   then
+    list="${f},${list}"
+   elif [ "x$f" != "x" ] && [ "x$list" == "x"  ];
+   then
+    list="${f}"
+   fi
+ done
+ echo "${list}"
+ merge_otu_tables.py -i "${list}" -o ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom
+ biom convert -i ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom -o ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.txt -b --header-key="taxonomy" --output-metadata-id="Consensus Lineage"
+ biom summarize_table -i ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom -o ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom.sum_table.txt
+done
+
+# merge final set of assembled biom tables
+
+list=""
+#make biom tables
+mkdir -p ${OUT}/bowtie2_runs/${NAME}/unassembled/all_overhang_merged_results/
+for hang in ${ALLOVER}
+do
+ for f in `ls ${OUT}/bowtie2_runs/${NAME}/unassembled/Sort_${hang}max_overhang/merged/max_overhang_${hang}_sum_merged.biom`
+ do
+   if [ "x$f" != "x"  ] && [ "x$list" != "x"  ];
+   then
+    list="${f},${list}"
+   elif [ "x$f" != "x" ] && [ "x$list" == "x"  ];
+   then
+    list="${f}"
+   fi
+ done
+echo "${list}"
+done
+merge_otu_tables.py -i "${list}" -o ${OUT}/bowtie2_runs/${NAME}/unassembled/all_overhang_merged_results/all_max_overhang_sum_merged.biom
+biom convert -i ${OUT}/bowtie2_runs/${NAME}/unassembled/all_overhang_merged_results/all_max_overhang_sum_merged.biom -o ${OUT}/bowtie2_runs/${NAME}/unassembled/all_overhang_merged_results/all_max_overhang_sum_merged.txt -b --header-key="taxonomy" --output-metadata-id="Consensus Lineage"
+biom summarize_table -i ${OUT}/bowtie2_runs/${NAME}/unassembled/all_overhang_merged_results/all_max_overhang_sum_merged.biom -o ${OUT}/bowtie2_runs/${NAME}/unassembled/all_overhang_merged_results/all_max_overhang_sum_merged.biom.sum_table.txt
+done
+
+
+##### add the single and paired bowtie 2 files to different folders. Turn the following code into a for loop for the single bowtie2 reads
+
+mkdir -p ${OUT}/bowtie2_runs/${NAME}/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads/
+###merge all biom tables for all types of reads
+type="unassembled discarded_R discarded_F assembled"
+#make biom tables
+for f in `ls ${OUT}/bowtie2_runs/${NAME}/*/all_overhang_merged_results/all_max_overhang_sum_merged.biom`
+do
+  if [ "x$f" != "x"  ] && [ "x$list" != "x"  ];
+  then
+   list="${f},${list}"
+  elif [ "x$f" != "x" ] && [ "x$list" == "x"  ];
+  then
+   list="${f}"
+  fi
+echo "${list}"
+done
+merge_otu_tables.py -i "${list}" -o ${OUT}/bowtie2_runs/${NAME}/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads.biom
+biom convert -i ${OUT}/bowtie2_runs/${NAME}/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads.biom -o ${OUT}/bowtie2_runs/${NAME}/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads.txt -b --header-key="taxonomy" --output-metadata-id="Consensus Lineage"
+biom summarize_table -i ${OUT}/bowtie2_runs/${NAME}/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads.biom -o ${OUT}/bowtie2_runs/${NAME}/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads/all_bowtie2_results_merged_all_overhang_all_percent_all_numbers_of_reads.biom.sum_table.txt
+
+
+
+
+
 
 
 
