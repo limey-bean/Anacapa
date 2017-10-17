@@ -15,7 +15,7 @@ Bowtie2 taxonomic assignment: Reference libraries for many metabarcode primers s
 
 ## Anacapa relies on many programs and databases to run properly. 
 **__First Download the Anacapa_db folder.__** 
-This folder contains:
+* This folder contains:
 	* Two folders
 		* adapters_and_PrimAdapt_rc	
 		* scripts
@@ -23,13 +23,24 @@ This folder contains:
 		* forward_primers.txt
 		* reverse_primers.txt
 
-adapters_and_PrimAdapt_rc folder contains: 
-	* the forward and reverse adapters for nextera and trueseq (add) adapters.
+* adapters_and_PrimAdapt_rc folder contains: 
+	* the forward and reverse nextera adapters 
+	* add forward and reverse trueseq (add) adapters.
 
-scripts folder contains:
-	*
+* scripts folder contains:
+	* anacapa_config.sh
+	* anacapa_format_primers_cutadapt.py
+	* anacapa_release_V1.sh
+	* anacapa_vars.sh
+	* check_paired.pl
+	* group_alignments_to_files.py *not currently used (Emily github knowledge problem)
+	* group_alignments_to_files_p_mod.py
+	* pick_open_otus_and_summ.sh *not currently used (for qiime processing)
+	* run_bowtie2_make_3_Sfolders.sh
+	* summarize_bowtie2_hits.py *not currently used (Emily github knowledge problem)
+	* summarize_bowtie2_hits_full_taxonomy.py
 
-The two files are examples of how to format the primer forward and reverse input files.  It is VERY IMPORTANT that you modify these files to reflect your data set!
+* The two files are examples of how to format the primer forward and reverse input files.  It is VERY IMPORTANT that you modify these files to reflect your data set!
 
 However, if you already have any these programs or databases, there is no need to add them to the crux_release_V1_db folder. Instead update the file paths or loading commands to the Crux_config.sh and crux_vars.sh folders accordingly.
 
