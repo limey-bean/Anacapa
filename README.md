@@ -1,6 +1,6 @@
 # Anacapa
 
-### Anacapa_release_V1		01-17-2017
+### Anacapa_release_V1		10-17-2017
 #### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Rachel Turba (rturba@ucla.edu ) and Rachel Meyer (rsmeyer@ucla.edu). 
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
 
@@ -14,7 +14,24 @@ The workflow: Anacapa takes raw Illumina fastq format reads and preprocesses the
 Bowtie2 taxonomic assignment: Reference libraries for many metabarcode primers suffer from several problems: low coverage for many taxa, incomplete seqeunce coverage of amplicon region, species have low variability and are not distinct from other species with in a genus or family, etc. Anacapa processes reads iteratively and takes into account 1) the read overhang between the sample read and the reference sequences, 2) the percent identity of the sample read to a reference, and 3) the number of equal best hits between a sample read and a given reference library. Anacapa sorts reads iteratively using bowtie2. Reads are initially sorted by read overhang (the default is bins with reads containing <= 25 bp, 25 < reads >= 50, 50 < reads >= 75, and 75 < reads >= 100). Within each overhang bin, Anacapa uses bowtie2 to identify reads with single hits (99% identity or better) to a reference library clustered at 99%, the remaining reads are then sorted using a reference library clustered at 97% and the single best hits (97% identity or better) are retained, the remaining reads are sorted with 95% reference libraries, and so on for 90, 85, and 80% reference libraries. Sample reads that have a forward and reverse read are sorted into bins based on the read (in the pair) with the largest overhand or lowest percent single hit to a reference database. Reads are summarized for each bin / percent reference library combination, and then summarized after merging all percent reference library results within bins, and then summarized for all data from every bin / percent reference library combination.  
 
 ## Anacapa relies on many programs and databases to run properly. 
-**__First Download the Anacapa_db folder.__** The executables and database folders should be accessible from this folder. However, if you already have any these programs or databases, there is no need to add them to the crux_release_V1_db folder. Instead update the file paths or loading commands to the Crux_config.sh and crux_vars.sh folders accordingly.
+**__First Download the Anacapa_db folder.__** 
+This folder contains:
+	* Two folders
+		* adapters_and_PrimAdapt_rc	
+		* scripts
+	* Two files:
+		* forward_primers.txt
+		* reverse_primers.txt
+
+adapters_and_PrimAdapt_rc folder contains: 
+	* the forward and reverse adapters for nextera and trueseq (add) adapters.
+
+scripts folder contains:
+	*
+
+The two files are examples of how to format the primer forward and reverse input files.  It is VERY IMPORTANT that you modify these files to reflect your data set!
+
+However, if you already have any these programs or databases, there is no need to add them to the crux_release_V1_db folder. Instead update the file paths or loading commands to the Crux_config.sh and crux_vars.sh folders accordingly.
 
 **__Programs__**
 
