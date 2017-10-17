@@ -1,6 +1,6 @@
 # Anacapa
 
-### Anacapa_release_V1		09-15-2017
+### Anacapa_release_V1		01-17-2017
 #### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Rachel Turba (rturba@ucla.edu ) and Rachel Meyer (rsmeyer@ucla.edu). 
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
 
@@ -14,7 +14,7 @@ Anacapa is an automated metabarcoding read processing pipeline.  It is designed 
 
 This is a preliminary attempt a documentation...  To run the latest version of Anacapa using the 6 primer sets that are commonly used for CALeDNA projects, you will need to download the following:
 * Download the Anacapa_db folder
-* Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
+* Download taxonomy reference libraries (updated 10-16-2017) from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
 
 Once you download these folders, transfer the reference library folders to the Anacapa_db folder.  You should have the following subdirectories in the Anacapa_db folder:
 * 12S  
@@ -24,15 +24,13 @@ Once you download these folders, transfer the reference library folders to the A
 * CO1  
 * FITS  
 * PITS  
-* primers  
 * scripts
 
 The script to run Anacapa is in the scripts directory.  It is called: anacapa_release_V1.sh
 
 To run the script you need to run the following command:
 
-sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -s <uclust_percent> 
- * for <uclust_percent> use proportion (e.g. 97% = .97)
+sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type ("nextera" or "truseq")>
  
 ### More to come, and it might be a bit buggy.
 * if you choose to take this on...  Good Luck!
