@@ -33,11 +33,11 @@ Bowtie2 taxonomic assignment: Reference libraries for many metabarcode primers s
 	* anacapa_release_V1.sh
 	* anacapa_vars.sh
 	* check_paired.pl
-	* group_alignments_to_files.py *not currently used (Emily github knowledge problem)
+	* group_alignments_to_files.py *not currently used (Emily github knowledge problem)*
 	* group_alignments_to_files_p_mod.py
-	* pick_open_otus_and_summ.sh *not currently used (for qiime processing)
+	* pick_open_otus_and_summ.sh *not currently used (for qiime processing)*
 	* run_bowtie2_make_3_Sfolders.sh
-	* summarize_bowtie2_hits.py *not currently used (Emily github knowledge problem)
+	* summarize_bowtie2_hits.py *not currently used (Emily github knowledge problem)*
 	* summarize_bowtie2_hits_full_taxonomy.py
 
 * The two files are examples of how to format the primer forward and reverse input files.  It is VERY IMPORTANT that you modify these files to reflect your data set!
