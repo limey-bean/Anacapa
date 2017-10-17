@@ -7,8 +7,44 @@
 ## Introduction
 Anacapa Island's name is derived from the Chumash __Ennepah__ or __Anyapakh__ which means "mirage island" (Gudde and Bright, 2004). Much like Anacapa Island, using environmental DNA (eDNA) to uncover Biodiversity seems like an issusion on the horizon, however both are real phenomoena.  
 
-Anacapa is an automated metabarcoding read processing pipeline.  It is designed to analyze multiple samples and metabarcodes simultaneously. The input is raw Illumina metabarcode sequence data and outputs are species count data for multiple samples and metabarcoes. Sucessful implementaion of Anacap requires: 1) raw illumina data, 2) primers for the metabrcodes of interest, 3) reference libraries for the metabrcodes of interest (for custom libraries check out CRUX), and 4) the dependencies indicated below. Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (md5sum), uncompresses (gunzip), and renam files and reads within files.  Reads are next processed for quality control.  PEAR (Zhang et al., 2013) is used to merge quality trimmed reads (Q ≥ 30) of at least 125bp.  Sequencing adapters are removed and fastq files are converted to fasta files with cutadapt (Martin, 2011), and some reads are reverse complemented using Fastx-toolkit (Gordon and Hannon, 2010).  Metabarcoded reads generated using different primer sets are then sorted by primer set using split primers (https://github.com/jessegomer/Split_on_Primer). The resulting reads are assigned taxonomy using an open reference implementation of Uclust (Edgar, 2010) in Qiime (Caporaso et al., 2010).  
+Anacapa is an automated metabarcoding read processing pipeline.  It is designed to analyze multiple samples and metabarcodes simultaneously, and to run on Illumina HiSeq and MiSeq data. There is no requirement that the raw paired reads overlap, or that both reads in a pair pass qc.  Taxonomy results are generated for all read types, however taxomony is reported for overlapping (assembled) and non overlapping (unassembled) paired end reads, and also single end reads (discarded forward or reverse) where one of the pairs fails qc. The input is raw Illumina metabarcode sequence data and outputs are species count data for multiple samples and metabarcodes. Sucessful implementaion of Anacap requires: 1) raw illumina data, 2) a set of forward and reverse fasta format files that indlude the metabarcodes used to generate seqeunce data, 3) reference libraries for the metabrcodes of interest made using CRUX, and 4) the dependencies indicated below. 
 
+The workflow: Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (md5sum), uncompresses (gunzip), and rename files and reads within files.  Reads are next processed for quality control using cutadapt, where read are retained if they have a Q ≥ 30 and are at lease 100bp after adapter and 3' primer trimming.  PEAR (Zhang et al., 2013) is used to merge paired reads.  Metabarcode reads are sorted by 5' primers and fastq files are converted to fasta files with cutadapt (Martin, 2011). Some reads (unassembled reverse reads) are reverse complemented using Fastx-toolkit (Gordon and Hannon, 2010), prior to sorting. The resulting reads are assigned taxonomy using Bowtie2. Reference libraries for many metabarcode primers suffer from several problems: low coverage for many taxa, incomplete seqeunce coverage of amplicon region, etc. Anacapa processes reads itteratively and takes into account sample read overhang from reference sequences, and percent identity to references. Anacapa sorts reads using bowtie2 and first sorts reads by read overhang retaining (reads < 25 bp, 25 < reads > 50, 50 < reads > 75, and 75 < reads > 100). Within each overhang bin, Anacapa uses bowtie2 to identify reads with single hits to a reference library clustered at 99%, the remaining reads are then sorted using a reference library clustered at 97%, and so on using 95, 90, 85, and 80% reference libraries.  Reads are summarized for each bin / percent reference library combination, and then summarized after merging all percent reference library results within overhang bins, and then summarized for all data from every bin / percent reference library combination.  
+
+## Anacapa relies on many programs and databases to run properly. 
+**__First Download the Anacapa_db folder.__** The executables and database folders should be accessible from this folder. However, if you already have any these programs or databases, there is no need to add them to the crux_release_V1_db folder. Instead update the file paths or loading commands to the Crux_config.sh and crux_vars.sh folders accordingly.
+
+**__Programs__**
+
+
+1. OBItools: https://git.metabarcoding.org/obitools/obitools/wikis/home
+	* OBItools is used to generate reference libraries for the ecoPCR in silico PCR step for CRUX.
+	* OBItools does not need to be installed in the crux_release_V1_db folder.
+	* Installation information can be found here: http://metabarcoding.org//obitools/doc/welcome.html#installing-the-obitools
+
+2. ecoPCR: https://git.metabarcoding.org/obitools/ecopcr/wikis/home
+	* If you are not modifying the Crux_config.sh, then the path to the ecoPCR executable should be as follows: ~/crux_release_V1_db/ecoPCR/src/ecoPCR
+
+3. cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
+        * cutadapt does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment. 
+
+4. BLAST+: https://www.ncbi.nlm.nih.gov/books/NBK279690/
+	* the lastest BLAST executables can be downloaded from: ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.6.0/
+	* If you are not modifying the Crux_config.sh, then the path to the blastn executable should be as follows: ~/crux_release_V1_db/ncbi-blast-2.6.0+/bin/blastn
+
+5. entrez_qiime: https://github.com/bakerccm/entrez_qiime
+	* **entrez_qiime.py** is already included in crux_release_V1_db folder
+
+6. Qiime 1: http://qiime.org/index.html
+	* Qiime 1 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment. 
+	* Installation information can be found here: http://qiime.org/install/install.html
+	* We will transition to Qiime 2 by January 01, 2018. 
+	
+7. Bowtie2: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+	* Bowtie2 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment. 
+  
+  
+**__Databases to download__**
 
 ## Running this sucker...
 
