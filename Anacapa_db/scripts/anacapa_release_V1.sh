@@ -282,7 +282,7 @@ do
 	cp ${OUT}/primer_sort/assembled/${j}_all.clean_assembled.fasta ${OUT}/bowtie2_runs/${j}/assembled/${j}_all.clean_assembled.fasta
     cp ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/${j}_pear_unassembled_F.fasta
     cp ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/${j}_pear_unassembled_R.fasta
- 	qsub -l highp,h_rt=6:00:00,h_data=12G  -N pick${j}_bowtie2 -cwd -m bea -o ${OUT}/bowtie2_runs/runlog/{j}.out -e ${OUT}/bowtie2_runs/runlog/${j}.err -M ${UN} ${DB}/scripts/run_bowtie2_make_3_Sfolders.sh  -o ${OUT} -d ${DB} -n ${str}
+ 	qsub -l highp,h_rt=6:00:00,h_data=12G  -N pick${j}_bowtie2 -cwd -m bea -o ${OUT}/bowtie2_runs/runlog/${j}.out -e ${OUT}/bowtie2_runs/runlog/${j}.err -M ${UN} ${DB}/scripts/run_bowtie2_make_3_Sfolders.sh  -o ${OUT} -d ${DB} -n ${str}
 done
 echo "check!"
 date
