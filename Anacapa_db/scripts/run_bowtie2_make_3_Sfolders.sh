@@ -1,7 +1,8 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -o <working/out_dir> -d <database_directory> -n name  
+sh ~/Anacapa_db/scripts/run_bowtie2_make_3_Sfolders.sh -o <working/out_dir> -d <database_directory> -n <primer name>  
+
 OUT=""
 DB=""
 NAME=""
