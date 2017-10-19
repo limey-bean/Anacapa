@@ -1,9 +1,12 @@
 # Written by Jesse Gomer (jessegomer@gmail.com)
 # for the University of California Conservation Consortium's CALeDNA Program
+# python ~/group_alignments_to_files.py <outdir> <sam> <percent to keep> <allowable overhang> -p (if paired)
+
 
 import re
 import sys
 import argparse
+
 
 class SamEntry(object):
     def __init__(self, raw_row):
@@ -57,7 +60,6 @@ class SamEntry(object):
 
 
 class BowtieSorter(object):
-
     ##########################################
     # Modify this function to change criteria !
     def should_keep_or_reject(self, entry):
@@ -94,38 +96,55 @@ class BowtieSorter(object):
             if self.verbose:
                 print 'Writing {}/{} to good file'.format(forward.qname, backward.qname)
             self.send_to_good_file(forward)
-        else:
+        if not should_keep_forward:
             if self.verbose:
-                print 'Writing {}/{} to bad file with reason {}'.format(forward.qname, backward.qname, forward_reason or backward_reason)
-            self.send_pair_to_reject_file(forward_reason or backward_reason, forward, backward)
+                print 'Writing {}/{} to bad file with reason {}'.format(forward.qname, backward.qname,
+                                                                        forward_reason)
+            self.send_pair_to_reject_file(forward_reason, forward, backward)
+        else:  # backward is the reason
+            if self.verbose:
+                print 'Writing {}/{} to bad file with reason {}'.format(forward.qname, backward.qname,
+                                                                        backward_reason)
+            self.send_pair_to_reject_file(backward_reason, forward, backward)
 
-    def __init__(self, directory, good_file_name='bowtie2_good_hits.txt',
-                 general_reject_prefix='bowtie2_rejects_', max_allowable_cigar_s=25, verbose=False):
+    def __init__(self, directory, max_allowable_cigar_s, identity_cutoff_to_keep, good_file_name='bowtie2_good_hits.txt',
+                 general_reject_prefix='bowtie2_rejects_', verbose=False):
 
         self.directory = directory
         self.good_file_name = good_file_name
-        self.cutoffs = [(0.97, ".97-1.0"), (0.95, ".95-.9699"), (0.9, ".90-.9499"),
-                        (0.80, ".80-.8999"), (0.0, ".00-.7999")]
+        self.cutoffs = [(0.99, ".99-1.0"), (0.97, ".97-.9899"), (0.95, ".95-.9699"), (0.90, ".90-.9499"),
+                        (0.85, ".85-.8999"), (0.80, ".80-.8499"), (0.00, ".00-.7999")]
         self.general_reject_prefix = general_reject_prefix
         self.max_allowable_cigar_s = max_allowable_cigar_s
-        self.identity_cutoff_to_keep = 0.97
+        self.identity_cutoff_to_keep = float(identity_cutoff_to_keep)
         self.verbose = verbose
         # keep all files open until the end because opening and closing is very slow
         self.file_cache = {}
 
     def send_pair_to_reject_file(self, prefix, forward, reverse):
-        self.send_to_reject_file(prefix, forward, postfix='_forward')
-        self.send_to_reject_file(prefix, reverse, postfix='_reverse')
+        min_ratio = min(forward.identity_ratio, reverse.identity_ratio)
+        group_name = self.calculate_cutoff_group(min_ratio)
+        self.send_to_reject_file(prefix, forward, postfix='_forward', override_group_name=group_name)
+        self.send_to_reject_file(prefix, reverse, postfix='_reverse', override_group_name=group_name)
 
-    def send_to_reject_file(self, prefix, entry, postfix=''):
-        # calculate cutoff
+    def calculate_cutoff_group(self, identity_ratio):
         for cutoff_value, possible_group_name in self.cutoffs:
-            if entry.identity_ratio >= cutoff_value:
+            if identity_ratio >= cutoff_value:
                 group_name = possible_group_name
                 break
+        return group_name
+
+    def send_to_reject_file(self, prefix, entry, postfix='', override_group_name=None):
+        # calculate cutoff
+
+        if override_group_name:
+            group_name = override_group_name
+        else:
+            group_name = self.calculate_cutoff_group(entry.identity_ratio)
+
 
         file_name = "{}{}{}{}{}.fasta".format(self.directory, self.general_reject_prefix,
-                                            prefix, group_name, postfix)
+                                              prefix, group_name, postfix)
 
         content = ">{}\n{}\n".format(entry.qname, entry.seq)
 
@@ -173,6 +192,13 @@ class BowtieSorter(object):
         self.clean_up_file_cache()
 
 
+def restricted_float(x):
+    x = float(x)
+    if x < 0.0 or x > 1.0:
+        raise argparse.ArgumentTypeError("%r not in range [0.0, 1.0]" % (x,))
+    return x
+
+
 parser = argparse.ArgumentParser(description='Groups output of bowtie2 into files')
 parser.add_argument('-v', '--verbose', help='Print out debugging information',
                     action='store_true')
@@ -182,6 +208,9 @@ parser.add_argument('-p', '--paired', help='Paired mode, input file is treated a
 parser.add_argument('output_directory', type=str, help='Directory where output will be written')
 parser.add_argument('input_file', type=str, help='The SAM file to be read')
 
+parser.add_argument('s_to_allow', type=float, help='Allowable query overhang')
+
+parser.add_argument('keep_percent', type=restricted_float, help='percent to keep')
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -191,16 +220,12 @@ if __name__ == '__main__':
         output_directory = output_directory + '/'
 
     sam_file_name = args.input_file
+    overhang = args.s_to_allow
+    keep = args.keep_percent
 
-    bowtie_sorter = BowtieSorter(output_directory, verbose=args.verbose)
+    bowtie_sorter = BowtieSorter(output_directory, overhang, keep, verbose=args.verbose)
     if args.paired:
         bowtie_sorter.process_paired_sam_file(sam_file_name)
     else:
         bowtie_sorter.process_sam_file(sam_file_name)
-
-
-
-
-
-
 
