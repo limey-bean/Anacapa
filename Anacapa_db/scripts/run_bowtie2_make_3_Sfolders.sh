@@ -80,7 +80,7 @@ do
  python ${DB}/scripts/group_alignments_to_files_p_mod.py ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${ove}max_overhang/bowtie2_at_.99 ${OUT}/bowtie2_runs/${NAME}/${folder}/plus${i}_unmapped_at_ends/unmapped_at_ends.sam ${ove} .99 # sort reads into -> single best hits, multiple hits, to short.  Also sort my percent similarity to the 99% reference
  echo "Summarizing single best hits for 99% with up to ${ove} basepair overhang"
  mkdir -p ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${ove}max_overhang/single_best     # get best hits for 99% at S25
- python ${DB}/scripts/summarize_bowtie2_hits_full_taxonomy.py ${DB}/${NAME}/${NAME}_final_database/${NAME}_taxonomy_.99.txt ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${ove}max_overhang/bowtie2_at_.99/bowtie2_good_hits.txt ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${ove}max_overhang/single_best/single_best${NAME}_99_single_best.txt
+ python ${DB}/scripts/summarize_bowtie2_hits_full_taxonomy.py ${DB}/${NAME}/${NAME}_final_database/${NAME}_taxonomy_.99.txt ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${ove}max_overhang/bowtie2_at_.99/bowtie2_good_hits.txt ${OUT}/bowtie2_runs/${NAME}/${folder}/Sort_${ove}max_overhang/single_best/single_best${NAME}_.99_single_best.txt
  date
  echo " "
  i="${ove}"
