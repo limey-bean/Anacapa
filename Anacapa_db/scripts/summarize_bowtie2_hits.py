@@ -9,7 +9,7 @@ def load_taxonomy_file(taxonomy_file):
     taxonomy = {}
     for line in taxonomy_file:
         identifier = line.split('\t')[0].strip()
-        species = line.split(';')[-1]
+        species = line.split('\t')[1]
         taxonomy[identifier] = species.strip()
     return taxonomy
 
@@ -20,7 +20,7 @@ def count_species(hits_file, taxonomy):
     species_counts = defaultdict(lambda: Counter())
     for line in hits_file:
         sequence_id, taxonomy_id, percent = line.strip().split('\t')
-        sample_name = sequence_id.split(':')[0]
+        sample_name = sequence_id.split('_:')[0]
         species_name = taxonomy[taxonomy_id]
         species_counts[sample_name][species_name] += 1
 
@@ -35,7 +35,7 @@ def create_output(output_file, species_counts):
         all_species.update(sample.keys())
 
     # write the header
-    output_file.write('Species\t{}\n'.format('\t'.join(all_samples)))
+    output_file.write('#OTU ID\t{}\n'.format('\t'.join(all_samples)))
 
     for species_name in all_species:
         counts = []
