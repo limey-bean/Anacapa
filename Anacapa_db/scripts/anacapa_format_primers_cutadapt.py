@@ -80,7 +80,7 @@ for line in F_infile:
         outfile.write(header + "_rc" + "\n")  
     else:
     	seq = line.strip()
-    	outfile.write(rComp(seq) + adapter_Frc + "$" + "\n")
+    	outfile.write(rComp(seq) + adapter_Frc  + "\n")
 outfile.close()
 F_infile.close()
 
@@ -129,6 +129,6 @@ for line in R_infile:
         outfile.write(header + "_rc" + "\n")  
     else:
     	seq = line.strip()
-    	outfile.write(rComp(seq) + adapter_Rrc + "$" + "\n")
+    	outfile.write(rComp(seq) + adapter_Rrc + "\n")
 outfile.close()
 R_infile.close()
