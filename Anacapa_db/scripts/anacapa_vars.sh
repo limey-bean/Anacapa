@@ -26,7 +26,7 @@ MIN_LEN="100"
 MIN_QUAL="30"
 
 ###QC 4
-ERROR_QC4=".3"															# max errors allowed in trim step oligonucleotide (by percent)
+ERROR_QC4=".4"															# max errors allowed in trim step oligonucleotide (by percent)
 FILE_TYPE_QC4="fastq"													# fasta or fastq. 
 R_PRIM_RC="file:${DB}/primers/a_reverse_rc_primers.txt"   # path to file with the forward primer + adapter "g"
 
