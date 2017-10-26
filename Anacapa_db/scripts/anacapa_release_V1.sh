@@ -137,7 +137,8 @@ python ${DB}/scripts/anacapa_format_primers_cutadapt.py ${ADPT} ${FP} ${RP} ${DB
 
 ################################
 # QC the preprocessed .fastq files
-#############################
+################################
+
 
 echo "QC: 1) Run cutadapt to remove 5'sequncing adapters and 3'primers + sequencing adapters, sort for length, and quality. Paired reads that pass QC will go to the paired file, Paires that did not pass filter will go to the unpaired file"
 mkdir -p ${OUT}/cutadapt_fastq
@@ -149,7 +150,11 @@ do
  str1=${str%_*}
  j=${str1#${OUT}/fastq/}
  echo ${j} "..."
- ${CUTADAPT} -e ${ERROR_QC1}  -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} -G ${R_ADAPT} -A ${Frc_PRIM_ADAPT} --minimum-length ${MIN_LEN} -q ${MIN_QUAL}  --too-short-output ${OUT}/cutadapt_fastq/unpaired/${j}_unPaired_1.fastq --too-short-paired-output ${OUT}/cutadapt_fastq/unpaired/${j}_unPaired_2.fastq -o ${OUT}/cutadapt_fastq/paired/${j}_Paired_1.fastq -p ${OUT}/cutadapt_fastq/paired/${j}_Paired_2.fastq ${str1}_1.fastq ${str1}_2.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
+ ${CUTADAPT} -e ${ERROR_QC1}  -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} -G ${R_ADAPT} -A ${Frc_PRIM_ADAPT} --minimum-length ${MIN_LEN} -q ${MIN_QUAL}  --too-short-output ${OUT}/cutadapt_fastq/unpaired/${j}_aunPaired_1.fastq --too-short-paired-output ${OUT}/cutadapt_fastq/unpaired/${j}_aunPaired_2.fastq -o ${OUT}/cutadapt_fastq/paired/${j}_aPaired_1.fastq -p ${OUT}/cutadapt_fastq/paired/${j}_aPaired_2.fastq ${str1}_1.fastq ${str1}_2.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
+ fastq_quality_trimmer -t 35 -l 100  -i ${OUT}/cutadapt_fastq/paired/${j}_aPaired_1.fastq -o ${OUT}/cutadapt_fastq/paired/${j}_Paired_1.fastq -Q33
+ fastq_quality_trimmer -t 35 -l 100  -i ${OUT}/cutadapt_fastq/paired/${j}_aPaired_2.fastq -o ${OUT}/cutadapt_fastq/paired/${j}_Paired_2.fastq -Q33
+ fastq_quality_trimmer -t 35 -l 100  -i ${OUT}/cutadapt_fastq/unpaired/${j}_aunPaired_1.fastq -o ${OUT}/cutadapt_fastq/unpaired/${j}_unPaired_1.fastq -Q33
+ fastq_quality_trimmer -t 35 -l 100  -i ${OUT}/cutadapt_fastq/unpaired/${j}_aunPaired_2.fastq -o ${OUT}/cutadapt_fastq/unpaired/${j}_unPaired_2.fastq -Q33
  echo ${j} "...  check!"
 done
 date
@@ -280,11 +285,12 @@ do
 	cp ${OUT}/primer_sort/discarded_F/${j}_all.discarded_F.fasta ${OUT}/bowtie2_runs/${j}/discarded_F/${j}_all.discarded_F.fasta
 	cp ${OUT}/primer_sort/discarded_R/${j}_all.discarded_R.fasta ${OUT}/bowtie2_runs/${j}/discarded_R/${j}_all.discarded_R.fasta
 	cp ${OUT}/primer_sort/assembled/${j}_all.clean_assembled.fasta ${OUT}/bowtie2_runs/${j}/assembled/${j}_all.clean_assembled.fasta
-        cp ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/${j}_pear_unassembled_F.fasta
-        cp ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/${j}_pear_unassembled_R.fasta
-    if [ "${j}" != "unknown"  ];
+    cp ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/${j}_pear_unassembled_F.fasta
+    cp ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/${j}_pear_unassembled_R.fasta
+ 	if [ "${j}" != "unknown"  ];
     then
- 	 qsub -l highp,h_rt=6:00:00,h_data=12G  -N pick${j}_bowtie2 -cwd -m bea -o ${OUT}/bowtie2_runs/runlog/{j}.out -e ${OUT}/bowtie2_runs/runlog/${j}.err -M ${UN} ${DB}/scripts/run_bowtie2_make_3_Sfolders.sh  -o ${OUT} -d ${DB} -n ${j}
+ 	 echo "qsub -l highp,h_rt=6:00:00,h_data=12G  -N pick${j}_bowtie2 -cwd -m bea -o ${OUT}/bowtie2_runs/runlog/${j}.out -e ${OUT}/bowtie2_runs/runlog/${j}.err -M ${UN} ${DB}/scripts/run_bowtie2_make_3_Sfolders.sh  -o ${OUT} -d ${DB} -n ${j}"
+     echo " "
     fi
  done
 echo "check!"
