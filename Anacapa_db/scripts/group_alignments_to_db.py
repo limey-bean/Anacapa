@@ -5,7 +5,7 @@
 
 import re
 import argparse
-from SqliteStorage import BowtieStorage
+from sqlite_storage import BowtiePairStorage, BowtieStorageSingle
 
 class SamEntry(object):
     def __init__(self, raw_row):
@@ -113,7 +113,7 @@ class BowtieSorter(object):
         self.max_allowable_cigar_s = max_allowable_cigar_s
         self.identity_cutoff_to_keep = float(identity_cutoff_to_keep)
         self.verbose = verbose
-        self.bowtie_storage = BowtieStorage(output_db)
+        self.bowtie_storage = BowtiePairStorage(output_db)
         # keep all files open until the end because opening and closing is very slow
         self.file_cache = {}
 
