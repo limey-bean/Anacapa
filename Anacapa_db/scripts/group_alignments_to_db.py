@@ -106,10 +106,9 @@ class BowtieSorter(object):
                                                                         backward_reason)
             self.send_pair_to_reject_file(backward_reason, forward, backward)
 
-    def __init__(self, output_db, max_allowable_cigar_s, identity_cutoff_to_keep, good_file_name='bowtie2_good_hits.txt',
-                verbose=False):
+    def __init__(self, output_db, good_file_location, max_allowable_cigar_s, identity_cutoff_to_keep, verbose=False):
 
-        self.good_file_name = good_file_name
+        self.good_file_location = good_file_location
         self.max_allowable_cigar_s = max_allowable_cigar_s
         self.identity_cutoff_to_keep = float(identity_cutoff_to_keep)
         self.verbose = verbose
@@ -131,7 +130,7 @@ class BowtieSorter(object):
         self.bowtie_storage.store_one(entry, prefix)
 
     def send_to_good_file(self, entry):
-        file_name = self.directory + self.good_file_name
+        file_name = self.good_file_location
         content = "{}\t{}\t{:0.4f}\n".format(entry.qname, entry.rname, entry.identity_ratio)
         self.write_with_cache(file_name, content)
 
@@ -186,6 +185,7 @@ parser.add_argument('-p', '--paired', help='Paired mode, input file is treated a
                                            'pairs of forward and backward sequences',
                     action='store_true')
 parser.add_argument('output_db', type=str, help='Database file where output will be written')
+parser.add_argument('good_file_location', type=str, help='File that good reads will be written to')
 parser.add_argument('input_file', type=str, help='The SAM file to be read')
 
 parser.add_argument('s_to_allow', type=float, help='Allowable query overhang')
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     overhang = args.s_to_allow
     keep = args.keep_percent
 
-    bowtie_sorter = BowtieSorter(output_db, overhang, keep, verbose=args.verbose)
+    bowtie_sorter = BowtieSorter(output_db, args.good_file_location,  overhang, keep, verbose=args.verbose)
     if args.paired:
         bowtie_sorter.process_paired_sam_file(sam_file_name)
     else:
