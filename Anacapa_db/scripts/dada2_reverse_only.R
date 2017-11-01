@@ -4,8 +4,8 @@
 
  args = commandArgs(trailingOnly=TRUE)
 
- barC = arg[1]  #barcode target
- path = arg[2]  #path to the fastq files
+ barC = args[1]  #barcode target
+ path = args[2]  #path to the fastq files
 
 # barC = "CO1"
 # path <- paste("/Users/limeybean/Downloads/unpaired_2/",barC,sep="")
