@@ -4,9 +4,9 @@
 
 args = commandArgs(trailingOnly=TRUE)
 
-barC = arg[1]  #barcode target
-path = arg[2]  #path to the fastq files
-barC_length = arg[3] # expected seq length of the barcode.
+barC = args[1]  #barcode target
+path = args[2]  #path to the fastq files
+barC_length = args[3] # expected seq length of the barcode.
 
 #barC = "CO1"
 #path <- paste("/Users/limeybean/Downloads/paired/",barC,sep="")
