@@ -175,12 +175,6 @@ nochim_merged_seq.fasta = dataframe2fas(nochim_merged_seq, file= nochime_fname.f
 ##############################################################
 try <- ldply(mergers)  #merge all dataframes resulting from merger
 
-# pairedsum.table <- cbind(try$.id,try$forward,try$reverse, try$abundance, try$accept)
-# colnames(pairedsum.table) <- c("id","forward", "reverse","abundance","accept")
-# test <- as.data.frame(pairedsum.table)
-# namevector <- c("sequenceF","sequenceR")
-# test[ , namevector] <- "NA"
-# pairedsum.unmerged.table <- subset(test, accept=="FALSE", select=c(id,forward,reverse,abundance,sequenceF,sequenceR))
 
 pairedsum.unmerged.table <- try %>% select(id = .id, forward, reverse, abundance, accept) %>% data.frame %>% 
   filter(accept == FALSE) %>% select(-accept) # remove the ones that worked well during merge
@@ -231,21 +225,6 @@ pairedsum.unmerged.table$sequenceRc <- sapply(sapply(sapply(pairedsum.unmerged.t
 # pairedsum.unmerged.table$NNNNNN <- "AAAAAAAAAATTCTTAAAAAAAAAA"
 pairedsum.unmerged.table$sequenceF_N_Rrc <- paste(pairedsum.unmerged.table$sequenceF,"AAAAAAAAAATTCTTAAAAAAAAAA",pairedsum.unmerged.table$sequenceRc,sep="")
 
-# pairedsum.unmerged.dada2 <- subset(pairedsum.unmerged.table, keep=="TRUE")
-# pairedsum.unmerged.dada2  <- pairedsum.unmerged.dada2[,c(which(colnames(pairedsum.unmerged.dada2)=="sequenceF_N_Rrc"),which(colnames(pairedsum.unmerged.dada2)!="sequenceF_N_Rrc"))]
-
-# pairedsum.unmerged.dada2$forward <- NULL
-# pairedsum.unmerged.dada2$reverse <- NULL
-# pairedsum.unmerged.dada2$sequenceF <- NULL
-# pairedsum.unmerged.dada2$sequenceR <- NULL
-# pairedsum.unmerged.dada2$sequenceRc <- NULL
-# pairedsum.unmerged.dada2$lengthF <- NULL
-# pairedsum.unmerged.dada2$lengthR <- NULL
-# pairedsum.unmerged.dada2$keep <- NULL
-# pairedsum.unmerged.dada2$totalseq <- NULL
-# pairedsum.unmerged.dada2$expected_amplicon <- NULL
-# pairedsum.unmerged.dada2$name <- NULL
-# pairedsum.unmerged.dada2$NNNNNN  <- NULL
 
 pairedsum.unmerged.dada2 <- pairedsum.unmerged.table %>% filter(keep == TRUE) %>% select(sequenceF_N_Rrc, id:sequenceRc) %>%
   select(-c(forward, reverse, sequenceF, sequenceR, sequenceRc, lengthF, lengthR, keep, totalseq, expected_amplicon))
@@ -260,13 +239,6 @@ pairedsum.unmerged.dada2 <- pairedsum.unmerged.table %>% filter(keep == TRUE) %>
 unmerged.seq.tab <- dcast(pairedsum.unmerged.dada2, sequenceF_N_Rrc ~ id, fun.aggregate = sum) %>% 
   data.frame %>% column_to_rownames( "sequenceF_N_Rrc") %>% t()
 
-# rownames(umerged.seq.tab) <- umerged.seq.tab$sequenceF_N_Rrc
-# umerged.seq.tab$sequenceF_N_Rrc <- NULL
-# unmerged.seq.tab <-t(as.vector(umerged.seq.tab))
-
-# rownames <- row.names(unmerged.seq.tab)
-# tt<- apply(unmerged.seq.tab, 2 , as.integer)
-# row.names(tt) <- rownames
 
 ##########################################
 # Run bimera detection on unmerged reads -> discard bimeras
@@ -284,11 +256,6 @@ unmergedbarCseqnum = paste("unmerged_", barC , "_seq_number", sep = '')
 
 
 #transpose table, make rownames into a column -> sequnces
-# unmerged.seq.tab.nochim <- t(unmerged.seq.tab.nochim)
-# unmerged.seq.tab.nochim <- cbind(sequences = rownames(unmerged.seq.tab.nochim), unmerged.seq.tab.nochim)
-# rownames(unmerged.seq.tab.nochim1) <- c()
-# unmerged.seq.tab.nochim <- as.data.frame(unmerged.seq.tab.nochim)
-
 unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim %>% t %>% data.frame %>% rownames_to_column("sequences")
 
 
@@ -302,23 +269,11 @@ unmerged.seq.tab.nochim$sequencesR <- sapply((sapply(sapply(unmerged.seq.tab.noc
 unmerged.seq.tab.nochim$sequencesRrc <- NULL
 
 # Reorder the columns (seqF, seqR, all the samples)
-# unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim[,c(which(colnames(unmerged.seq.tab.nochim)=="sequencesR"),which(colnames(unmerged.seq.tab.nochim)!="sequencesR"))]
-# unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim1[,c(which(colnames(unmerged.seq.tab.nochim)=="sequencesF"),which(colnames(unmerged.seq.tab.nochim)!="sequencesF"))]
 
 unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim %>% select(sequencesF, sequencesR, 1:4) %>% 
   mutate(!!unmergedbarCseqnum := paste0(unmergedbarC, "_", row_number())) %>% select(7, 1:6)
 
-# add new first column that gives the barcode, the type of read (unmerged), and the read number
-# unmerged.seq.tab.nochim$seqnum <- 1:nrow(unmerged.seq.tab.nochim) 
-# namevector <- c(unmergedbarC)
-# unmerged.seq.tab.nochim[ , namevector] <- unmergedbarC
-# unmerged.seq.tab.nochim[[unmergedbarCseqnum]] <- paste(unmerged.seq.tab.nochim[[unmergedbarC]] , unmerged.seq.tab.nochim$seqnum,sep="_")
 
-# 
-# # unmerged.seq.tab.nochim$seqnum <- NULL
-# # unmerged.seq.tab.nochim[[unmergedbarC]] <- NULL
-# unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim[,c(which(colnames(unmerged.seq.tab.nochim)==unmergedbarCseqnum),which(colnames(unmerged.seq.tab.nochim)!=unmergedbarCseqnum))]
-# 
 # ########################################
 # ### make output files
 # #########################################
@@ -339,4 +294,3 @@ nochim_unmerged_seq_R.fasta = dataframe2fas(nochim_unmerged_seq_R, file= nochime
  
 # write summary table 
 write.table(unmerged.seq.tab.nochim, file = nochime_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
-
