@@ -133,30 +133,11 @@ mergedbarCseqnum = paste("merged_", barC , "_seq_number", sep = '')
 nochime_fname.fasta = paste(path,"/", "nochim_merged",barC,".fasta", sep='')
 nochime_fname.txt = paste(path,"/", "nochim_merged",barC,".txt", sep='')
 
-
 makes.sense.seqtab.nochim <- t(seqtab.nochim)
-makes.sense.seqtab.nochim <- cbind(sequence = rownames(makes.sense.seqtab.nochim), makes.sense.seqtab.nochim)
-rownames(makes.sense.seqtab.nochim) <- NULL
-makes.sense.seqtab.nochim <- as.data.frame(makes.sense.seqtab.nochim)
-makes.sense.seqtab.nochim$seqnum <- 1:nrow(makes.sense.seqtab.nochim)
-
-namevector <- c(mergedbarC)
-makes.sense.seqtab.nochim[ , namevector] <- mergedbarC
-makes.sense.seqtab.nochim[[mergedbarCseqnum]] <- paste(makes.sense.seqtab.nochim[[mergedbarC]] , makes.sense.seqtab.nochim$seqnum,sep="_")
-makes.sense.seqtab.nochim$seqnum <- NULL
-makes.sense.seqtab.nochim[[mergedbarC]] <- NULL
-
-# makes.sense.seqtab.nochim2 <- t(seqtab.nochim)
-
-
-# This step just reorders the columns
-# nochim_merged  <- makes.sense.seqtab.nochim[,c(which(colnames(makes.sense.seqtab.nochim)==mergedbarCseqnum),which(colnames(makes.sense.seqtab.nochim)!=mergedbarCseqnum))]
-
-makes.sense.seqtab.nochim2 <- t(seqtab.nochim)
-nochim_merged <- makes.sense.seqtab.nochim2 %>% data.frame %>%
+nochim_merged <- makes.sense.seqtab.nochim %>% data.frame %>%
        rownames_to_column %>% rename(sequence = rowname) %>% # make sequences into a column
-       mutate(merged_CO1_seq_number = paste0(mergedbarC,"_",row_number())) %>% # Make a new column w seq number
-       select(6,1,2,3,4,5) # reorder the columns
+       mutate(!!mergedbarCseqnum := paste0(mergedbarC,"_",row_number())) %>% # Make a new column w seq number
+       select(!!mergedbarCseqnum,everything()) # reorder the columns
 
 # Save this table 
 write.table(nochim_merged, file = nochime_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
@@ -208,10 +189,7 @@ pairedsum.unmerged.table$sequenceR <- apply(pairedsum.unmerged.table, 1, functio
 # add seqeunce length for forwards and reversed to unmerged dereplicated data
 ##############################################################
 
-## Minor note for Emily from Gaurav: is this gsub doing something special? 
-## I ran the following line to test whether it does anything that normal nchar doesn't in this case:
-## all(nchar(pairedsum.unmerged.table$sequenceF) == nchar(gsub("[a-z]","",pairedsum.unmerged.table$sequenceF)))
- 
+
 pairedsum.unmerged.table$lengthF <- nchar(gsub("[a-z]","",pairedsum.unmerged.table$sequenceF))
 pairedsum.unmerged.table$lengthR <- nchar(gsub("[a-z]","",pairedsum.unmerged.table$sequenceR))
 pairedsum.unmerged.table$totalseq <- pairedsum.unmerged.table$lengthF + pairedsum.unmerged.table$lengthR
@@ -228,14 +206,10 @@ pairedsum.unmerged.table$sequenceRc <- sapply(sapply(sapply(pairedsum.unmerged.t
 pairedsum.unmerged.table$sequenceF_N_Rrc <- paste(pairedsum.unmerged.table$sequenceF,"AAAAAAAAAATTCTTAAAAAAAAAA",pairedsum.unmerged.table$sequenceRc,sep="")
 
 
-pairedsum.unmerged.dada2 <- pairedsum.unmerged.table %>% filter(keep == TRUE) %>% select(sequenceF_N_Rrc, id:sequenceRc) %>%
-  select(-c(forward, reverse, sequenceF, sequenceR, sequenceRc, lengthF, lengthR, keep, totalseq, expected_amplicon))
+pairedsum.unmerged.dada2 <- pairedsum.unmerged.table %>% filter(keep == TRUE) %>% select(sequenceF_N_Rrc, id, abundance)
 
 
 #View(pairedsum.unmerged.dada2 %>% group_by(sequenceF_N_Rrc) %>% summarise(sum= n()))
-
-# convert abundance to a numeric vector
-# pairedsum.unmerged.dada2$abundance <- as.integer(pairedsum.unmerged.dada2$abundance)
 
 # Spread the dataframe, and sum up the abundances per id
 unmerged.seq.tab <- dcast(pairedsum.unmerged.dada2, sequenceF_N_Rrc ~ id, fun.aggregate = sum) %>% 
@@ -272,8 +246,8 @@ unmerged.seq.tab.nochim$sequencesRrc <- NULL
 
 # Reorder the columns (seqF, seqR, all the samples)
 
-unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim %>% select(sequencesF, sequencesR, 1:4) %>% 
-  mutate(!!unmergedbarCseqnum := paste0(unmergedbarC, "_", row_number())) %>% select(7, 1:6)
+unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim %>% select(sequencesF, sequencesR, everything()) %>% 
+  mutate(!!unmergedbarCseqnum := paste0(unmergedbarC, "_", row_number())) %>% select(!!unmergedbarCseqnum, everything())
 
 
 # ########################################
