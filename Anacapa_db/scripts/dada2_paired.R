@@ -24,6 +24,7 @@ library("plyr")
 library("Biostrings")
 library("reshape2")
 library("dplyr")
+library("tibble")
 ####################
 ### Show where reads are kept
 ####################
