@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 
 ##### command arguments for running script ADD Soon!
+## the dada2 commands come directly from https://benjjneb.github.io/dada2/tutorial.html
 
 # args = commandArgs(trailingOnly=TRUE)
 # 
