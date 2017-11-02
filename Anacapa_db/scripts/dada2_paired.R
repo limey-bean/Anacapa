@@ -2,23 +2,28 @@
 
 ##### command arguments for running script ADD Soon!
 
-args = commandArgs(trailingOnly=TRUE)
+# args = commandArgs(trailingOnly=TRUE)
+# 
+# barC = args[1]  #barcode target
+# path = args[2]  #path to the fastq files
+# barC_length = args[3] # expected seq length of the barcode.
 
-barC = args[1]  #barcode target
-path = args[2]  #path to the fastq files
-barC_length = args[3] # expected seq length of the barcode.
-
-#barC = "CO1"
+barC = "CO12"
 #path <- paste("/Users/limeybean/Downloads/paired/",barC,sep="")
-#barC_length = "500"
+barC_length = "500"
+
+# Install packages that are not currently installed
+
 
 ####################################################################################### process paired end reads
 
-library(dada2); packageVersion("dada2")
+library("dada2")
+cat(paste("dada2 package version:", packageVersion("dada2")))
 library("seqRFLP")
-library(plyr)
+library("plyr")
 library("Biostrings")
-library(reshape2)
+library("reshape2")
+library("dplyr")
 ####################
 ### Show where reads are kept
 ####################
@@ -93,7 +98,8 @@ head(mergers[[1]])
 ####################
 seqtab <- makeSequenceTable(mergers)
 dim(seqtab)
-table(nchar(getSequences(seqtab)))
+
+cat("Distribution of merged sequence lengths:"); table(nchar(getSequences(seqtab)))
 
 ####################
 ### Remove Chimeras
@@ -102,7 +108,7 @@ table(nchar(getSequences(seqtab)))
 seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
 dim(seqtab.nochim)
 
-sum(seqtab.nochim)/sum(seqtab)
+cat("Proportion of sequences kept after chimera removal: "); cat(sum(seqtab.nochim)/sum(seqtab))
 
 ####################
 ### Track Reads
@@ -117,7 +123,7 @@ head(track)
 
 
 ###########################################
-### make output files for the merged reads
+### make output files (FASTA and abundance matrix) for the merged reads
 ############################################
 
 mergedbarC =  paste("merged_", barC , sep='')
@@ -127,23 +133,40 @@ nochime_fname.txt = paste(path,"/", "nochim_merged",barC,".txt", sep='')
 
 
 makes.sense.seqtab.nochim <- t(seqtab.nochim)
-makes.sense.seqtab.nochim <- cbind(seqeunces = rownames(makes.sense.seqtab.nochim), makes.sense.seqtab.nochim)
+makes.sense.seqtab.nochim <- cbind(sequence = rownames(makes.sense.seqtab.nochim), makes.sense.seqtab.nochim)
 rownames(makes.sense.seqtab.nochim) <- NULL
 makes.sense.seqtab.nochim <- as.data.frame(makes.sense.seqtab.nochim)
-makes.sense.seqtab.nochim$seqnum <- 1:nrow(makes.sense.seqtab.nochim) 
+makes.sense.seqtab.nochim$seqnum <- 1:nrow(makes.sense.seqtab.nochim)
+
 namevector <- c(mergedbarC)
 makes.sense.seqtab.nochim[ , namevector] <- mergedbarC
 makes.sense.seqtab.nochim[[mergedbarCseqnum]] <- paste(makes.sense.seqtab.nochim[[mergedbarC]] , makes.sense.seqtab.nochim$seqnum,sep="_")
 makes.sense.seqtab.nochim$seqnum <- NULL
 makes.sense.seqtab.nochim[[mergedbarC]] <- NULL
 
-nochim_merged  <- makes.sense.seqtab.nochim[,c(which(colnames(makes.sense.seqtab.nochim)==mergedbarCseqnum),which(colnames(makes.sense.seqtab.nochim)!=mergedbarCseqnum))]
-nochim_merged_seq <- data.frame(nochim_merged[[mergedbarCseqnum]],nochim_merged$seqeunces)
-nochim_merged_seq.fasta = dataframe2fas(nochim_merged_seq, file= nochime_fname.fasta)
+# makes.sense.seqtab.nochim2 <- t(seqtab.nochim)
+
+
+# This step just reorders the columns
+# nochim_merged  <- makes.sense.seqtab.nochim[,c(which(colnames(makes.sense.seqtab.nochim)==mergedbarCseqnum),which(colnames(makes.sense.seqtab.nochim)!=mergedbarCseqnum))]
+
+makes.sense.seqtab.nochim2 <- t(seqtab.nochim)
+nochim_merged <- makes.sense.seqtab.nochim2 %>% data.frame %>%
+       rownames_to_column %>% rename(sequence = rowname) %>% # make sequences into a column
+       mutate(merged_CO1_seq_number = paste0(mergedbarC,"_",row_number())) %>% # Make a new column w seq number
+       select(6,1,2,3,4,5) # reorder the columns
+
+# Save this table 
 write.table(nochim_merged, file = nochime_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
 
+# Make a fasta file out of the sequences in this table
+nochim_merged_seq <- nochim_merged %>% select(merged_CO1_seq_number, sequence)
+nochim_merged_seq.fasta = dataframe2fas(nochim_merged_seq, file= nochime_fname.fasta)
 
-########################################################################################### processed unmerged paired end reads
+
+
+########################################################################################### 
+### processed unmerged paired end reads
 ### We need to remove the reads that did not merge and process those that did not overlap.  
 
 
@@ -152,12 +175,15 @@ write.table(nochim_merged, file = nochime_fname.txt, row.names=FALSE, sep="\t", 
 ##############################################################
 try <- ldply(mergers)  #merge all dataframes resulting from merger
 
-pairedsum.table <- cbind(try$.id,try$forward,try$reverse, try$abundance, try$accept)
-colnames(pairedsum.table) <- c("id","forward", "reverse","abundance","accept")
-test <- as.data.frame(pairedsum.table)
-namevector <- c("sequenceF","sequenceR")
-test[ , namevector] <- "NA"
-pairedsum.unmerged.table <- subset(test, accept=="FALSE", select=c(id,forward,reverse,abundance,sequenceF,sequenceR))
+# pairedsum.table <- cbind(try$.id,try$forward,try$reverse, try$abundance, try$accept)
+# colnames(pairedsum.table) <- c("id","forward", "reverse","abundance","accept")
+# test <- as.data.frame(pairedsum.table)
+# namevector <- c("sequenceF","sequenceR")
+# test[ , namevector] <- "NA"
+# pairedsum.unmerged.table <- subset(test, accept=="FALSE", select=c(id,forward,reverse,abundance,sequenceF,sequenceR))
+
+pairedsum.unmerged.table <- try %>% select(id = .id, forward, reverse, abundance, accept) %>% data.frame %>% 
+  filter(accept == FALSE) %>% select(-accept) # remove the ones that worked well during merge
 
 ##############################################################
 ## grab the correct F and R reads from the dadaF and dadR files
@@ -186,62 +212,66 @@ pairedsum.unmerged.table$sequenceR <- apply(pairedsum.unmerged.table, 1, functio
 # add seqeunce length for forwards and reversed to unmerged dereplicated data
 ##############################################################
 
-
-charmatchesF<-nchar(gsub("[a-z]","",pairedsum.unmerged.table$sequenceF))
-charmatchesR<-nchar(gsub("[a-z]","",pairedsum.unmerged.table$sequenceR))
-pairedsum.unmerged.table$lengthF<-charmatchesF
-pairedsum.unmerged.table$lengthR<-charmatchesR
-pairedsum.unmerged.table$totalseq<-(pairedsum.unmerged.table$lengthF + pairedsum.unmerged.table$lengthR)
+## Minor note for Emily from Gaurav: is this gsub doing something special? 
+## I ran the following line to test whether it does anything that normal nchar doesn't in this case:
+## all(nchar(pairedsum.unmerged.table$sequenceF) == nchar(gsub("[a-z]","",pairedsum.unmerged.table$sequenceF)))
+ 
+pairedsum.unmerged.table$lengthF <- nchar(gsub("[a-z]","",pairedsum.unmerged.table$sequenceF))
+pairedsum.unmerged.table$lengthR <- nchar(gsub("[a-z]","",pairedsum.unmerged.table$sequenceR))
+pairedsum.unmerged.table$totalseq <- pairedsum.unmerged.table$lengthF + pairedsum.unmerged.table$lengthR
 
 # add expected length of amplicon
 pairedsum.unmerged.table$expected_amplicon <- barC_length
 pairedsum.unmerged.table$keep[pairedsum.unmerged.table$totalseq>=pairedsum.unmerged.table$expected_amplicon] <- FALSE
 pairedsum.unmerged.table$keep[pairedsum.unmerged.table$totalseq<pairedsum.unmerged.table$expected_amplicon] <- TRUE
 
-pairedsum.unmerged.table$sequenceRc <- sapply((sapply(sapply(pairedsum.unmerged.table$sequenceR, DNAString), reverseComplement)), toString)
+# Get the reverse complement of the R sequence
+pairedsum.unmerged.table$sequenceRc <- sapply(sapply(sapply(pairedsum.unmerged.table$sequenceR, DNAString), reverseComplement), toString)
 
-pairedsum.unmerged.table$NNNNNN <- "AAAAAAAAAATTCTTAAAAAAAAAA"
-pairedsum.unmerged.table$sequenceF_N_Rrc <- paste(pairedsum.unmerged.table$sequenceF,pairedsum.unmerged.table$NNNNNN,pairedsum.unmerged.table$sequenceRc,sep="")
+# pairedsum.unmerged.table$NNNNNN <- "AAAAAAAAAATTCTTAAAAAAAAAA"
+pairedsum.unmerged.table$sequenceF_N_Rrc <- paste(pairedsum.unmerged.table$sequenceF,"AAAAAAAAAATTCTTAAAAAAAAAA",pairedsum.unmerged.table$sequenceRc,sep="")
 
-pairedsum.unmerged.dada2 <- subset(pairedsum.unmerged.table, keep=="TRUE")
-pairedsum.unmerged.dada2  <- pairedsum.unmerged.dada2[,c(which(colnames(pairedsum.unmerged.dada2)=="sequenceF_N_Rrc"),which(colnames(pairedsum.unmerged.dada2)!="sequenceF_N_Rrc"))]
+# pairedsum.unmerged.dada2 <- subset(pairedsum.unmerged.table, keep=="TRUE")
+# pairedsum.unmerged.dada2  <- pairedsum.unmerged.dada2[,c(which(colnames(pairedsum.unmerged.dada2)=="sequenceF_N_Rrc"),which(colnames(pairedsum.unmerged.dada2)!="sequenceF_N_Rrc"))]
 
-pairedsum.unmerged.dada2$forward <- NULL
-pairedsum.unmerged.dada2$reverse <- NULL
-pairedsum.unmerged.dada2$sequenceF <- NULL
-pairedsum.unmerged.dada2$sequenceR <- NULL
-pairedsum.unmerged.dada2$sequenceRc <- NULL
-pairedsum.unmerged.dada2$lengthF <- NULL
-pairedsum.unmerged.dada2$lengthR <- NULL
-pairedsum.unmerged.dada2$keep <- NULL
-pairedsum.unmerged.dada2$totalseq <- NULL
-pairedsum.unmerged.dada2$expected_amplicon <- NULL
-pairedsum.unmerged.dada2$name <- NULL
-pairedsum.unmerged.dada2$NNNNNN  <- NULL
+# pairedsum.unmerged.dada2$forward <- NULL
+# pairedsum.unmerged.dada2$reverse <- NULL
+# pairedsum.unmerged.dada2$sequenceF <- NULL
+# pairedsum.unmerged.dada2$sequenceR <- NULL
+# pairedsum.unmerged.dada2$sequenceRc <- NULL
+# pairedsum.unmerged.dada2$lengthF <- NULL
+# pairedsum.unmerged.dada2$lengthR <- NULL
+# pairedsum.unmerged.dada2$keep <- NULL
+# pairedsum.unmerged.dada2$totalseq <- NULL
+# pairedsum.unmerged.dada2$expected_amplicon <- NULL
+# pairedsum.unmerged.dada2$name <- NULL
+# pairedsum.unmerged.dada2$NNNNNN  <- NULL
 
+pairedsum.unmerged.dada2 <- pairedsum.unmerged.table %>% filter(keep == TRUE) %>% select(sequenceF_N_Rrc, id:sequenceRc) %>%
+  select(-c(forward, reverse, sequenceF, sequenceR, sequenceRc, lengthF, lengthR, keep, totalseq, expected_amplicon))
 
 
 #View(pairedsum.unmerged.dada2 %>% group_by(sequenceF_N_Rrc) %>% summarise(sum= n()))
 
 # convert abundance to a numeric vector
-pairedsum.unmerged.dada2$abundance <- as.integer(pairedsum.unmerged.dada2$abundance)
+# pairedsum.unmerged.dada2$abundance <- as.integer(pairedsum.unmerged.dada2$abundance)
 
 # Spread the dataframe, and sum up the abundances per id
-umerged.seq.tab <- dcast(pairedsum.unmerged.dada2, sequenceF_N_Rrc ~ id, fun.aggregate = sum)
+unmerged.seq.tab <- dcast(pairedsum.unmerged.dada2, sequenceF_N_Rrc ~ id, fun.aggregate = sum) %>% 
+  data.frame %>% column_to_rownames( "sequenceF_N_Rrc") %>% t()
 
-rownames(umerged.seq.tab) <- umerged.seq.tab$sequenceF_N_Rrc
+# rownames(umerged.seq.tab) <- umerged.seq.tab$sequenceF_N_Rrc
+# umerged.seq.tab$sequenceF_N_Rrc <- NULL
+# unmerged.seq.tab <-t(as.vector(umerged.seq.tab))
 
-umerged.seq.tab$sequenceF_N_Rrc <- NULL
-unmerged.seq.tab <-t(as.vector(umerged.seq.tab))
-
-rownames <- row.names(unmerged.seq.tab)
-tt<- apply(unmerged.seq.tab, 2 , as.integer)
-row.names(tt) <- rownames
+# rownames <- row.names(unmerged.seq.tab)
+# tt<- apply(unmerged.seq.tab, 2 , as.integer)
+# row.names(tt) <- rownames
 
 ##########################################
 # Run bimera detection on unmerged reads -> discard bimeras
 ##########################################
-unmerged.seq.tab.nochim <- removeBimeraDenovo(tt, method="consensus", multithread=TRUE, verbose=TRUE)
+unmerged.seq.tab.nochim <- removeBimeraDenovo(unmerged.seq.tab, method="consensus", multithread=TRUE, verbose=TRUE)
 
 
 ##########################################
@@ -254,10 +284,13 @@ unmergedbarCseqnum = paste("unmerged_", barC , "_seq_number", sep = '')
 
 
 #transpose table, make rownames into a column -> sequnces
-unmerged.seq.tab.nochim <- t(unmerged.seq.tab.nochim)
-unmerged.seq.tab.nochim <- cbind(sequences = rownames(unmerged.seq.tab.nochim), unmerged.seq.tab.nochim)
-rownames(unmerged.seq.tab.nochim) <- c()
-unmerged.seq.tab.nochim <- as.data.frame(unmerged.seq.tab.nochim)
+# unmerged.seq.tab.nochim <- t(unmerged.seq.tab.nochim)
+# unmerged.seq.tab.nochim <- cbind(sequences = rownames(unmerged.seq.tab.nochim), unmerged.seq.tab.nochim)
+# rownames(unmerged.seq.tab.nochim1) <- c()
+# unmerged.seq.tab.nochim <- as.data.frame(unmerged.seq.tab.nochim)
+
+unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim %>% t %>% data.frame %>% rownames_to_column("sequences")
+
 
 ## split sequence column into two -> sequences F and Rrc (reverse complement), split on dummy sequnces used to merge reads initially
 unmerged.seq.tab.nochim$sequencesF <- sapply(strsplit(as.character(unmerged.seq.tab.nochim$sequences),'AAAAAAAAAATTCTTAAAAAAAAAA'), "[", 1)
@@ -268,40 +301,42 @@ unmerged.seq.tab.nochim$sequences <- NULL
 unmerged.seq.tab.nochim$sequencesR <- sapply((sapply(sapply(unmerged.seq.tab.nochim$sequencesRrc, DNAString), reverseComplement)), toString)
 unmerged.seq.tab.nochim$sequencesRrc <- NULL
 
-#Order the columns
-unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim[,c(which(colnames(unmerged.seq.tab.nochim)=="sequencesR"),which(colnames(unmerged.seq.tab.nochim)!="sequencesR"))]
-unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim[,c(which(colnames(unmerged.seq.tab.nochim)=="sequencesF"),which(colnames(unmerged.seq.tab.nochim)!="sequencesF"))]
+# Reorder the columns (seqF, seqR, all the samples)
+# unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim[,c(which(colnames(unmerged.seq.tab.nochim)=="sequencesR"),which(colnames(unmerged.seq.tab.nochim)!="sequencesR"))]
+# unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim1[,c(which(colnames(unmerged.seq.tab.nochim)=="sequencesF"),which(colnames(unmerged.seq.tab.nochim)!="sequencesF"))]
+
+unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim %>% select(sequencesF, sequencesR, 1:4) %>% 
+  mutate(!!unmergedbarCseqnum := paste0(unmergedbarC, "_", row_number())) %>% select(7, 1:6)
 
 # add new first column that gives the barcode, the type of read (unmerged), and the read number
-unmerged.seq.tab.nochim$seqnum <- 1:nrow(unmerged.seq.tab.nochim) 
-namevector <- c(unmergedbarC)
-unmerged.seq.tab.nochim[ , namevector] <- unmergedbarC
-unmerged.seq.tab.nochim[[unmergedbarCseqnum]] <- paste(unmerged.seq.tab.nochim[[unmergedbarC]] , unmerged.seq.tab.nochim$seqnum,sep="_")
-unmerged.seq.tab.nochim$seqnum <- NULL
-unmerged.seq.tab.nochim[[unmergedbarC]] <- NULL
-unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim[,c(which(colnames(unmerged.seq.tab.nochim)==unmergedbarCseqnum),which(colnames(unmerged.seq.tab.nochim)!=unmergedbarCseqnum))]
+# unmerged.seq.tab.nochim$seqnum <- 1:nrow(unmerged.seq.tab.nochim) 
+# namevector <- c(unmergedbarC)
+# unmerged.seq.tab.nochim[ , namevector] <- unmergedbarC
+# unmerged.seq.tab.nochim[[unmergedbarCseqnum]] <- paste(unmerged.seq.tab.nochim[[unmergedbarC]] , unmerged.seq.tab.nochim$seqnum,sep="_")
 
-########################################
-### make output files
-#########################################
-
+# 
+# # unmerged.seq.tab.nochim$seqnum <- NULL
+# # unmerged.seq.tab.nochim[[unmergedbarC]] <- NULL
+# unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim[,c(which(colnames(unmerged.seq.tab.nochim)==unmergedbarCseqnum),which(colnames(unmerged.seq.tab.nochim)!=unmergedbarCseqnum))]
+# 
+# ########################################
+# ### make output files
+# #########################################
+# 
 # make file paths
+
 nochime_unfnameF.fasta = paste(path,"/", "nochim_unmerged",barC,"F",".fasta", sep='')
 nochime_unfnameR.fasta = paste(path,"/", "nochim_unmerged",barC,"R",".fasta", sep='')
 nochime_unfname.txt = paste(path,"/", "nochim_unmerged",barC,".txt", sep='')
-
+ 
 # make data frames for the soon to be made fasta files  with reads and read names
 nochim_unmerged_seq_F <- data.frame(unmerged.seq.tab.nochim[[unmergedbarCseqnum]],unmerged.seq.tab.nochim$sequencesF)
 nochim_unmerged_seq_R <- data.frame(unmerged.seq.tab.nochim[[unmergedbarCseqnum]],unmerged.seq.tab.nochim$sequencesR)
-
+ 
 # export the fasta file ready dataframes
 nochim_unmerged_seq_F.fasta = dataframe2fas(nochim_unmerged_seq_F, file= nochime_unfnameF.fasta)
 nochim_unmerged_seq_R.fasta = dataframe2fas(nochim_unmerged_seq_R, file= nochime_unfnameR.fasta)
-
+ 
 # write summary table 
 write.table(unmerged.seq.tab.nochim, file = nochime_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
-
-
-
-
 
