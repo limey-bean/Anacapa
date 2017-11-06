@@ -160,7 +160,7 @@ nochim_merged <- makes.sense.seqtab.nochim %>% data.frame %>%
 write.table(nochim_merged, file = nochime_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
 
 # Make a fasta file out of the sequences in this table
-nochim_merged_seq <- nochim_merged %>% select(merged_CO1_seq_number, sequence)
+nochim_merged_seq <- nochim_merged %>% select(!!mergedbarCseqnum, sequence)
 
 #
 nochim_merged_seq.fasta = dataframe2fas(nochim_merged_seq, file= nochime_fname.fasta)
@@ -219,8 +219,8 @@ pairedsum.unmerged.table$lengthR <- nchar(gsub("[a-z]","",pairedsum.unmerged.tab
 pairedsum.unmerged.table$totalseq <- pairedsum.unmerged.table$lengthF + pairedsum.unmerged.table$lengthR
 
 # add expected length of amplicon
-pairedsum.unmerged.table$keep2[pairedsum.unmerged.table$totalseq>=barC_length] <- FALSE
-pairedsum.unmerged.table$keep2[pairedsum.unmerged.table$totalseq<barC_length] <- TRUE
+pairedsum.unmerged.table$keep[pairedsum.unmerged.table$totalseq>=barC_length] <- FALSE
+pairedsum.unmerged.table$keep[pairedsum.unmerged.table$totalseq<barC_length] <- TRUE
 
 # Get the reverse complement of the R sequence
 pairedsum.unmerged.table$sequenceRc <- sapply(sapply(sapply(pairedsum.unmerged.table$sequenceR, DNAString), reverseComplement), toString)
