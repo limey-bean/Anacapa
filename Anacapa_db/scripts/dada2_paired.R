@@ -3,15 +3,14 @@
 ##### command arguments for running script ADD Soon!
 ## the dada2 commands come directly from https://benjjneb.github.io/dada2/tutorial.html
 
-# args = commandArgs(trailingOnly=TRUE)
-# 
-# barC = args[1]  #barcode target
-# path = args[2]  #path to the fastq files
-# barC_length = args[3] # expected seq length of the barcode.
+args = commandArgs(trailingOnly=TRUE) 
+barC = args[1]  #barcode target
+path = args[2]  #path to the fastq files
+barC_length = args[3] # expected seq length of the barcode.
 
-barC = "CO1"
+#barC = "CO1"
 #path <- paste("/Users/limeybean/Downloads/paired/",barC,sep="")
-barC_length = "500"
+#barC_length = "500"
 
 # Install packages that are not currently installed -----
 # This chunk may need attention, putting it here as a starting point - gsk
