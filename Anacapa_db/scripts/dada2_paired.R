@@ -31,7 +31,6 @@ unmergedoutpath=paste(odirpath, "/dada2_out/paired/unmerged/",barC, sep='')
  }
 ####################################################################################### process paired end reads
 
-
 library("dada2")
 cat(paste("dada2 package version:", packageVersion("dada2")))
 library("seqRFLP")
@@ -46,7 +45,6 @@ library("ggplot2")
 ####################
 
 list.files(path)
-
 
 ####################
 ### Filter and Trim
@@ -150,8 +148,8 @@ track
 # I.e. how will each be used?
 mergedbarC =  paste("merged_", barC , sep='')
 mergedbarCseqnum = paste("merged_", barC , "_seq_number", sep = '')
-nochime_fname.fasta = paste(path,"/", "nochim_merged",barC,".fasta", sep='')
-nochime_fname.txt = paste(path,"/", "nochim_merged",barC,".txt", sep='')
+nochime_fname.fasta = paste(mergedoutpath,"/", "nochim_merged",barC,".fasta", sep='')
+nochime_fname.txt = paste(mergedoutpath,"/", "nochim_merged",barC,".txt", sep='')
 
 makes.sense.seqtab.nochim <- t(seqtab.nochim)
 nochim_merged <- makes.sense.seqtab.nochim %>% data.frame %>%
@@ -282,9 +280,9 @@ unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim %>% select(sequencesF, sequen
 # 
 # make file paths
 
-nochime_unfnameF.fasta = paste(path,"/", "nochim_unmerged",barC,"F",".fasta", sep='')
-nochime_unfnameR.fasta = paste(path,"/", "nochim_unmerged",barC,"R",".fasta", sep='')
-nochime_unfname.txt = paste(path,"/", "nochim_unmerged",barC,".txt", sep='')
+nochime_unfnameF.fasta = paste(unmergedoutpath,"/", "nochim_unmerged",barC,"F",".fasta", sep='')
+nochime_unfnameR.fasta = paste(unmergedoutpath,"/", "nochim_unmerged",barC,"R",".fasta", sep='')
+nochime_unfname.txt = paste(unmergedoutpath,"/", "nochim_unmerged",barC,".txt", sep='')
  
 # make data frames for the soon to be made fasta files  with reads and read names
 nochim_unmerged_seq_F <- data.frame(unmerged.seq.tab.nochim[[unmergedbarCseqnum]],unmerged.seq.tab.nochim$sequencesF)
