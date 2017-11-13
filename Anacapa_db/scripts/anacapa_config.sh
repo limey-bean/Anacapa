@@ -4,6 +4,7 @@
 # Last Updated 9-15-2017
 
 
+
 #############################
 # Paths to programs / load programs
 #############################
@@ -14,9 +15,6 @@ MODULE_SOURCE="source /u/local/Modules/default/init/bash" 	#if none, leave empty
 
 #load cutadapt
 CUTADAPT="/u/local/apps/python/2.7.13/bin/cutadapt" 		#path to cutadapt binary. see documentation for how to obtain this script
-
-#load pear
-PEAR="module load pear"									#or what ever code is used to load pear in a bash shell, or path to pear
 
 #load fastx_toolkit
 FASTX_TOOLKIT="module load fastx_toolkit"				#or what ever code is used to load fastx_toolkit in a bash shell, or path to fastx_toolkit 
@@ -30,8 +28,11 @@ BOWTIE2="module load bowtie2"							#or what ever code is used to load bowtie2 i
 #load ATS
 ATS="module load ATS"									#or what ever code is used to load ATS in a bash shell, or path to ATS.  ATS is a Hoffman2 module that allows the user to submit a job on the HPC from within a shell script 
 
-#load Qiime
-QIIME="module load qiime" 								#or what ever code is used to load qiime in a bash shell (e.g. on a mac it might be "macqiime")
+#load R
+R="module load R/3.4.2"
+
+#load GCC
+GCC="module load gcc/6.3.0"
 
 #load perl
-PERL="module load perl"							#or what ever code is used to load perl in a bash shell, or path to perl/5.10.1
+PERL="module load perl"
