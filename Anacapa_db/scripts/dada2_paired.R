@@ -3,30 +3,32 @@
 ##### command arguments for running script ADD Soon!
 ## the dada2 commands come directly from https://benjjneb.github.io/dada2/tutorial.html
 
-args = commandArgs(trailingOnly=TRUE) 
-barC = args[1]  #barcode target
-path = args[2]  #path to the fastq files
-barC_length = args[3] # expected seq length of the barcode.
+ args = commandArgs(trailingOnly=TRUE)
+# 
+ barC = args[1]  #barcode target
+ odirpath = args[2]  #path to the fastq files
+ barC_length = args[3] # expected seq length of the barcode.
 
-#barC = "CO1"
-#path <- paste("/Users/limeybean/Downloads/paired/",barC,sep="")
-#barC_length = "500"
+## path to output
+path = paste(odirpath, "/paired/" ,barC, sep='')
+mergedoutpath=paste(odirpath, "/dada2_out/paired/merged/",barC, sep='')
+unmergedoutpath=paste(odirpath, "/dada2_out/paired/unmerged/",barC, sep='')
 
 # Install packages that are not currently installed -----
 # This chunk may need attention, putting it here as a starting point - gsk
-# .cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble")
-# .bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings", "dada2")
+ .cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble")
+ .bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings", "dada2")
+ 
+ .inst <- .cran_packages %in% installed.packages()
+ if (any(!.inst)) {
+   install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
+ }
 # 
-# .inst <- .cran_packages %in% installed.packages()
-# if (any(!.inst)) {
-#   install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
-# }
-# 
-# .inst <- .bioc_packages %in% installed.packages()
-# if (any(!.inst)) {
-#   source("http://bioconductor.org/biocLite.R")
-#   biocLite(.bioc_packages[!.inst])
-# }
+ .inst <- .bioc_packages %in% installed.packages()
+ if (any(!.inst)) {
+   source("http://bioconductor.org/biocLite.R")
+   biocLite(.bioc_packages[!.inst])
+ }
 ####################################################################################### process paired end reads
 
 library("dada2")
@@ -43,6 +45,7 @@ library("ggplot2")
 ####################
 
 list.files(path)
+
 
 ####################
 ### Filter and Trim
