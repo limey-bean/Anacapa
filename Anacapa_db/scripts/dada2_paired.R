@@ -31,6 +31,7 @@ unmergedoutpath=paste(odirpath, "/dada2_out/paired/unmerged/",barC, sep='')
  }
 ####################################################################################### process paired end reads
 
+
 library("dada2")
 cat(paste("dada2 package version:", packageVersion("dada2")))
 library("seqRFLP")
