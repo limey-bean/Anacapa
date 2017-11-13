@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  
+# sh ~/Anacapa_db/scripts/anacapa_release_20171110.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq>
 IN=""
 OUT=""
 DB=""
@@ -9,8 +9,9 @@ UN=""
 FP=""
 RP=""
 ADPT=""
+ILLTYPE=""
 
-while getopts "i:o:d:u:f:r:a:" opt; do
+while getopts "i:o:d:u:f:r:a:t:" opt; do
     case $opt in
         i) IN="$OPTARG" # path to raw .fastq.gz files
         ;;
@@ -20,36 +21,26 @@ while getopts "i:o:d:u:f:r:a:" opt; do
         ;;
         u) UN="$OPTARG"  # need username for submitting sequencing job
         ;;
-        f) FP="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
+        f) FP="$OPTARG"  # need forward reads for cutadapt
         ;;
-        r) RP="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
+        r) RP="$OPTARG"  # need reverse reads for cutadapt
         ;;
-        a) ADPT="$OPTARG"  # need a warning if this is not a proportion from 0 to 1
+        a) ADPT="$OPTARG"  # need adapter for cutadapt
+        ;;
+        t) ILLTYPE="$OPTARG"  #need to know trim params cutadapt
         ;;
     esac
 done
 
 ####################################script & software
-# This pipeline was developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), with contributions from Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
-# Last Updated 9-15-2017
+# This pipeline was developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), and with contributions from Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
+# Last Updated 11-10-2017
 #
-# The purpose of this script is to process raw fastq.gz files from an Illumina sequencing and generate summarized taxonomic assignment tables for multiple metabardocing targets.
+# The purpose of this script is to process raw fastq.gz files from an Illumina sequencing and generate summarized taxonomic assignment tables for multiple metabarcoding targets.
 #
 # This script is currently designed to run on UCLA's Hoffman2 cluster.  Please adjust the code to work with your computing resources. (e.g. module / path names to programs, submitting jobs for processing if you have a cluster, etc)
-# If you are submitting this as a job, the following qsub parameters usually run right away and is more than enough to get the job done:
-#	qsub -l highp,h_rt=24:00:00,h_data=60G -N metabarcoding_pipeline -cwd -m bea -o ./1P_4.out -e ./1P_4.err -M eecurd <path_to_metabarcoding_script> <input_dir> <out_dir> <ref_dir> <hoffman_account_user_name> <uclust_percent>
-# for multiple cores
-#	qsub -l highp,h_rt=24:00:00,h_data=60G -pe shared 2 -N metabarcoding_pipeline -cwd -m bea -o ./1P_4.out -e ./1P_4.err -M eecurd <path_to_metabarcoding_script> <input_dir> <out_dir> <ref_dir> <hoffman_account_user_name> <uclust_percent>
-
 #
-# The steps of the pipeline are as follows: 
-# 	preprocess the .fastq files: 1) Generate an md5sum file, 2) Rename each file for Qiime compatibility, 3) Uncompress files, 4) Rename each read in each file to reflect the sample ID
-#	QC the .fastq files: 1) Run PEAR to filter low quality reads, and assemble paired reads where possible. Unassembled paired reads, and discarded reads will be retained and analyzed, 2) Run cutadapt to removal sequencing adapters, 3) Convert fastq to fasta files
-#	Split reads by metabarcode: 1) Use split_on_primer2.py to sort reads by primer set.  This step requires three iterations of primer splitting due to the degenerate nature of 16S (PPM) and CO1.  
-#	Processes metabarcode reads for taxonomy: 1) submit array job for pick open refs.  Use pick_open_reference_otus to implement uclust at the user determined threshold. 97% or .97 is typical, but other options are possible.
-
-#
-# In order to run the script you need a scripts and reference directory that contains: 1) Scripts that are integral for running the main scripts, 2) your reference library folders that contain .fasta and the accompanying taxonomy.txt tiles.
+# This script runs in two phases, the first is the qc phase that follows the anacapa_release_20171110.sh.  The second phase is the dada2 denoising, mergeing (if reads are paired) and chimera detection / bowtie2 sequence assignment phase.
 #
 ######################################
 
@@ -60,19 +51,14 @@ source $DB/scripts/anacapa_vars.sh
 source $DB/scripts/anacapa_config.sh
 
 
-##load module
+##load modules / software
 ${MODULE_SOURCE} # use if you need to load modules from an HPC
-
-${PEAR} #load pear
 ${FASTX_TOOLKIT} #load fastx_toolkit
-${QIIME} #load qiime
 ${ANACONDA_PYTHON} #load anaconda/python2-4.2
-${BOWTIE2} #load bowtie2
 ${PERL} #load perl
 ${ATS} #load ATS
 date
 ###
-
 
 ################################
 # Preprocessing .fastq files
@@ -80,10 +66,10 @@ date
 echo " "
 echo " "
 echo "Preprocessing: 1) Generate an md5sum file"
-md5sum ${IN}/*fastq.gz > ${IN}/*fastq.gz.md5sum  # need to add something to check the before and after md5sum
+md5sum ${IN}/*fastq.gz > ${IN}/*fastq.gz.md5sum  
 date
 ###
-echo "Preprocessing: 2) Rename each file for Qiime compatibility"
+echo "Preprocessing: 2) Rename each file for readability"
 ###################################
 suffix1=R1_001.fastq
 suffix2=R2_001.fastq
@@ -107,192 +93,179 @@ gunzip ${OUT}/fastq/*
 date
 ###
 
-
-echo "Preprocessing: 4) Rename each read in each file to reflect the sample ID"
+######## to delete or not to delete##############
+#echo "Preprocessing: 4) Rename each read in each file to reflect the sample ID"
 #this is an awk program that does the following:
 #if the line is the first of 4 (starting count of 1) do the substitution
 #otherwise just output the line
-fastqrenamer="(NR % 4) == 1 {sub(/^@[[:alnum:]]+/, filename); print }
-              (NR % 4) != 1 { print }"
-for str in `ls ${OUT}/fastq/*_1.fastq`
-do
- str1=${str%_1*}
- FILE=${str1#${OUT}/fastq/}
- awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
- mv ${str1}_1.fastq.tmp ${str1}_1.fastq
- awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_2.fastq.tmp
- mv ${str1}_2.fastq.tmp ${str1}_2.fastq
-done
-date
+#fastqrenamer="(NR % 4) == 1 {sub(/^@[[:alnum:]]+/, filename); print }
+#              (NR % 4) != 1 { print }"
+#for str in `ls ${OUT}/fastq/*_1.fastq`
+#do
+# str1=${str%_1*}
+# FILE=${str1#${OUT}/fastq/}
+# awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
+# mv ${str1}_1.fastq.tmp ${str1}_1.fastq
+# awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_2.fastq.tmp
+# mv ${str1}_2.fastq.tmp ${str1}_2.fastq
+#done
+#date
 ###
 
+
 ################################
-# Generate cut adapt primer files
+# QC the preprocessed .fastq files
 #############################
+
+echo "QC: 1) Run cutadapt to remove 5'sequncing adapters and 3'primers + sequencing adapters, sort for length, and quality."
+
+# Generate cut adapt primer files -> merge reverse complemented primers with adapters for cutting 3'end sequencing past the end of the metabarcode region, and add cutadapt specific characters to primers and primer/adapter combos so that the appropriate ends of reads are trimmed
 mkdir -p ${DB}/adapters_and_PrimAdapt_rc
 mkdir -p ${DB}/primers
 echo " "
 echo "Generating Primer and Primer + Adapter files for for cutadapt steps.  If not using nextera indexes, please check the primer seqeunces"
 python ${DB}/scripts/anacapa_format_primers_cutadapt.py ${ADPT} ${FP} ${RP} ${DB}
 
-################################
-# QC the preprocessed .fastq files
-################################
-
-
-echo "QC: 1) Run cutadapt to remove 5'sequncing adapters and 3'primers + sequencing adapters, sort for length, and quality. Paired reads that pass QC will go to the paired file, Paires that did not pass filter will go to the unpaired file"
+# now use the file generated to trim fastq reads
 mkdir -p ${OUT}/cutadapt_fastq
-mkdir -p ${OUT}/cutadapt_fastq/paired
-mkdir -p ${OUT}/cutadapt_fastq/unpaired
+mkdir -p ${OUT}/cutadapt_fastq/untrimmed
+mkdir -p ${OUT}/primer_sort/
 ###
 for str in `ls ${OUT}/fastq/*_1.fastq`
 do
+ # first chop of the 5' adapter and 3' adapter and primer combo (reverse complemented)
  str1=${str%_*}
  j=${str1#${OUT}/fastq/}
  echo ${j} "..."
- ${CUTADAPT} -e ${ERROR_QC1}  -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} -G ${R_ADAPT} -A ${Frc_PRIM_ADAPT} --minimum-length ${MIN_LEN} -q ${MIN_QUAL}  --too-short-output ${OUT}/cutadapt_fastq/unpaired/${j}_aunPaired_1.fastq --too-short-paired-output ${OUT}/cutadapt_fastq/unpaired/${j}_aunPaired_2.fastq -o ${OUT}/cutadapt_fastq/paired/${j}_aPaired_1.fastq -p ${OUT}/cutadapt_fastq/paired/${j}_aPaired_2.fastq ${str1}_1.fastq ${str1}_2.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
- fastq_quality_trimmer -t 35 -l 100  -i ${OUT}/cutadapt_fastq/paired/${j}_aPaired_1.fastq -o ${OUT}/cutadapt_fastq/paired/${j}_Paired_1.fastq -Q33
- fastq_quality_trimmer -t 35 -l 100  -i ${OUT}/cutadapt_fastq/paired/${j}_aPaired_2.fastq -o ${OUT}/cutadapt_fastq/paired/${j}_Paired_2.fastq -Q33
- fastq_quality_trimmer -t 35 -l 100  -i ${OUT}/cutadapt_fastq/unpaired/${j}_aunPaired_1.fastq -o ${OUT}/cutadapt_fastq/unpaired/${j}_unPaired_1.fastq -Q33
- fastq_quality_trimmer -t 35 -l 100  -i ${OUT}/cutadapt_fastq/unpaired/${j}_aunPaired_2.fastq -o ${OUT}/cutadapt_fastq/unpaired/${j}_unPaired_2.fastq -Q33
+ ${CUTADAPT} -e ${ERROR_QC1} -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} -G ${R_ADAPT} -A ${Frc_PRIM_ADAPT} -o ${OUT}/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -p ${OUT}/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq ${str1}_1.fastq ${str1}_2.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
+ # stringent quality fileter to get rid of the junky sequence at the ends - modify in config file
+ fastq_quality_trimmer -t ${MIN_QUAL} -l ${MIN_LEN}  -i ${OUT}/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -o ${OUT}/cutadapt_fastq/${j}_qcPaired_1.fastq -Q33
+ fastq_quality_trimmer -t ${MIN_QUAL} -l ${MIN_LEN}  -i ${OUT}/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq -o ${OUT}/cutadapt_fastq/${j}_qcPaired_2.fastq -Q33
+ # sort by metabarcode
+ echo "forward..."
+ if [ "${ILLTYPE}" == "MiSeq"  ]; # if MiSeq chop more off the end than if HiSeq - modify length in config file
+ then
+  ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM}  -u -${MS_F_TRIM} -o ${OUT}/primer_sort/{name}_${j}_Paired_1.fastq  ${OUT}/cutadapt_fastq/${j}_qcPaired_1.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
+  echo "check"
+  echo "reverse..."
+  ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM}  -u -${MS_R_TRIM} -o ${OUT}/primer_sort/{name}_${j}_Paired_2.fastq   ${OUT}/cutadapt_fastq/${j}_qcPaired_2.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
+  echo "check"
+ else
+  ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM}  -u -${HS_F_TRIM} -o ${OUT}/primer_sort/{name}_${j}_Paired_1.fastq  ${OUT}/cutadapt_fastq/${j}_qcPaired_1.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
+  echo "check"
+  echo "reverse..."
+  ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM}  -u -${HS_R_TRIM} -o ${OUT}/primer_sort/{name}_${j}_Paired_2.fastq   ${OUT}/cutadapt_fastq/${j}_qcPaired_2.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
+  echo "check"
+ fi
+ date
  echo ${j} "...  check!"
 done
 date
 ###
-
-
-echo "QC: 2) Run cutadapt on the unpaired reads to remove 5'sequncing adapters and 3'primers + sequencing adapters, and sort for length"
-###
-for str in `ls ${OUT}/cutadapt_fastq/unpaired/*_1.fastq`
-do
- str1=${str%_*}
- j=${str1#${OUT}/cutadapt_fastq/unpaired/}
- echo ${j} "..."
- ${CUTADAPT} -e ${ERROR_QC1}  -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} --minimum-length ${MIN_LEN} -o ${OUT}/cutadapt_fastq/unpaired/${j}_clean_unpaired_1.fastq ${str1}_1.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
- ${CUTADAPT} -e ${ERROR_QC1}  -f ${FILE_TYPE_QC1} -g ${R_ADAPT} -a ${Frc_PRIM_ADAPT} --minimum-length ${MIN_LEN} -o ${OUT}/cutadapt_fastq/unpaired/${j}_clean_unpaired_2.fastq ${str1}_2.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
- echo ${j} "...  check!"
-done
-date
-###
-
-echo "QC: 3) Run PEAR on paired reads to assemble reads where possible."
-mkdir -p ${OUT}/PEAR 
-###
-for str in `ls ${OUT}/cutadapt_fastq/paired/*_1.fastq`
-do
- str1=${str%_1*}
- j=${str1#${OUT}/cutadapt_fastq/paired/}
- pear -f ${str1}_1.fastq -r ${str1}_2.fastq -o ${OUT}/PEAR/${j} -p ${P_VAL} -j ${THREADS} >> ${OUT}/PEAR/pear-report.txt
-done
-###
-mkdir -p ${OUT}/primer_sort/
-mkdir -p ${OUT}/primer_sort/assembled  
-mkdir -p ${OUT}/primer_sort/unassembled_F  
-mkdir -p ${OUT}/primer_sort/unassembled_R 
-mkdir -p ${OUT}/primer_sort/discarded_F
-mkdir -p ${OUT}/primer_sort/discarded_R
-###
-cat ${OUT}/PEAR/*.assembled.fastq > ${OUT}/primer_sort/assembled/all.assembled.fastq
-cat ${OUT}/PEAR/*.unassembled.forward.fastq > ${OUT}/primer_sort/unassembled_F/all.unassembled.F.fastq 
-cat ${OUT}/PEAR/*.unassembled.reverse.fastq > ${OUT}/primer_sort/unassembled_R/all.unassembled.R.fastq 
-cat ${OUT}/cutadapt_fastq/unpaired/*_clean_unpaired_1.fastq > ${OUT}/primer_sort/discarded_F/all.discarded_F.fastq
-cat ${OUT}/cutadapt_fastq/unpaired/*_clean_unpaired_2.fastq > ${OUT}/primer_sort/discarded_R/all.discarded_R.fastq
-date
-###
-
-echo "QC: 4) Use cutadapt to remove the 3' primers from the assembled reads."
-${CUTADAPT} -e ${ERROR_QC4} -f ${FILE_TYPE_QC4} -a ${R_PRIM_RC} -o ${OUT}/primer_sort/assembled/all.clean_assembled.fastq  ${OUT}/primer_sort/assembled/all.assembled.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
-date
-###
-
-echo "QC: 5) Reverse complement the unassembled reverse reads for down stream analysis."
-fastx_reverse_complement -i ${OUT}/primer_sort/unassembled_R/all.unassembled.R.fastq  -o ${OUT}/primer_sort/unassembled_R/all.unassembled.R_rc.fastq  -Q33
-echo "reverse complementation.....  check!"
-date
-###
-
- 
-###############################
-# Split reads by metabarcode
-###############################
-date
-echo "Sort reads by metabarcode: 1) Use cutadapt to sort reads by primer set and trim primer sequences from reads"
-###
-###
-echo "assembled..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM} -o ${OUT}/primer_sort/assembled/{name}_all.clean_assembled.fasta  ${OUT}/primer_sort/assembled/all.assembled.fastq >> ${OUT}/primer_sort/assembled/cutadapt-report.txt
-echo "check"
-echo "unassembled forward..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM} -o ${OUT}/primer_sort/unassembled_F/{name}_pear_unassembled_F.fasta ${OUT}/primer_sort/unassembled_F/all.unassembled.F.fastq >> ${OUT}/primer_sort/unassembled_F/cutadapt-report.txt
-echo "check"
-echo "unassembled reverse..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/unassembled_R/{name}_pear_unassembled_R.fasta ${OUT}/primer_sort/unassembled_R/all.unassembled.R_rc.fastq >> ${OUT}/primer_sort/unassembled_R/cutadapt-report.txt
-echo "check"
-echo "discarded forward..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM} -o ${OUT}/primer_sort/discarded_F/{name}_discarded_F.fasta  ${OUT}/primer_sort/discarded_F/all.discarded_F.fastq >> ${OUT}/primer_sort/discarded_F/cutadapt-report.txt
-echo "check"
-echo "discarded reverse..."
-${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM} -o ${OUT}/primer_sort/discarded_R/{name}_discarded_R.fasta  ${OUT}/primer_sort/discarded_R/all.discarded_R.fastq >> ${OUT}/primer_sort/discarded_R/cutadapt-report.txt
-echo "check"
-date
 
 ###############################
 # Make sure unassembled reads are still paired
 ###############################
-date
+makedir -p ${OUT}/paired/
+makedir -p ${OUT}/unpaired/
+
 echo "Checking that Paired reads are still paired: 1) Use  Armin PEYMANN perl script (https://www.biostars.org/p/56171/) to make sure that unassembled reads are still paired"
-for str in `ls ${OUT}/primer_sort/unassembled_F/*_pear_unassembled_F.fasta`
+for str in `ls ${OUT}/primer_sort/*_Paired_1.fastq`
 do
- str1=${str%_pear_unassembled_F.fasta}
- j=${str1#${OUT}/primer_sort/unassembled_F/}
+ str1=${str%_Paired_1.fastq}
+ j=${str1#${OUT}/primer_sort/}
  echo ${j} "..."
- perl ${DB}/scripts/check_paired.pl ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F.fasta ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R.fasta
- echo ${j} "...check!"
-done
-date
-echo "Merge unpaired unassembled reads with discarded reads"
-for str in `ls ${OUT}/primer_sort/unassembled_F/*_pear_unassembled_F.fasta`
-do
- str1=${str%_pear_unassembled_F.fasta}
- j=${str1#${OUT}/primer_sort/unassembled_F/}
- echo ${j} "..."
- cat ${OUT}/primer_sort/discarded_F/${j}_discarded_F.fasta ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_singletons.fastq > ${OUT}/primer_sort/discarded_F/${j}_all.discarded_F.fasta
- cat ${OUT}/primer_sort/discarded_R/${j}_discarded_R.fasta ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R_singletons.fastq > ${OUT}/primer_sort/discarded_R/${j}_all.discarded_R.fasta
- echo ${j} "...check!"
+ perl ${DB}/scripts/check_paired.pl ${OUT}/primer_sort/${j}_Paired_1.fastq ${OUT}/primer_sort/${j}_Paired_2.fastq
+ echo ${j} "...check!" 
 done
 date
 
+###############################
+# Move files to paired and unpaired folders
+###############################
+mkdir -p ${OUT}/paired/
+mkdir -p ${OUT}/unpaired_1/
+mkdir -p ${OUT}/unpaired_2/
 
-#################
-#Processes metabarcode reads for taxonomy
-#################
-echo "Process metabarcode reads for taxonomy: 1) submit bowtie2 read for each metabarcode"
+echo "Move paired and unpaired files to the correct folders"
+for str in `ls ${OUT}/primer_sort/*_Paired_1.fastq`
+do
+ str1=${str%_*_Paired_1.fastq}
+ j=${str1#${OUT}/primer_sort/}
+ echo ${j} "..."
+ mkdir -p ${OUT}/paired/${j}
+ mkdir -p ${OUT}/unpaired_1/${j}
+ mkdir -p ${OUT}/unpaired_2/${j}
+ cp ${OUT}/primer_sort/${j}_*_Paired_1_singletons.fastq ${OUT}/unpaired_1/${j}
+ cp ${OUT}/primer_sort/${j}_*_Paired_2_singletons.fastq ${OUT}/unpaired_2/${j}
+ cp ${OUT}/primer_sort/${j}_*_sorted.fastq ${OUT}/paired/${j}
+ echo ${j} "...check!" 
+done
+date
+
+echo "Remove primer_sort, cutadapt_fastq, and fastq folders"
+rm -r ${OUT}/primer_sort/
+rm -r ${OUT}/cutadapt_fastq
+rm -r ${OUT}/fastq
+
+###############################
+# Submit jobs for the paired and unpaired reads for each barcode
+###############################
+
+### Make directories for the dada2 results files
+mkdir -p ${OUT}/dada2_out
+mkdir -p ${OUT}/dada2_out/paired
+mkdir -p ${OUT}/dada2_out/paired/merged
+mkdir -p ${OUT}/dada2_out/paired/unmerged
+mkdir -p ${OUT}/dada2_out/unpaired_F
+mkdir -p ${OUT}/dada2_out/unpaired_R
+
+### Make directories for the bowtie2 results files
 mkdir -p ${OUT}/bowtie2_runs/
-mkdir -p ${OUT}/bowtie2_runs/runlog
+mkdir -p ${OUT}/bowtie2_runs/paired
+mkdir -p ${OUT}/bowtie2_runs/paired/merged
+mkdir -p ${OUT}/bowtie2_runs/paired/unmerged
+mkdir -p ${OUT}/bowtie2_runs/unpaired_F
+mkdir -p ${OUT}/bowtie2_runs/unpaired_R
+mkdir -p ${OUT}/dada2_bowtie2/
+
+### Make directories for the runlogs, and runscripts
+mkdir -p ${OUT}/dada2_bowtie2/runscripts
+mkdir -p ${OUT}/dada2_bowtie2/runlogs
 mkdir -p ${OUT}/taxon_summaries
+
 ###
-for str in `ls ${OUT}/primer_sort/assembled/*_all.clean_assembled.fasta`
+echo "Process metabarcode reads for taxonomy: 1) submit bowtie2 read for each metabarcode"
+for j in `ls ${OUT}/paired/`
 do
- str1=${str%_all.clean_assembled.fasta}
- j=${str1#${OUT}/primer_sort/assembled/}
+ if [ "${j}" != "unknown"  ]; # ignore all of the unknown reads...
+ then
+     #make folders for the metabarcode specific output of dada2 and bowtie2
  	mkdir -p ${OUT}/taxon_summaries/${j}
- 	mkdir -p ${OUT}/bowtie2_runs/${j}
- 	mkdir -p ${OUT}/bowtie2_runs/${j}/assembled
- 	mkdir -p ${OUT}/bowtie2_runs/${j}/unassembled
- 	mkdir -p ${OUT}/bowtie2_runs/${j}/discarded_F
- 	mkdir -p ${OUT}/bowtie2_runs/${j}/discarded_R
- 	mkdir -p ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/
-	cp ${OUT}/primer_sort/discarded_F/${j}_all.discarded_F.fasta ${OUT}/bowtie2_runs/${j}/discarded_F/${j}_all.discarded_F.fasta
-	cp ${OUT}/primer_sort/discarded_R/${j}_all.discarded_R.fasta ${OUT}/bowtie2_runs/${j}/discarded_R/${j}_all.discarded_R.fasta
-	cp ${OUT}/primer_sort/assembled/${j}_all.clean_assembled.fasta ${OUT}/bowtie2_runs/${j}/assembled/${j}_all.clean_assembled.fasta
-    cp ${OUT}/primer_sort/unassembled_F/${j}_pear_unassembled_F_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/${j}_pear_unassembled_F.fasta
-    cp ${OUT}/primer_sort/unassembled_R/${j}_pear_unassembled_R_sorted.fastq ${OUT}/bowtie2_runs/${j}/unassembled/Sort_${BASEOVERHANG}max_overhang/bowtie2_at_.99/fasta_to_process/${j}_pear_unassembled_R.fasta
- 	if [ "${j}" != "unknown"  ];
-    then
- 	 echo "qsub -l highp,h_rt=6:00:00,h_data=12G  -N pick${j}_bowtie2 -cwd -m bea -o ${OUT}/bowtie2_runs/runlog/${j}.out -e ${OUT}/bowtie2_runs/runlog/${j}.err -M ${UN} ${DB}/scripts/run_bowtie2_make_3_Sfolders.sh  -o ${OUT} -d ${DB} -n ${j}"
-     echo " "
-    fi
- done
+	mkdir -p ${OUT}/bowtie2_runs/paired/merged/${j}
+	mkdir -p ${OUT}/bowtie2_runs/paired/unmerged/${j}
+	mkdir -p ${OUT}/bowtie2_runs/unpaired_F/${j}
+	mkdir -p ${OUT}/bowtie2_runs/unpaired_R/${j}
+	mkdir -p ${OUT}/dada2_out/paired/merged/${j}
+	mkdir -p ${OUT}/dada2_out/paired/unmerged/${j}
+	mkdir -p ${OUT}/dada2_out/unpaired_F/${j}
+	mkdir -p ${OUT}/dada2_out/unpaired_R/${j}
+    echo "${j}"
+    # generate runlogs that you can submit at any time!
+    printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N paired_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_paired.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_paired.err \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_paired.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_paired.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_paired_job.sh
+    printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N upaired_F_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_F.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_F.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_unpaired_F.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_unpaired_F.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_F_job.sh
+    printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N upaired_R_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_R.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_R.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_unpaired_R.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_unpaired_R.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_R_job.sh
+    echo ''
+    # submit jobs to run dada2 and bowtie2
+    #qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_paired_job.sh
+    #qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_F_job.sh
+    #qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_R_job.sh
+ fi
+done
 echo "check!"
+echo "if a dada2 / bowtie2 job fails you can find the job submission file in ${OUT}/dada2_bowtie2/runscripts"
 date
 echo "good_luck!"
+
+
+
