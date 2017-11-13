@@ -46,7 +46,9 @@ rm -r ${OUT}/paired/${MB}/filtered
 # Run bowtie2 on merged paired reads
 ########################################
 ### end to end mode
-bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/dada2_out/paired/merged/${MB}/nochim_merged${MB}.fasta -S ${OUT}/bowtie2_runs/paired/merged/${MB}/nochim_merged${MB}_end_to_end.sam --no-hd --no-sq -D 20 -R 3 -N 0 -L 15  -i S,1,0.50 --end-to-end --no-unal -p 120 -k 100 --un ${OUT}/dada2_out/paired/merged/${MB}/nochim_merged${MB}_end_to_end_reject.fasta --omit-sec-seq
+
+
+bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/dada2_out/paired/merged/${MB}/nochim_unmerged${MB}.fasta -S ${OUT}/bowtie2_runs/paired/merged/${MB}/nochim_merged${MB}_end_to_end.sam --no-hd --no-sq -D 20 -R 3 -N 0 -L 15  -i S,1,0.50 --end-to-end --no-unal -p 120 -k 100 --un ${OUT}/dada2_out/paired/merged/${MB}/nochim_merged${MB}_end_to_end_reject.fasta --omit-sec-seq
 
 ### local mode
 
