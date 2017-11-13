@@ -2,22 +2,45 @@
 
 ##### command arguments for running script!
 ## the dada2 commands are sight modifications of those from https://benjjneb.github.io/dada2/tutorial.html
-
-
  args = commandArgs(trailingOnly=TRUE)
+# 
+ barC = args[1]  #barcode target
+ odirpath = args[2]  #path to the fastq files
+ barC_length = args[3] # expected seq length of the barcode.
 
-barC = args[1]  #barcode target
-path = args[2]  #path to the fastq files
-
-#barC = "CO1"
-#path <- paste("/Users/limeybean/Downloads/unpaired_1/",barC,sep="")
+## path to output
+path = paste(odirpath, "/unpaired_1/" ,barC, sep='')
+outpath=paste(odirpath, "/dada2_out/unpaired_F/",barC, sep='')
 
 
 ############################################################################################Forward Reads reads
 
-library(dada2); packageVersion("dada2")
-library("seqRFLP")
+# Install packages that are not currently installed -----
+# This chunk may need attention, putting it here as a starting point - gsk
+ .cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble")
+ .bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings", "dada2")
+ 
+ .inst <- .cran_packages %in% installed.packages()
+ if (any(!.inst)) {
+   install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
+ }
+# 
+ .inst <- .bioc_packages %in% installed.packages()
+ if (any(!.inst)) {
+   source("http://bioconductor.org/biocLite.R")
+   biocLite(.bioc_packages[!.inst])
+ }
+####################################################################################### process paired end reads
 
+library("dada2")
+cat(paste("dada2 package version:", packageVersion("dada2")))
+library("seqRFLP")
+library("plyr")
+library("Biostrings")
+library("reshape2")
+library("dplyr")
+library("tibble")
+library("ggplot2")
 ####################
 ### Show where reads are kept
 ####################
@@ -104,8 +127,8 @@ head(track)
 # make variables, and file paths for output
 forward_barC =  paste("forward_", barC , sep='')
 forwardbarCseqnum = paste("forward_", barC , "_seq_number", sep = '')
-nochime_f_fname.fasta = paste(path,"/", "nochim_forward",barC,".fasta", sep='')
-nochime_f_fname.txt = paste(path,"/", "nochim_forward",barC,".txt", sep='')
+nochime_f_fname.fasta = paste(outpath,"/", "nochim_forward",barC,".fasta", sep='')
+nochime_f_fname.txt = paste(outpath,"/", "nochim_forward",barC,".txt", sep='')
 
 #modify table so that there are unique specific names for each read, and that also include sample realtive abundance.
 makes.sense.seqtabFo.nochim <- t(seqtabFo.nochim)
@@ -124,4 +147,3 @@ nochim_forward  <- makes.sense.seqtabFo.nochim[,c(which(colnames(makes.sense.seq
 nochim_forward_seq <- data.frame(nochim_forward[[forwardbarCseqnum]],nochim_forward$seqeunces)
 nochim_forward_seq.fasta = dataframe2fas(nochim_forward_seq, file= nochime_f_fname.fasta)
 write.table(nochim_forward, file = nochime_f_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
-
