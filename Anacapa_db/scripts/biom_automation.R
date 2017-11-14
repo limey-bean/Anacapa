@@ -154,7 +154,7 @@ for (i in 1:length(heads)){
   
   #Save Plots
   # modify this to use a user-supplied path for figures
-  name <- paste0(figures_path,head_clean,"_rarefaction.png")
+  name <- paste0(head_clean,"_rarefaction.png")
   ggsave(name, width = 20, height = 10)
 }
 
