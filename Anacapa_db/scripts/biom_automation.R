@@ -14,18 +14,32 @@ library("optparse")
 
 
 ##Source https://github.com/mahendra-mariadassou/phyloseq-extended
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/graphical_methods.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/tree_methods.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/plot_merged_trees.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/specificity_methods.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/ternary_plot.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/richness.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/edgePCA.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/copy_number_correction.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/import_frogs.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/prevalence.R")
-source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/compute_niche.R")
-source('/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/pairwise_adonis.R')
+
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/graphical_methods.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/graphical_methods.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/tree_methods.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/tree_methods.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/plot_merged_trees.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/plot_merged_trees.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/specificity_methods.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/specificity_methods.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/ternary_plot.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/ternary_plot.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/richness.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/richness.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/edgePCA.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/edgePCA.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/copy_number_correction.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/copy_number_correction.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/import_frogs.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/copy_number_correction.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/prevalence.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/prevalence.R")
+# source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/compute_niche.R")
+source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/compute_niche.R")
+# source('/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/pairwise_adonis.R')
+
+
 
 
 #Define Arguments Needed for R script
