@@ -3,31 +3,32 @@
 ##### command arguments for running script ADD Soon!
 ## the dada2 commands come directly from https://benjjneb.github.io/dada2/tutorial.html
 
-# args = commandArgs(trailingOnly=TRUE)
+ args = commandArgs(trailingOnly=TRUE)
 # 
-# barC = args[1]  #barcode target
-# path = args[2]  #path to the fastq files
-# barC_length = args[3] # expected seq length of the barcode.
+ barC = args[1]  #barcode target
+ odirpath = args[2]  #path to the fastq files
+ barC_length = args[3] # expected seq length of the barcode.
 
-barC = "CO1"
-#path <- paste("/Users/limeybean/Downloads/paired/",barC,sep="")
-barC_length = "500"
+## path to output
+path = paste(odirpath, "/paired/" ,barC, sep='')
+mergedoutpath=paste(odirpath, "/dada2_out/paired/merged/",barC, sep='')
+unmergedoutpath=paste(odirpath, "/dada2_out/paired/unmerged/",barC, sep='')
 
 # Install packages that are not currently installed -----
 # This chunk may need attention, putting it here as a starting point - gsk
-# .cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble")
-# .bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings", "dada2")
+ .cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble")
+ .bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings", "dada2")
+ 
+ .inst <- .cran_packages %in% installed.packages()
+ if (any(!.inst)) {
+   install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
+ }
 # 
-# .inst <- .cran_packages %in% installed.packages()
-# if (any(!.inst)) {
-#   install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
-# }
-# 
-# .inst <- .bioc_packages %in% installed.packages()
-# if (any(!.inst)) {
-#   source("http://bioconductor.org/biocLite.R")
-#   biocLite(.bioc_packages[!.inst])
-# }
+ .inst <- .bioc_packages %in% installed.packages()
+ if (any(!.inst)) {
+   source("http://bioconductor.org/biocLite.R")
+   biocLite(.bioc_packages[!.inst])
+ }
 ####################################################################################### process paired end reads
 
 library("dada2")
@@ -147,8 +148,8 @@ track
 # I.e. how will each be used?
 mergedbarC =  paste("merged_", barC , sep='')
 mergedbarCseqnum = paste("merged_", barC , "_seq_number", sep = '')
-nochime_fname.fasta = paste(path,"/", "nochim_merged",barC,".fasta", sep='')
-nochime_fname.txt = paste(path,"/", "nochim_merged",barC,".txt", sep='')
+nochime_fname.fasta = paste(mergedoutpath,"/", "nochim_merged",barC,".fasta", sep='')
+nochime_fname.txt = paste(mergedoutpath,"/", "nochim_merged",barC,".txt", sep='')
 
 makes.sense.seqtab.nochim <- t(seqtab.nochim)
 nochim_merged <- makes.sense.seqtab.nochim %>% data.frame %>%
@@ -279,9 +280,9 @@ unmerged.seq.tab.nochim <- unmerged.seq.tab.nochim %>% select(sequencesF, sequen
 # 
 # make file paths
 
-nochime_unfnameF.fasta = paste(path,"/", "nochim_unmerged",barC,"F",".fasta", sep='')
-nochime_unfnameR.fasta = paste(path,"/", "nochim_unmerged",barC,"R",".fasta", sep='')
-nochime_unfname.txt = paste(path,"/", "nochim_unmerged",barC,".txt", sep='')
+nochime_unfnameF.fasta = paste(unmergedoutpath,"/", "nochim_unmerged",barC,"F",".fasta", sep='')
+nochime_unfnameR.fasta = paste(unmergedoutpath,"/", "nochim_unmerged",barC,"R",".fasta", sep='')
+nochime_unfname.txt = paste(unmergedoutpath,"/", "nochim_unmerged",barC,".txt", sep='')
  
 # make data frames for the soon to be made fasta files  with reads and read names
 nochim_unmerged_seq_F <- data.frame(unmerged.seq.tab.nochim[[unmergedbarCseqnum]],unmerged.seq.tab.nochim$sequencesF)
