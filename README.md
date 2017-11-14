@@ -9,14 +9,13 @@ Anacapa Island's name is derived from the Chumash __Ennepah__ or __Anyapakh__ wh
 
 Anacapa is an automated metabarcoding read processing pipeline.  It is designed to analyze multiple samples and metabarcodes simultaneously. It processes raw fastq reads generated on Illumina HiSeq and MiSeq machines. This pipeline does not require that the raw paired reads overlap, or that both reads in a pair pass qc.  Taxonomy results are generated for all read types, however taxonomy is reported for overlapping (assembled) and non overlapping (unassembled) paired end reads, and also single end reads (discarded forward or discarded reverse) where one of the pairs fails qc. The input is raw Illumina metabarcode sequence data and outputs are species count data for multiple samples and metabarcodes. Successful implementation of Anacap requires: 1) raw illumina sequencing data, 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data, 3) reference libraries that correspond to the metabarcodes of interest made using CRUX, and 4) the dependencies indicated below. 
 
-The workflow: Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (**md5sum**) and uncompresses (**gunzip**) and then renames both the files and reads within files to be **Qiime** (Caporaso et al., 2010) and **R** (Team, RC, 2000) readable.  Reads are next processed for quality control using **cutadapt** (Martin 2011), where read are retained if they have a Q ≥ 30 and are at lease 100bp after adapter and 3' primer trimming. This step also sorts paired and unpaired reads after QC.  **PEAR** (Zhang et al., 2013) is used to merge paired reads and sorts reads into several bins: assembled, forward unassembled, reverse unassembled, and discarded. The discarded reads from the paired step and the unpaired reads from the initail cut adapt step are merged together for later analysis. Unassembled reverse reads are reverse complemented using Fastx-toolkit (Gordon and Hannon, 2010), prior to primer sorting.  Metabarcode reads are sorted by 5' primers and fastq files are converted to fasta files with **cutadapt**.  Sorted reads are then assigned taxonomy using **Bowtie2** (Langmead and Salzberg, 2012), and **Qiime** is used to merge and summarize results tables. 
+The workflow: Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (**md5sum**) and uncompresses (**gunzip**) and then renames the files for readability  readable.  Reads are next trimmed using **cutadapt** (Martin 2011) to remove sequencing adapters from the 5' ends and sequnging adapters and primers from the 3' end of reads.  **Fastx-toolkit** (Gordon and Hannon, 2010) is then used to processed for quality control. Read are retained if they have a Q ≥ 35 and are at lease 100bp after adapter and 3' primer trimming. **Cutadapt** is next used to sort reads by primer, and to trim additional basepairs from the end of read to increase quality going into **dada2**. Prior to running **dada2** there is a paired end read checking step.  Reads that have pairs that passed qc are run separately from unpaired F or unpaired R reads.  **dada2** is then used to denoise, dereplicate, merge (where possible), and remove chimeric sequences from the data set.   **dada2** processed reads are then assigned taxonomy using **Bowtie2** (Langmead and Salzberg, 2012).
 
-Novel implementation of **Bowtie2** for taxonomic assignment: Reference libraries for many metabarcode primers suffer from several problems: low coverage for many taxa, incomplete sequence coverage of amplicon region, species have low variability within taxa and are not distinct from other species with in a genus or family, etc. However, the Anacapa pipleine solves these problems by taking into account 1) the read overhang between the sample read and the reference sequences, 2) the percent identity of the sample read to a reference, and 3) the number of equal best hits between a sample read and a given reference library. 
+
+*	elaborate on dada2 and the bowtie2 process and **R** (Team, RC, 2000)
 
 (Zack wants to add a paragraph about ESV's VS OTUs. We sort of ignore both really, and go for defined groups like species, genus, family, etc... Is that a shortcomming of the method?)  
 
-
-Specifically, the Anacapa pipeline sorts reads iteratively using bowtie2. Reads are initially sorted by read overhang (the default is bins with reads containing <= 25 bp, 25 < reads >= 50, 50 < reads >= 75, and 75 < reads >= 100). Within each overhang bin, Anacapa uses bowtie2 to identify reads with single hits (99% identity or better) to a reference library clustered at 99%, the remaining reads are then sorted using a reference library clustered at 97% and the single best hits (97% identity or better) are retained, the remaining reads are sorted with 95% reference libraries, and so on for 90, 85, and 80% reference libraries. Sample reads that have a forward and reverse read are sorted into bins based on the read (in the pair) with the largest overhand or lowest percent single hit to a reference database. Reads are summarized for each bin / percent reference library combination, and then summarized after merging all percent reference library results within bins, and then summarized for all data from every bin / percent reference library combination.  (will need rewording once we implement Jesse's SQlite idea, and Zack's downstream analysis).
 
 ## Anacapa relies on many programs and databases to run properly. 
 **__First Download the Anacapa_db folder.__** 
@@ -35,15 +34,16 @@ Specifically, the Anacapa pipeline sorts reads iteratively using bowtie2. Reads 
 * scripts folder contains:
 	* anacapa_config.sh
 	* anacapa_format_primers_cutadapt.py
-	* anacapa_release_V1.sh
+	* anacapa_release_V1_dada2_plus_bowtie2.sh
 	* anacapa_vars.sh
 	* check_paired.pl
-	* group_alignments_to_files.py *- not currently used (Emily github knowledge problem)*
-	* group_alignments_to_files_p_mod.py
-	* pick_open_otus_and_summ.sh *- not currently used (for qiime processing)*
-	* run_bowtie2_make_3_Sfolders.sh
-	* summarize_bowtie2_hits.py *- not currently used (Emily github knowledge problem)*
-	* summarize_bowtie2_hits_full_taxonomy.py
+	* dada2_paired.R
+	* dada2_unpaired_F.R
+	* dada2_unpaired_R.R
+	* run_dada2_bowtie2_paired.sh
+	* run_dada2_bowtie2_unpaired_F.sh
+	* run_dada2_bowtie2_unpaired_R.sh
+	* pending -> bowtie2summary script
 
 * The two files are examples of how to format the primer forward and reverse input files.  It is VERY IMPORTANT that you modify these files to reflect your data set!
 
@@ -52,17 +52,15 @@ To run Anacap, you need verify that the full path to each of the following progr
 
 1. cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
 
-2. PEAR: 
+2. fastxtoolkit (add versions)
 
-3. fastxtoolkit
+3. Python (add versions)
 
-4. Perl
+4. Perl (add versions)
 
-3. Qiime 1: http://qiime.org/index.html
-	* Installation information can be found here: http://qiime.org/install/install.html
-	* We will transition to Qiime 2 by January 01, 2018. 
-	
-4. Bowtie2: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+5. R (add versions)
+
+3. Bowtie2: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
 	* Bowtie2 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment. 
   
   
@@ -88,7 +86,7 @@ The script to run Anacapa is in the scripts directory.  It is called: anacapa_re
 
 To run the script you need to run the following command:
 
-sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type ("nextera" or "truseq")>
+sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type ("nextera" or "truseq")>  -t <illumina run type HiSeq or MiSeq>
  
 ### More to come, and it might be a bit buggy.
 * if you choose to take this on...  Good Luck!
