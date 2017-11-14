@@ -33,22 +33,22 @@ while getopts "i:o:d:u:f:r:a:t:" opt; do
 done
 
 ####################################script & software
-# This pipeline was developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), and with contributions from Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
+# This pipeline was developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), and Gaurav Kandlikar (gkandlikar@ucla.edu), and with contributions from Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
 # Last Updated 11-10-2017
 #
 # The purpose of this script is to process raw fastq.gz files from an Illumina sequencing and generate summarized taxonomic assignment tables for multiple metabarcoding targets.
 #
 # This script is currently designed to run on UCLA's Hoffman2 cluster.  Please adjust the code to work with your computing resources. (e.g. module / path names to programs, submitting jobs for processing if you have a cluster, etc)
 #
-# This script runs in two phases, the first is the qc phase that follows the anacapa_release_20171110.sh.  The second phase is the dada2 denoising, mergeing (if reads are paired) and chimera detection / bowtie2 sequence assignment phase.
+# This script runs in two phases, the first is the qc phase that follows the anacapa_release_20171110.sh.  The second phase follows the run_dada2_bowtie2.sh scripts, and includes dada2 denoising, mergeing (if reads are paired) and chimera detection / bowtie2 sequence assignment phase.
 #
 ######################################
 
 # Need to make a script to make sure dependencies are properly configured
 
 # location of the config and var files
-source $DB/scripts/anacapa_vars.sh
-source $DB/scripts/anacapa_config.sh
+source $DB/scripts/anacapa_vars.sh  # edit to change variables and parameters
+source $DB/scripts/anacapa_config.sh # edit for proper configuration
 
 
 ##load modules / software
@@ -56,7 +56,7 @@ ${MODULE_SOURCE} # use if you need to load modules from an HPC
 ${FASTX_TOOLKIT} #load fastx_toolkit
 ${ANACONDA_PYTHON} #load anaconda/python2-4.2
 ${PERL} #load perl
-${ATS} #load ATS
+${ATS} #load ATS, Hoffman2 specific module for managing submitted jobs.
 date
 ###
 
@@ -65,11 +65,11 @@ date
 ################################
 echo " "
 echo " "
-echo "Preprocessing: 1) Generate an md5sum file"
+echo "Preprocessing: 1) Generate an md5sum file"  # user can check for file corruption
 md5sum ${IN}/*fastq.gz > ${IN}/*fastq.gz.md5sum  
 date
 ###
-echo "Preprocessing: 2) Rename each file for readability"
+echo "Preprocessing: 2) Rename each file for readability" # remove the additional and less relevant information in an illumna fasta file name 
 ###################################
 suffix1=R1_001.fastq
 suffix2=R2_001.fastq
@@ -93,26 +93,6 @@ gunzip ${OUT}/fastq/*
 date
 ###
 
-######## to delete or not to delete##############
-#echo "Preprocessing: 4) Rename each read in each file to reflect the sample ID"
-#this is an awk program that does the following:
-#if the line is the first of 4 (starting count of 1) do the substitution
-#otherwise just output the line
-#fastqrenamer="(NR % 4) == 1 {sub(/^@[[:alnum:]]+/, filename); print }
-#              (NR % 4) != 1 { print }"
-#for str in `ls ${OUT}/fastq/*_1.fastq`
-#do
-# str1=${str%_1*}
-# FILE=${str1#${OUT}/fastq/}
-# awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_1.fastq > ${str1}_1.fastq.tmp
-# mv ${str1}_1.fastq.tmp ${str1}_1.fastq
-# awk -v filename="@${FILE}_" "${fastqrenamer}" ${str1}_2.fastq > ${str1}_2.fastq.tmp
-# mv ${str1}_2.fastq.tmp ${str1}_2.fastq
-#done
-#date
-###
-
-
 ################################
 # QC the preprocessed .fastq files
 #############################
@@ -123,10 +103,10 @@ echo "QC: 1) Run cutadapt to remove 5'sequncing adapters and 3'primers + sequenc
 mkdir -p ${DB}/adapters_and_PrimAdapt_rc
 mkdir -p ${DB}/primers
 echo " "
-echo "Generating Primer and Primer + Adapter files for for cutadapt steps.  If not using nextera indexes, please check the primer seqeunces"
+echo "Generating Primer and Primer + Adapter files for for cutadapt steps.  Your adapter type is ${ADPT}."
 python ${DB}/scripts/anacapa_format_primers_cutadapt.py ${ADPT} ${FP} ${RP} ${DB}
 
-# now use the file generated to trim fastq reads
+# now use the formated cutadapt primer file to trim fastq reads
 mkdir -p ${OUT}/cutadapt_fastq
 mkdir -p ${OUT}/cutadapt_fastq/untrimmed
 mkdir -p ${OUT}/primer_sort/
@@ -141,9 +121,9 @@ do
  # stringent quality fileter to get rid of the junky sequence at the ends - modify in config file
  fastq_quality_trimmer -t ${MIN_QUAL} -l ${MIN_LEN}  -i ${OUT}/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -o ${OUT}/cutadapt_fastq/${j}_qcPaired_1.fastq -Q33
  fastq_quality_trimmer -t ${MIN_QUAL} -l ${MIN_LEN}  -i ${OUT}/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq -o ${OUT}/cutadapt_fastq/${j}_qcPaired_2.fastq -Q33
- # sort by metabarcode
+ # sort by metabarcode but run additional trimming.  It makes a differnce in merging reads in dada2.  Trimming varies based on seqeuncing platform.
  echo "forward..."
- if [ "${ILLTYPE}" == "MiSeq"  ]; # if MiSeq chop more off the end than if HiSeq - modify length in config file
+ if [ "${ILLTYPE}" == "MiSeq"  ]; # if MiSeq chop more off the end than if HiSeq - modify length in the vars file
  then
   ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM}  -u -${MS_F_TRIM} -o ${OUT}/primer_sort/{name}_${j}_Paired_1.fastq  ${OUT}/cutadapt_fastq/${j}_qcPaired_1.fastq >> ${OUT}/cutadapt_fastq/cutadapt-report.txt
   echo "check"
