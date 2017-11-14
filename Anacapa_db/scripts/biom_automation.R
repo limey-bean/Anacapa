@@ -13,6 +13,12 @@ library("gridBase")
 library("optparse")
 
 
+## To Do
+# 1. Write a function to make physeq1_notna (currently done ~6 times)
+# 2. Take in output paths as an argument (for figures and the text files that get sunk)
+# 3. Turn the sourced functions, + pairwise.adonis(), + ggrare() into a package
+
+
 ##Source https://github.com/mahendra-mariadassou/phyloseq-extended
 
 # source("/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/graphical_methods.R")
@@ -44,7 +50,7 @@ source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended
 
 #Define Arguments Needed for R script
 
-args = commandArgs(trailingOnly=TRUE)
+args <- commandArgs(trailingOnly=TRUE)
 
 
 # Manage Null Arguments
@@ -58,6 +64,15 @@ if (length(args)==0) {
   # default output file
   args[3] = "out.txt"
 }
+
+
+# Zack, I think we should incorporate a whole output directory path- right now the figures are saved ,
+# to the working directory, which I think is not ideal...
+# if(args[4]) {
+#   figures_path <- args[4] 
+# } else {
+#   figures_path <- ""
+# } 
 
 #Import Biom Table
 ## This Biom table should have already been decontaminated and rarified through the Anacapa pipeline
@@ -90,8 +105,9 @@ OTU <- otu_table(otu, taxa_are_rows = TRUE)
 #Create a taxonomy table
 tax_phy <- as.matrix(observation_metadata(dat))
 
-## Gaurav's hacky wqy to do this (I am getting `NULL` on `observation_metadata()`)
+## Gaurav's hacky way to do this (I am getting `NULL` on `observation_metadata()`)
 # tax_phy <- as.matrix(colsplit(rownames(otu),";", names = c("Domain","Kingdom","Phylum","Class","Order","Family","Genus","Species")))
+# rownames(tax_phy) <- rownames(otu)
 
 TAX <- tax_table(tax_phy)
 #Change the TAX column names
@@ -110,107 +126,18 @@ mor_map <- mor_map[order(mor_map$SampleID),]
 sampledata <- sample_data(mor_map)
 
 #Build Phyloseq dataframe structure
-physeq = phyloseq(OTU, TAX)
-physeq1 = merge_phyloseq(physeq, sampledata)
+physeq <- phyloseq(OTU, TAX)
+physeq1 <- merge_phyloseq(physeq, sampledata)
 physeq1
 
 #Remove Columns to Analyze
 heads <- colnames(sampledata)
+
+# Zack, should this be a variable number of columns? do these always have the 5 to filter out?
 heads <- heads[-1:-5]
 heads
 
-## Rarefaction curve, ggplot style
-ggrare <- function(physeq, step = 10, label = NULL, color = NULL, plot = TRUE, parallel = FALSE, se = TRUE) {
-  ## Args:
-  ## - physeq: phyloseq class object, from which abundance data are extracted
-  ## - step: Step size for sample size in rarefaction curves
-  ## - label: Default `NULL`. Character string. The name of the variable
-  ##          to map to text labels on the plot. Similar to color option
-  ##          but for plotting text.
-  ## - color: (Optional). Default ‘NULL’. Character string. The name of the
-  ##          variable to map to colors in the plot. This can be a sample
-  ##          variable (among the set returned by
-  ##          ‘sample_variables(physeq)’ ) or taxonomic rank (among the set
-  ##          returned by ‘rank_names(physeq)’).
-  ##
-  ##          Finally, The color scheme is chosen automatically by
-  ##          ‘link{ggplot}’, but it can be modified afterward with an
-  ##          additional layer using ‘scale_color_manual’.
-  ## - color: Default `NULL`. Character string. The name of the variable
-  ##          to map to text labels on the plot. Similar to color option
-  ##          but for plotting text.
-  ## - plot:  Logical, should the graphic be plotted.
-  ## - parallel: should rarefaction be parallelized (using parallel framework)
-  ## - se:    Default TRUE. Logical. Should standard errors be computed. 
-  ## require vegan
-  x <- as(otu_table(physeq), "matrix")
-  if (taxa_are_rows(physeq)) { x <- t(x) }
-  
-  ## This script is adapted from vegan `rarecurve` function
-  tot <- rowSums(x)
-  S <- rowSums(x > 0)
-  nr <- nrow(x)
-  
-  rarefun <- function(i) {
-    cat(paste("rarefying sample", rownames(x)[i]), sep = "\n")
-    n <- seq(1, tot[i], by = step)
-    if (n[length(n)] != tot[i]) {
-      n <- c(n, tot[i])
-    }
-    y <- rarefy(x[i, ,drop = FALSE], n, se = se)
-    if (nrow(y) != 1) {
-      rownames(y) <- c(".S", ".se")
-      return(data.frame(t(y), Size = n, Sample = rownames(x)[i]))
-    } else {
-      return(data.frame(.S = y[1, ], Size = n, Sample = rownames(x)[i]))
-    }
-  }
-  if (parallel) {
-    out <- mclapply(seq_len(nr), rarefun, mc.preschedule = FALSE)
-  } else {
-    out <- lapply(seq_len(nr), rarefun)
-  }
-  df <- do.call(rbind, out)
-  
-  ## Get sample data 
-  if (!is.null(sample_data(physeq, FALSE))) {
-    sdf <- as(sample_data(physeq), "data.frame")
-    sdf$Sample <- rownames(sdf)
-    data <- merge(df, sdf, by = "Sample")
-    labels <- data.frame(x = tot, y = S, Sample = rownames(x))
-    labels <- merge(labels, sdf, by = "Sample")
-  }
-  
-  ## Add, any custom-supplied plot-mapped variables
-  if( length(color) > 1 ){
-    data$color <- color
-    names(data)[names(data)=="color"] <- deparse(substitute(color))
-    color <- deparse(substitute(color))
-  }
-  if( length(label) > 1 ){
-    labels$label <- label
-    names(labels)[names(labels)=="label"] <- deparse(substitute(label))
-    label <- deparse(substitute(label))
-  }
-  
-  p <- ggplot(data = data, aes_string(x = "Size", y = ".S", group = "Sample", color = color))
-  p <- p + labs(x = "Sequence Sample Size", y = "Species Richness")
-  if (!is.null(label)) {
-    p <- p + geom_text(data = labels, aes_string(x = "x", y = "y", label = label, color = color),
-                       size = 4, hjust = 0)
-  }
-  p <- p + geom_line()
-  if (se) { ## add standard error if available
-    p <- p + geom_ribbon(aes_string(ymin = ".S - .se", ymax = ".S + .se", color = NULL, fill = color), alpha = 0.2)
-  }
-  if (plot) {
-    plot(p)
-  }
-  invisible(p)
-}
-
-
-
+source("ggrare.R")
 
 ##Alpha Diversity
 #Rarefaction Curves
@@ -226,7 +153,8 @@ for (i in 1:length(heads)){
   p <- p + theme_bw() + theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
   
   #Save Plots
-  name <- paste0(head_clean,"_rarefaction.png")
+  # modify this to use a user-supplied path for figures
+  name <- paste0(figures_path,head_clean,"_rarefaction.png")
   ggsave(name, width = 20, height = 10)
 }
 
@@ -285,20 +213,21 @@ for (i in 1:length(heads)){
 #Beta Diversity Statistics
 #Bray-Ward Heat Map
 ##Distance Calculation
-d = distance(physeq1, method='bray')
+d <- distance(physeq1, method='bray')
 
 #Plot Ward Map
-jpeg("Bray-Ward_Heat_Map.jpg")
+# Zack, changing this to png from jpg - mostly because the others are saved as png and we might as well be consistent
+png("Bray-Ward_Heat_Map.png")
 plot(hclust(d, method="ward.D"))
 heatmap(as.matrix(d))
 dev.off()
 
 #Jaccard-Ward Heat Map
 ##Distance Calculation
-d = distance(physeq1, method='jaccard')
+d <- distance(physeq1, method='jaccard')
 
 #Plot Ward Map
-jpeg("Jaccard-Ward_Heat_Map.jpg")
+png("Jaccard-Ward_Heat_Map.png")
 plot(hclust(d, method="ward.D"))
 heatmap(as.matrix(d))
 dev.off()
@@ -378,15 +307,17 @@ for (i in 1:length(heads)){
   palette <- palleteall
   #Color Tips
   tipColor <- col_factor(palette, levels = levels(envtype))(envtype)
-  name <- paste0(head_clean,"_ward_linkage.jpg")
+  name <- paste0(head_clean,"_ward_linkage.png")
   #Plot and Save Figure
-  jpeg(name)
+  png(name)
   par(mar=c(0,0,2,0))
   plot(clustering,tip.color = tipColor, direction ="downwards",main = "Ward Linkage Map", cex=1.5)
   dev.off()
 }
 
 #Network Map
+# Zack, I had trouble running this loop- nothing spit out when I ran it as a loop, but I could
+# generate the plots by manually iterating i from 1-4
 for (i in 1:length(heads)){
   #Subset Sample for non NA
   physeq1_notna <- physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i])))
@@ -395,8 +326,8 @@ for (i in 1:length(heads)){
 
   head_clean <- as.name(heads[i])
   #Generate and Save Plot
-  name <- paste0(head_clean,"_network_map.jpg")
-  jpeg(name)
+  name <- paste0(head_clean,"_network_map.png")
+  png(name)
   par(mar=c(0,0,2,0))
   plot_network(ig, physeq1_notna, color=heads[i], line_weight=0.9, label=NULL)
   dev.off()
@@ -436,10 +367,10 @@ for (i in 1:length(heads)){
   #Adonis Test
   log_1 <- adonis(as.formula(paste("mor_jac~", head_clean)), data = sampledf)
   #Pairwise Adonis
-  log_2<- pairwise.adonis(vanilla,getElement(sdf, heads[i]),sim.method = 'jaccard')
+  # log_2<- pairwise.adonis(vanilla,getElement(sdf, heads[i]),sim.method = 'jaccard')
   #Print
   print(log_1)
-  print(log_2)
+  # print(log_2)
   #Betadispersion Test
   beta <- betadisper(mor_jac, getElement(sdf, heads[i]))
   log_3 <- permutest(beta)
