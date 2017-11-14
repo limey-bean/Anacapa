@@ -237,9 +237,9 @@ do
     printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N unpaired_R_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_R.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_R.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_unpaired_R.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_unpaired_R.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_R_job.sh
     echo ''
     # submit jobs to run dada2 and bowtie2
-    #qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_paired_job.sh
-    #qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_F_job.sh
-    #qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_R_job.sh
+    qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_paired_job.sh
+    qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_F_job.sh
+    qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_R_job.sh
  fi
 done
 echo "check!"
