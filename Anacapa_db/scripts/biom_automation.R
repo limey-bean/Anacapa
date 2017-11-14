@@ -1,15 +1,15 @@
 ## Load Necessary Files
-library("qiimer", lib.loc="/Library/Frameworks/R.framework/Versions/3.3/Resources/library")
-library(reshape2)
-library(ggplot2)
-library(ggrepel)
-library(vegan)
-library(dplyr)
-library(wesanderson) # I just want to give a shout out to karthik for being a true legend and fellow Wes Anderson afficiando, as well as to Gaurav for sharing with me this amazing package. Truly life altering
-library(cluster)
-library(biomformat)
-library('phyloseq')
-library('gridBase')
+library("qiimer")
+library("reshape2")
+library("ggplot2")
+library("ggrepel")
+library("vegan")
+library("dplyr")
+library("wesanderson") # I just want to give a shout out to karthik for being a true legend and fellow Wes Anderson afficiando, as well as to Gaurav for sharing with me this amazing package. Truly life altering
+library("cluster")
+library("biomformat")
+library("phyloseq")
+library("gridBase")
 library("optparse")
 
 
@@ -49,6 +49,9 @@ args = commandArgs(trailingOnly=TRUE)
 
 # Manage Null Arguments
 # test if there is at least one argument: if not, return an error
+
+## Zack- what happens if there is exactly 1 argument (biom file supplied but no mapping file?)
+## Seems like that should break the script but passes through this filter...
 if (length(args)==0) {
   stop("At least one argument must be supplied (input file).n", call.=FALSE)
 } else if (length(args)==1) {
@@ -62,6 +65,7 @@ if (length(args)==0) {
 #File Path to Biom Table
 file_path <- args[1]
 #file_path <- "/Users/zackgold/Documents/UCLA_phd/Projects/anacapa/march_seq_test/catalina_test/12s/moorea_kraken/12S_F_moorea_rarefied_6000/summarize_taxa_mor/rarefaction_6000__metadata_json_fixed.biom"
+
 
 #Read Biom Table
 dat <- read_biom(file_path)
@@ -77,13 +81,19 @@ otu <- as.matrix(biom_data(dat))
 ##Specific to Zack's Mo'orea because of R naming convention
 colnames(otu) <- c("DeepRF2.","PN1.","BRF3.","KM1_1.","LB2.","DeepRF1.","BRF1.", "PN2.","TMI2.","TMI3.", "TMI1.","PN3.","KM4_2.","M500_2.","KM1_3.","KM2_1.","MRB1.","M500_3.","LF1.","BRF2.","LB3.","KM2_2.","MidRF1.","KM4_3.","ShallowRF3.","MidRF3.","LF2.","MidRF2.","M500_1.","MRB2.","ShallowRF1.","Mor.poscntl.","MRB3.","DeepRF3.","LB1.","LF3.","KM1_2.","ShallowRF2.","KM2_3.","KM4_1.")   
 #order samples alphabetically
-otu<- otu[ , order(colnames(otu))]
-#Phyloseq OTU type matrix
-OTU = otu_table(otu, taxa_are_rows = TRUE)
+otu <- otu[ , order(colnames(otu))]
+
+
+# Phyloseq OTU type matrix
+OTU <- otu_table(otu, taxa_are_rows = TRUE)
 
 #Create a taxonomy table
 tax_phy <- as.matrix(observation_metadata(dat))
-TAX = tax_table(tax_phy)
+
+## Gaurav's hacky wqy to do this (I am getting `NULL` on `observation_metadata()`)
+# tax_phy <- as.matrix(colsplit(rownames(otu),";", names = c("Domain","Kingdom","Phylum","Class","Order","Family","Genus","Species")))
+
+TAX <- tax_table(tax_phy)
 #Change the TAX column names
 colnames(TAX) <- c("Domain","Kingdom","Phylum","Class","Order","Family","Genus","Species")
 
