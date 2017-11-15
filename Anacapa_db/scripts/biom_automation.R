@@ -46,6 +46,10 @@ source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended
 # source('/Users/zackgold/Documents/UCLA_phd/phyloseq-extended-master/pairwise_adonis.R')
 
 
+# NOTE!
+# For now these next two assume that you're signed into github and have access to limey-bean/Anacapa 
+source("https://raw.githubusercontent.com/limey-bean/Anacapa/master/Anacapa_db/scripts/ggrare.R?token=AF3qdHR4_JEI_R6r_i0Wr-0i2L91MUsBks5aFMABwA%3D%3D")
+source("https://raw.githubusercontent.com/limey-bean/Anacapa/master/Anacapa_db/scripts/pairwise_adonis.R?token=AF3qdL9R3w-HplSkEREFdlCnBXm0ygsTks5aFMFdwA%3D%3D")
 
 
 #Define Arguments Needed for R script
@@ -103,11 +107,11 @@ otu <- otu[ , order(colnames(otu))]
 OTU <- otu_table(otu, taxa_are_rows = TRUE)
 
 #Create a taxonomy table
-tax_phy <- as.matrix(observation_metadata(dat))
+# tax_phy <- as.matrix(observation_metadata(dat))
 
 ## Gaurav's hacky way to do this (I am getting `NULL` on `observation_metadata()`)
-# tax_phy <- as.matrix(colsplit(rownames(otu),";", names = c("Domain","Kingdom","Phylum","Class","Order","Family","Genus","Species")))
-# rownames(tax_phy) <- rownames(otu)
+tax_phy <- as.matrix(colsplit(rownames(otu),";", names = c("Domain","Kingdom","Phylum","Class","Order","Family","Genus","Species")))
+rownames(tax_phy) <- rownames(otu)
 
 TAX <- tax_table(tax_phy)
 #Change the TAX column names
@@ -137,24 +141,30 @@ heads <- colnames(sampledata)
 heads <- heads[-1:-5]
 heads
 
-source("ggrare.R")
 
 ##Alpha Diversity
 #Rarefaction Curves
+
+# write a function to filter out NAs from 
+remove_nas_from_physeq <- function(physeq, i) {
+  return(physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i]))))
+}
+
 for (i in 1:length(heads)){
   #subset data for non NA
-  physeq1_notna <- physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i])))
+  physeq1_notna <- remove_nas_from_physeq(physeq, i)
   #Conduct rarefaction of samples
   p <- ggrare(physeq1_notna, step = 1000, color = heads[i], se=FALSE)
   
   #Plot rarefaction Curve
-  head_clean <- as.name(heads[i])
-  p <- p + facet_wrap(as.formula(paste("~", head_clean)), ncol = 4)
+  current_variable <- heads[i]
+  
+  p <- p + facet_wrap(as.formula(paste("~", current_variable)), ncol = 4)
   p <- p + theme_bw() + theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
   
   #Save Plots
   # modify this to use a user-supplied path for figures
-  name <- paste0(head_clean,"_rarefaction.png")
+  name <- paste0(current_variable,"_rarefaction.png")
   ggsave(name, width = 20, height = 10)
 }
 
@@ -163,16 +173,18 @@ for (i in 1:length(heads)){
 #currently only focussed on Observed and Shannon, could alter for any type of diversity analysis
 for (i in 1:length(heads)){
   #subset data for non NA
-  head_clean <- as.name(heads[i])
-  head_clean
-  physeq1_notna <- physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i])))
+  current_variable <- heads[i]
+  current_variable
+  physeq1_notna <- remove_nas_from_physeq(physeq, i)
   
   #Plot Richness Box plot
-  richness <- plot_richness(physeq1_notna, x=heads[i], color=heads[i], measures= c("Observed", "Shannon")) + geom_boxplot(aes(fill=paste(head_clean)),alpha=0.2) +theme_bw() +  theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank())
+  richness <- plot_richness(physeq1_notna, x=heads[i], color=heads[i], measures= c("Observed", "Shannon")) + geom_boxplot(aes(fill=paste(current_variable)),alpha=0.2, show.legend = F) + theme_bw() +  
+    theme(panel.grid.minor.y = element_blank(), panel.grid.minor.x = element_blank(),
+          panel.grid.major.y = element_blank(), panel.grid.major.x = element_blank())
   richness
   
   #Save Plot
-  name <- paste0(head_clean,"_richness.png")
+  name <- paste0(current_variable,"_richness.png")
   ggsave(name,width = 20, height = 10)
 }
 
@@ -184,9 +196,9 @@ data <- cbind(sample_data(physeq1), alpha.diversity)
 
 for (i in 1:length(heads)){
   sink("Observerd_Species_Diversity_Statistics.txt", append=TRUE)
-  head_clean <- as.name(heads[i])
-  print(head_clean)
-  physeq1.alpha.anova <- aov(as.formula(paste("Observed~", head_clean)), data)
+  current_variable <- heads[i]
+  print(current_variable)
+  physeq1.alpha.anova <- aov(as.formula(paste("Observed~", current_variable)), data)
   log_1 <- summary(physeq1.alpha.anova )
   log_2<-TukeyHSD(physeq1.alpha.anova)
   print(log_1)
@@ -198,9 +210,9 @@ for (i in 1:length(heads)){
 #Shannon Statistics
 for (i in 1:length(heads)){
   sink("Shannon_Diversity_Statistics.txt", append=TRUE)
-  head_clean <- as.name(heads[i])
-  print(head_clean)
-  physeq1.alpha.anova <- aov(as.formula(paste("Shannon~", head_clean)), data)
+  current_variable <- heads[i]
+  print(current_variable)
+  physeq1.alpha.anova <- aov(as.formula(paste("Shannon~", current_variable)), data)
   log_1 <- summary(physeq1.alpha.anova )
   log_2<-TukeyHSD(physeq1.alpha.anova)
   print(log_1)
@@ -236,11 +248,11 @@ dev.off()
 
 for (i in 1:length(heads)){
   #Subset Data from non NA
-  physeq1_notna <- physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i])))
+  physeq1_notna <- remove_nas_from_physeq(physeq, i)
   #Calculate Distance Matrix
   dist.jc <- distance(physeq1_notna, method = "jaccard")
   ord <- ordinate(physeq1_notna, method = "MDS", distance=dist.jc )
-  head_clean <- as.name(heads[i])
+  current_variable <- heads[i]
   #Ordination
   (ordplot <- plot_ordination(physeq1_notna, ord, heads[i], color=heads[i])) + theme_bw() 
   #Plot NMDS
@@ -250,7 +262,7 @@ for (i in 1:length(heads)){
     theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank()) +
     geom_point(size = 3)
   #Save Plot
-  name <- paste0(head_clean,"_jaccard_nmds.png")
+  name <- paste0(current_variable,"_jaccard_nmds.png")
   ggsave(name,width = 20, height = 10)
 }
 
@@ -258,11 +270,11 @@ for (i in 1:length(heads)){
 
 for (i in 1:length(heads)){
   #Subset Data from non NA
-  physeq1_notna <- physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i])))
+  physeq1_notna <- remove_nas_from_physeq(physeq, i)
   #Calculate Distance Matrix
   dist.jc <- distance(physeq1_notna, method = "bray")
   ord <- ordinate(physeq1_notna, method = "MDS", distance=dist.jc )
-  head_clean <- as.name(heads[i])
+  current_variable <- heads[i]
   # Ordination
   (ordplot <- plot_ordination(physeq1_notna, ord, heads[i], color=heads[i])) + theme_bw() 
   #Plot NMDS 
@@ -272,7 +284,7 @@ for (i in 1:length(heads)){
     theme(panel.grid.minor.y=element_blank(),panel.grid.minor.x=element_blank(),panel.grid.major.y=element_blank(),panel.grid.major.x=element_blank()) +
     geom_point(size = 3)
   #Save Plot
-  name <- paste0(head_clean,"_bray_nmds.png")
+  name <- paste0(current_variable,"_bray_nmds.png")
   ggsave(name,width = 20, height = 10)
 }
 
@@ -295,19 +307,19 @@ palleteall <- c(col.grand,col.gr,col2.gr,col.gr_extra,col.rocket,col.rush,col.mo
 #Plot Ward Linkage Maps
 for (i in 1:length(heads)){
   #Subset Data for non NA
-  physeq1_notna <- physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i])))
+  physeq1_notna <- remove_nas_from_physeq(physeq, i)
   #Calculate Distance Matrix
   dist.jc <- distance(physeq1_notna, method = "jaccard")
   #Cluster Data
   clustering <- as.phylo(hclust(dist.jc, method = "ward.D2"))
   #Select Environmental Variables
   envtype <- get_variable(physeq1_notna,heads[i])
-  head_clean <- as.name(heads[i])
+  current_variable <- heads[i]
   #Color
   palette <- palleteall
   #Color Tips
   tipColor <- col_factor(palette, levels = levels(envtype))(envtype)
-  name <- paste0(head_clean,"_ward_linkage.png")
+  name <- paste0(current_variable,"_ward_linkage.png")
   #Plot and Save Figure
   png(name)
   par(mar=c(0,0,2,0))
@@ -320,13 +332,13 @@ for (i in 1:length(heads)){
 # generate the plots by manually iterating i from 1-4
 for (i in 1:length(heads)){
   #Subset Sample for non NA
-  physeq1_notna <- physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i])))
+  physeq1_notna <- remove_nas_from_physeq(physeq, i)
   #Network Generation
   ig <- make_network(physeq1_notna, distance=function(x){vegan::vegdist(x, "jaccard")}, max.dist=0.9)
 
-  head_clean <- as.name(heads[i])
+  current_variable <- heads[i]
   #Generate and Save Plot
-  name <- paste0(head_clean,"_network_map.png")
+  name <- paste0(current_variable,"_network_map.png")
   png(name)
   par(mar=c(0,0,2,0))
   plot_network(ig, physeq1_notna, color=heads[i], line_weight=0.9, label=NULL)
@@ -351,7 +363,7 @@ vegan_otu <- function(physeq) {
 #Adonis, Paired Adonis, Betadisp from Vegan
 for (i in 1:length(heads)){
   #subset data for non NA
-  physeq1_notna <- physeq1 %>% subset_samples(!is.na(get_variable(physeq1, heads[i])))
+  physeq1_notna <- remove_nas_from_physeq(physeq, i)
   #Sample Data in data frame
   sampledf <- data.frame(sample_data(physeq1_notna))
   #Make Vegan OTU Table 
@@ -362,10 +374,10 @@ for (i in 1:length(heads)){
   mor_jac <- phyloseq::distance(physeq1_notna, method = "jaccard")
   #Open .txt to record data
   sink("jaccard_beta_diversity_Statistics.txt", append=TRUE)
-  head_clean <- as.name(heads[i])
-  print(head_clean)
+  current_variable <- heads[i]
+  print(current_variable)
   #Adonis Test
-  log_1 <- adonis(as.formula(paste("mor_jac~", head_clean)), data = sampledf)
+  log_1 <- adonis(as.formula(paste("mor_jac~", current_variable)), data = sampledf)
   #Pairwise Adonis
   # log_2<- pairwise.adonis(vanilla,getElement(sdf, heads[i]),sim.method = 'jaccard')
   #Print
