@@ -163,7 +163,7 @@ class SummaryAppender(object):
                 ordered_sam_info = [sam_info[field] for field in fields]
                 new_summary_file.write('\t'.join([old_line] + ordered_sam_info) + '\n')
             else:
-                new_summary_file.write('\t'.join([old_line] + no_hit_entry))
+                new_summary_file.write('\t'.join([old_line] + no_hit_entry) + '\n')
         new_summary_file.close()
         shutil.move(summary_file_name + '.tmp', summary_file_name)
 
