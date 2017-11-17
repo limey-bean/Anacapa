@@ -73,11 +73,12 @@ class SummaryAppender(object):
         with open(taxonomy_file_name) as taxonomy_file:
             self.taxonomy = self.load_taxonomy_file(taxonomy_file)
         self.parsed_bowtie_output = {}
-        self.cutoffs = [(0.99, ".99-1.0"), (0.97, ".97-.9899"), (0.95, ".95-.9699"), (0.90, ".90-.9499"),
-                        (0.85, ".85-.8999"), (0.80, ".80-.8499"), (0.00, ".00-.7999")]
+        # each cutoff is a tuple of the cutoff_id,description,max_length_of_taxonomy
+        self.cutoffs = [(0.99, ".99-1.0", 6), (0.97, ".97-.9899", 5), (0.95, ".95-.9699", 4), (0.90, ".90-.9499", 3),
+                        (0.85, ".85-.8999", 2), (0.80, ".80-.8499", 1), (0.00, ".00-.7999", 0)]
 
-        with open(local_sam_name) as sam_file:
-            self.parsed_bowtie_output.update(self.parse_bowtie_output(sam_file, 'local'))
+        with open(local_sam_name) as local_sam_file:
+            self.parsed_bowtie_output.update(self.parse_bowtie_output(local_sam_file, 'local'))
         with open(end_to_end_sam_name) as sam_file:
             self.parsed_bowtie_output.update(self.parse_bowtie_output(sam_file, 'end_to_end'))
 
@@ -111,10 +112,10 @@ class SummaryAppender(object):
     def handle_group_of_entries(self, entries, mode):
         ids = [entry.identity_ratio for entry in entries]
         overhangs = [entry.cigar_max_s() for entry in entries]
-        id_cutoff, id_group_name = self.calculate_cutoff_group(max(ids))
+        id_cutoff, id_group_name, max_taxonomy_length = self.calculate_cutoff_group(max(ids))
         taxonomies_in_range = [self.taxonomy[entry.rname] for entry in entries if entry.identity_ratio >= id_cutoff]
         accession_in_range = [entry.rname for entry in entries if entry.identity_ratio >= id_cutoff]
-        taxonomy_consensus = self.determine_taxonomy_consensus(taxonomies_in_range)
+        taxonomy_consensus = self.determine_taxonomy_consensus(taxonomies_in_range, max_taxonomy_length)
         match_lengths = [entry.total_match for entry in entries]
         group_info = {}
         #, , taxonomic_paths_for_all_hits_within_percent_id_bin
@@ -130,21 +131,28 @@ class SummaryAppender(object):
         return group_info
 
     def calculate_cutoff_group(self, identity_ratio):
-        for cutoff_value, possible_group_name in self.cutoffs:
-            if identity_ratio >= cutoff_value:
-                group_name = possible_group_name
+        for possible_cutoff in self.cutoffs:
+            if identity_ratio >= possible_cutoff[0]:
+                actual_cutoff = possible_cutoff
                 break
-        return cutoff_value, group_name
+        return actual_cutoff
 
-    def determine_taxonomy_consensus(self, taxonomies):
-        if len(taxonomies) == 1:
-            return taxonomies[0]
-        split_taxonomies = [t.split(';') for t in taxonomies]
-        common_path = os.path.commonprefix(split_taxonomies)
-        if len(common_path) == 0:
+    def determine_taxonomy_consensus(self, taxonomies, max_taxonomy_length):
+        if max_taxonomy_length <= 0:
             return None
 
+        if len(taxonomies) == 1:
+            common_path = taxonomies[0].split(';')
+        else:
+            split_taxonomies = [t.split(';') for t in taxonomies]
+            common_path = os.path.commonprefix(split_taxonomies)
+            if len(common_path) == 0:
+                return None
+        # truncate common path to the max length
+        common_path = common_path[:max_taxonomy_length]
         return ';'.join(common_path)
+
+
 
     def append_to_summary(self, summary_file_name):
         fields = ['percent_ids','percent_id_bin','mode', 'single_or_multiple_hit', 'length_of_hit', 'overhang_or_soft_clipping',
@@ -186,7 +194,7 @@ parser.add_argument('end_to_end_sam', type=str, help='The end-to-end SAM file')
 if __name__ == '__main__':
     args = parser.parse_args()
 
-    local_sam = args.end_to_end_sam
+    local_sam = args.local_sam
     end_to_end_sam = args.end_to_end_sam
     summary_file_name = args.summary_file
     taxonomy_file_name = args.taxonomy_file
