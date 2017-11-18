@@ -26,6 +26,7 @@ source $DB/scripts/anacapa_config.sh
 ${MODULE_SOURCE} # use if you need to load modules from an HPC
 
 ${BOWTIE2} #load bowtie2
+${ANACONDA_PYTHON} # load anaconda python
 
 #### critical or the dependency 'RcppParallel' will not install
 ${R}
