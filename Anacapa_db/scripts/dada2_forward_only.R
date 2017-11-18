@@ -132,7 +132,7 @@ nochime_f_fname.txt = paste(outpath,"/", "nochim_forward",barC,".txt", sep='')
 
 #modify table so that there are unique specific names for each read, and that also include sample realtive abundance.
 makes.sense.seqtabFo.nochim <- t(seqtabFo.nochim)
-makes.sense.seqtabFo.nochim <- cbind(seqeunces = rownames(makes.sense.seqtabFo.nochim), makes.sense.seqtabFo.nochim)
+makes.sense.seqtabFo.nochim <- cbind(sequences = rownames(makes.sense.seqtabFo.nochim), makes.sense.seqtabFo.nochim)
 rownames(makes.sense.seqtabFo.nochim) <- NULL
 makes.sense.seqtabFo.nochim <- as.data.frame(makes.sense.seqtabFo.nochim)
 makes.sense.seqtabFo.nochim$seqnum <- 1:nrow(makes.sense.seqtabFo.nochim) 
@@ -144,6 +144,6 @@ makes.sense.seqtabFo.nochim[[forward_barC]] <- NULL
 
 # final data transfermations, and export of reads as fasta files and accompanying data table.
 nochim_forward  <- makes.sense.seqtabFo.nochim[,c(which(colnames(makes.sense.seqtabFo.nochim)==forwardbarCseqnum),which(colnames(makes.sense.seqtabFo.nochim)!=forwardbarCseqnum))]
-nochim_forward_seq <- data.frame(nochim_forward[[forwardbarCseqnum]],nochim_forward$seqeunces)
+nochim_forward_seq <- data.frame(nochim_forward[[forwardbarCseqnum]],nochim_forward$sequences)
 nochim_forward_seq.fasta = dataframe2fas(nochim_forward_seq, file= nochime_f_fname.fasta)
 write.table(nochim_forward, file = nochime_f_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
