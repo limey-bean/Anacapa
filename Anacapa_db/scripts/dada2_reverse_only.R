@@ -9,8 +9,8 @@
  barC_length = args[3] # expected seq length of the barcode.
 
 ## path to output
-path = paste(odirpath, "/unpaired_2/" ,barC, sep='')
-outpath=paste(odirpath, "/dada2_out/unpaired_R/",barC, sep='')
+path = paste(odirpath,  "/unpaired_R/",barC,  sep='')
+outpath=paste(odirpath,"/", barC, "/dada2_bowtie2/unpaired_R/", sep='')
 
 
 ############################################################################################Forward Reads reads
