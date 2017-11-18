@@ -75,4 +75,4 @@ bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index -f -1 ${OUT}/$
 # Summarize bowtie2 runs on unmerged paired reads and append to dada2 output
 ########################################
 
-python ${DB}/scripts/append_bowtie_to_summary.py ${OUT}/${MB}/dada2_bowtie2/paired/merged/${MB}/nochim_merged${MB}.txt ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_local.sam ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end.sam 
+python ${DB}/scripts/append_bowtie_to_summary.py ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}.txt ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_local.sam ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end.sam 
