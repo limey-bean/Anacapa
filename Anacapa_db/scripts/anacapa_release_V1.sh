@@ -164,8 +164,8 @@ date
 # Move files to paired and unpaired folders
 ###############################
 mkdir -p ${OUT}/paired/
-mkdir -p ${OUT}/unpaired_1/
-mkdir -p ${OUT}/unpaired_2/
+mkdir -p ${OUT}/unpaired_F/
+mkdir -p ${OUT}/unpaired_R/
 
 echo "Move paired and unpaired files to the correct folders"
 for str in `ls ${OUT}/primer_sort/*_Paired_1.fastq`
@@ -174,10 +174,10 @@ do
  j=${str1#${OUT}/primer_sort/}
  echo ${j} "..."
  mkdir -p ${OUT}/paired/${j}
- mkdir -p ${OUT}/unpaired_1/${j}
- mkdir -p ${OUT}/unpaired_2/${j}
- cp ${OUT}/primer_sort/${j}_*_Paired_1_singletons.fastq ${OUT}/unpaired_1/${j}
- cp ${OUT}/primer_sort/${j}_*_Paired_2_singletons.fastq ${OUT}/unpaired_2/${j}
+ mkdir -p ${OUT}/unpaired_F/${j}
+ mkdir -p ${OUT}/unpaired_R/${j}
+ cp ${OUT}/primer_sort/${j}_*_Paired_1_singletons.fastq ${OUT}/unpaired_F/${j}
+ cp ${OUT}/primer_sort/${j}_*_Paired_2_singletons.fastq ${OUT}/unpaired_R/${j}
  cp ${OUT}/primer_sort/${j}_*_sorted.fastq ${OUT}/paired/${j}
  echo ${j} "...check!" 
 done
@@ -192,27 +192,9 @@ rm -r ${OUT}/fastq
 # Submit jobs for the paired and unpaired reads for each barcode
 ###############################
 
-### Make directories for the dada2 results files
-mkdir -p ${OUT}/dada2_out
-mkdir -p ${OUT}/dada2_out/paired
-mkdir -p ${OUT}/dada2_out/paired/merged
-mkdir -p ${OUT}/dada2_out/paired/unmerged
-mkdir -p ${OUT}/dada2_out/unpaired_F
-mkdir -p ${OUT}/dada2_out/unpaired_R
-
-### Make directories for the bowtie2 results files
-mkdir -p ${OUT}/bowtie2_runs/
-mkdir -p ${OUT}/bowtie2_runs/paired
-mkdir -p ${OUT}/bowtie2_runs/paired/merged
-mkdir -p ${OUT}/bowtie2_runs/paired/unmerged
-mkdir -p ${OUT}/bowtie2_runs/unpaired_F
-mkdir -p ${OUT}/bowtie2_runs/unpaired_R
-mkdir -p ${OUT}/dada2_bowtie2/
-
 ### Make directories for the runlogs, and runscripts
 mkdir -p ${OUT}/dada2_bowtie2/runscripts
 mkdir -p ${OUT}/dada2_bowtie2/runlogs
-mkdir -p ${OUT}/taxon_summaries
 
 ###
 echo "Process metabarcode reads for taxonomy: 1) submit bowtie2 read for each metabarcode"
@@ -221,20 +203,16 @@ do
  if [ "${j}" != "unknown"  ]; # ignore all of the unknown reads...
  then
      #make folders for the metabarcode specific output of dada2 and bowtie2
- 	mkdir -p ${OUT}/taxon_summaries/${j}
-	mkdir -p ${OUT}/bowtie2_runs/paired/merged/${j}
-	mkdir -p ${OUT}/bowtie2_runs/paired/unmerged/${j}
-	mkdir -p ${OUT}/bowtie2_runs/unpaired_F/${j}
-	mkdir -p ${OUT}/bowtie2_runs/unpaired_R/${j}
-	mkdir -p ${OUT}/dada2_out/paired/merged/${j}
-	mkdir -p ${OUT}/dada2_out/paired/unmerged/${j}
-	mkdir -p ${OUT}/dada2_out/unpaired_F/${j}
-	mkdir -p ${OUT}/dada2_out/unpaired_R/${j}
+ 	mkdir -p ${OUT}/${j}
+	mkdir -p ${OUT}/${j}/dada2_bowtie2/paired/merged
+	mkdir -p ${OUT}/${j}/dada2_bowtie2/paired/unmerged
+	mkdir -p ${OUT}/${j}/dada2_bowtie2/unpaired_F
+	mkdir -p ${OUT}/${j}/dada2_bowtie2/unpaired_R
     echo "${j}"
     # generate runlogs that you can submit at any time!
     printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N paired_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_paired.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_paired.err \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_paired.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_paired.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_paired_job.sh
-    printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N unpaired_F_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_F.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_F.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_unpaired_F.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_unpaired_F.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_F_job.sh
-    printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N unpaired_R_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_R.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_R.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_unpaired_R.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_unpaired_R.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_R_job.sh
+    printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N upaired_F_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_F.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_F.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_unpaired_F.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_unpaired_F.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_F_job.sh
+    printf "#!/bin/bash\n#$ -l h_rt=02:00:00,h_data=8G\n#$ -N upaired_R_${j}_dada2_bowtie2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_R.out\n#$ -e ${OUT}/dada2_bowtie2/runlogs/${j}_unpaired_R.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\nsh ${DB}/scripts/run_dada2_bowtie2_unpaired_R.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_dada2_bowtie2_unpaired_R.sh]" >> ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_unpaired_R_job.sh
     echo ''
     # submit jobs to run dada2 and bowtie2
     qsub ${OUT}/dada2_bowtie2/runscripts/${j}_dada2_bowtie2_paired_job.sh
@@ -246,6 +224,9 @@ echo "check!"
 echo "if a dada2 / bowtie2 job fails you can find the job submission file in ${OUT}/dada2_bowtie2/runscripts"
 date
 echo "good_luck!"
+
+
+
 
 
 
