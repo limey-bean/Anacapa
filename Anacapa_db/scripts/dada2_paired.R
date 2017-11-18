@@ -10,9 +10,9 @@
  barC_length = args[3] # expected seq length of the barcode.
 
 ## path to output
-path = paste(odirpath, "/paired/" ,barC, sep='')
-mergedoutpath=paste(odirpath, "/dada2_out/paired/merged/",barC, sep='')
-unmergedoutpath=paste(odirpath, "/dada2_out/paired/unmerged/",barC, sep='')
+path = paste(odirpath,"/paired/",barC,  sep='')
+mergedoutpath=paste(odirpath,"/", barC,"/dada2_bowtie2/paired/merged", sep='')
+unmergedoutpath=paste(odirpath,"/", barC,"/dada2_bowtie2/paired/unmerged", sep='')
 
 # Install packages that are not currently installed -----
 # This chunk may need attention, putting it here as a starting point - gsk
