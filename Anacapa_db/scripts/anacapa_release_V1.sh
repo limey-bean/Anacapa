@@ -146,8 +146,6 @@ date
 ###############################
 # Make sure unassembled reads are still paired
 ###############################
-makedir -p ${OUT}/paired/
-makedir -p ${OUT}/unpaired/
 
 echo "Checking that Paired reads are still paired: 1) Use  Armin PEYMANN perl script (https://www.biostars.org/p/56171/) to make sure that unassembled reads are still paired"
 for str in `ls ${OUT}/primer_sort/*_Paired_1.fastq`
