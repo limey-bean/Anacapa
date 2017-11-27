@@ -120,7 +120,7 @@ nsub = 50  # maximum number of subjects to include
 ngap = -2  # gap penalty
 match = 1  # match score
 mismatch = -2.5  # mismatch penalty
-### pre-formatted taxonomy and blastn database ###
+levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
 
 opts, args = getopt.getopt(sys.argv[1:], "a:b:c:d:e:f:g:i:j:lm:n:o:r:q:t:s:h",
                            ['Minimum bitscore', 'Minimum Identity', 'Minimum Coverage', 'Top Proportion',
@@ -268,8 +268,13 @@ def read_tax_acc(taxfile):
     print "> 3 > Read in taxonomy information!"
     for l in tx:
         lne = l.rstrip().strip(";").split("\t")
-        if len(lne) == 2:
-            acctax[lne[0].split(".")[0]] = dict(x.split(":", 1) for x in lne[1].split(";"))
+
+        if (levels[0] + ':') not in l:
+            acc2tax[lne[0].split('.')[0]] = dict(zip(levels, reversed(lne[1].split(';'))))
+            input_sequences[entry.qname].hits.append(entry.rname)
+        else:
+            if len(lne) == 2:
+                acctax[lne[0].split(".")[0]] = dict(x.split(":", 1) for x in lne[1].split(";"))
     tx.close()
     return acctax
 
@@ -288,50 +293,6 @@ check_program("blastdbcmd")
 
 ## check whether muscle is located in the path
 check_program("muscle")
-
-## read in blastn output
-# b = open(fsa + '.blastn')
-# qtosdic = {}
-# giinfo = {}
-# sublist = []
-# for ln in b:
-#     ln = ln.rstrip()
-#     line = ln.split("\t")
-#     sstart = int(line[8])
-#     send = int(line[9])
-#     sstrand = line[13]
-#     slen = int(line[14])
-#     bltscore = float(line[12])
-#     evalue = float(line[10])
-#     identity = float(line[2])
-#     ### extend sstart and send by gap ###
-#     if (sstart - gap) < 1:
-#         sstart = 1
-#     else:
-#         sstart -= gap
-#     if (send + gap) > slen:
-#         send = slen
-#     else:
-#         send += gap
-#         ### calculate coverage ###
-#     coverage = float(line[3]) / float(line[15])
-#     ### filter hits ###
-#     if evalue < eset and identity > iset and coverage >= cvrset and line[11] > bset:
-#         if line[0].replace("|", "_") not in sublist:
-#             subcount = 1
-#             topsc = float(line[11])
-#             qtosdic[line[0].replace("|", "_")] = [line[1] + ":" + str(sstart) + "-" + str(send)]
-#             sublist.append(line[0].replace("|", "_"))
-#         else:
-#             bitsc = float(line[11])
-#             if (topsc - bitsc) / topsc < topper and subcount < nsub:
-#                 qtosdic[line[0].replace("|", "_")].append(line[1] + ":" + str(sstart) + "-" + str(send))
-#                 subcount += 1
-# b.close()
-
-# print "Cut offs"
-# print "evalue:",eset,"identity:", iset, "coverage:", cvrset
-# print qtosdic.values()
 
 ### read in pre-formatted lineage information ###
 acc2tax = read_tax_acc(tax)
@@ -360,7 +321,6 @@ with open(reference_fasta) as f:
         reference_sequences[r.id] = str(r.seq)
 
 outfile = open(outfile_name, 'w')
-levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
 for seqn, info in input_sequences.items():
     if seqn in acc2tax:
         print "[WARNING] Your sequence " + seqn + " has the same ID as the reference database! Please correct it!"
