@@ -368,8 +368,6 @@ for seqn, info in input_sequences.items():
         outfile.write(seqn + "\tSkipped\n")
         continue
 
-    # os.system("rm -f " + seqn + ".dblist")
-    # os.system("rm -f " + seqn + ".hitdb.fsa")
     ### Get all the hits list belong to the same query ###
     ### Add query fasta sequence to extracted hit fasta ###
     fifsa = open(seqn + ".hits.fsa", 'w')
@@ -384,8 +382,8 @@ for seqn, info in input_sequences.items():
     ### Run muscle ###
     os.system("muscle -quiet -clw -in " + seqn + ".hits.fsa -out " + seqn + ".muscle")
     alndic = get_dic_from_aln(seqn + ".muscle")
-    # os.system("rm " + seqn + ".hits.fsa")
-    # os.system("rm " + seqn + ".muscle")
+    os.system("rm " + seqn + ".hits.fsa")
+    os.system("rm " + seqn + ".muscle")
     #    	print "Processing:",k1
     ### get gap position and truncate the alignment###
     start, end = get_gap_pos(seqn, alndic)
