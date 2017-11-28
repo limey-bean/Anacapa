@@ -71,7 +71,7 @@ filtRs <- file.path(filt_path, paste0(sample.names, "_R_filt.fastq.gz"))
 
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, minLen = 70,
                      maxN=0, maxEE=c(2,2), truncQ=0, rm.phix=TRUE,
-                     compress=F, multithread=F) # On Windows set multithread=FALSE
+                     compress=F,matchIDs=TRUE, multithread=F) # On Windows set multithread=FALSE
 head(out)
 
 ####################
