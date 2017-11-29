@@ -268,13 +268,12 @@ def read_tax_acc(taxfile):
     print "> 3 > Read in taxonomy information!"
     for l in tx:
         lne = l.rstrip().strip(";").split("\t")
-
+        if len(lne) != 2:
+            continue
         if (levels[0] + ':') not in l:
-            acc2tax[lne[0].split('.')[0]] = dict(zip(levels, reversed(lne[1].split(';'))))
-            input_sequences[entry.qname].hits.append(entry.rname)
+            acctax[lne[0].split('.')[0]] = dict(zip(levels, lne[1].split(';')))
         else:
-            if len(lne) == 2:
-                acctax[lne[0].split(".")[0]] = dict(x.split(":", 1) for x in lne[1].split(";"))
+            acctax[lne[0].split(".")[0]] = dict(x.split(":", 1) for x in lne[1].split(";"))
     tx.close()
     return acctax
 
