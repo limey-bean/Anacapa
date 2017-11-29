@@ -64,6 +64,8 @@ plotQualityProfile(fnFo[1:2])
 filt_path <- file.path(path, "filtered") # Place filtered files in filtered/ subdirectory
 filtFos <- file.path(filt_path, paste0(sample.names, "_F_filto.fastq.gz"))
 
+exists <- file.exists(filtFos) 
+filtFos <- filtFos[exists]
 
 out <- filterAndTrim(fnFo, filtFos, minLen = 70,
                      maxN=0, maxEE=c(2), truncQ=0, rm.phix=TRUE,
