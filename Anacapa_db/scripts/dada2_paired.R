@@ -68,6 +68,10 @@ filt_path <- file.path(path, "filtered") # Place filtered files in filtered/ sub
 filtFs <- file.path(filt_path, paste0(sample.names, "_F_filt.fastq.gz"))
 filtRs <- file.path(filt_path, paste0(sample.names, "_R_filt.fastq.gz"))
 
+#should fix empty file problem
+exists <- file.exists(filtFs) & file.exists(filtRs)
+filtFs <- filtFs[exists]
+filtRs <- filtRs[exists]
 
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, minLen = 70,
                      maxN=0, maxEE=c(2,2), truncQ=0, rm.phix=TRUE,
