@@ -288,7 +288,7 @@ def read_tax_acc(taxfile):
 # check_taxdb()
 
 ## check whether blastdbcmd is located in the path
-check_program("blastdbcmd")
+#check_program("blastdbcmd")
 
 ## check whether muscle is located in the path
 check_program("muscle")
