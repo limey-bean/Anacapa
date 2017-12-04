@@ -392,7 +392,7 @@ for seqn, info in input_sequences.items():
     for level in levels:
         levels_votes = votes_by_level[level]
         outfile.write(level + ":" + str(max(levels_votes.values())) + ";")
-    outfile.write("\t;".join(info.hits))
+    outfile.write("\t" + ";".join(info.hits))
 
     outfile.write("\n")
 
