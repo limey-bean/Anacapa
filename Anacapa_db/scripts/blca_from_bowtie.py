@@ -5,6 +5,8 @@
 import sys
 import os
 import math
+import subprocess
+import StringIO
 
 try:
     from Bio import AlignIO, SeqIO
@@ -169,13 +171,6 @@ for o, a in opts:
         assert False, 'unhandle option'
 
 
-def check_taxdb():
-    ''' Check whether BLASTDB environmental variable has been setup'''
-    if 'BLASTDB' not in os.environ.keys():
-        print "ERROR: taxdb location has not been set up as the environmental variable BLASTDB. Please set up as \n\texport BLASTDB=/location/of/taxdb.bti/and/taxdb.btd/"
-        sys.exit(1)
-
-
 def check_program(prgname):
     '''Check whether a program has been installed and put in the PATH'''
     path = os.popen("which " + prgname).read().rstrip()
@@ -265,7 +260,6 @@ def cut_gap(alndic, start, end):
 def read_tax_acc(taxfile):
     tx = open(taxfile)
     acctax = {}
-    print "> 3 > Read in taxonomy information!"
     for l in tx:
         lne = l.rstrip().strip(";").split("\t")
         if len(lne) != 2:
@@ -284,17 +278,12 @@ def read_tax_acc(taxfile):
 ##
 ################################################################
 
-## check taxdb
-# check_taxdb()
-
-## check whether blastdbcmd is located in the path
-#check_program("blastdbcmd")
-
 ## check whether muscle is located in the path
 check_program("muscle")
 
 ### read in pre-formatted lineage information ###
 acc2tax = read_tax_acc(tax)
+print "> 1 > Read in taxonomy information!"
 SequenceInfo = namedtuple('SequenceInfo', ['seq', 'hits'])
 ### read in input fasta file ###
 input_sequences = {}
@@ -312,12 +301,14 @@ with open(sam_file_name) as sam_file:
             input_sequences[entry.qname] = SequenceInfo(seq=entry.seq, hits=[entry.rname])
 
 rejects = possible_rejects.difference(set(input_sequences))
-print "> 1 > Read in bowtie2 output!"
+print "> 2 > Read in bowtie2 output!"
 
 reference_sequences = {}
 with open(reference_fasta) as f:
     for r in SeqIO.parse(f, "fasta"):
         reference_sequences[r.id] = str(r.seq)
+
+print "> 3 > Read in reference db"
 
 outfile = open(outfile_name, 'w')
 for seqn, info in input_sequences.items():
@@ -329,20 +320,24 @@ for seqn, info in input_sequences.items():
 
     ### Get all the hits list belong to the same query ###
     ### Add query fasta sequence to extracted hit fasta ###
-    fifsa = open(seqn + ".hits.fsa", 'w')
+    fifsa = []
     for hit in info.hits:
         if hit not in reference_sequences:
             print "Missing reference sequence for " + hit
             continue
-        fifsa.write(">{}\n{}\n".format(hit, reference_sequences[hit]))
-    fifsa.write(">" + seqn + "\n" + info.seq)
-    fifsa.close()
+        fifsa.append(">{}\n{}\n".format(hit, reference_sequences[hit]))
+    fifsa.append(">" + seqn + "\n" + info.seq)
+    fifsa = "\n".join(fifsa)
     # os.system("rm " + seqn + ".dblist")
     ### Run muscle ###
-    os.system("muscle -quiet -clw -in " + seqn + ".hits.fsa -out " + seqn + ".muscle")
-    alndic = get_dic_from_aln(seqn + ".muscle")
-    os.system("rm " + seqn + ".hits.fsa")
-    os.system("rm " + seqn + ".muscle")
+    proc = subprocess.Popen(['muscle', '-quiet', '-clw'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    outs, errs = proc.communicate(fifsa)
+    # print outs
+    # print errs
+    # print StringIO.StringIO(outs)
+    alndic = get_dic_from_aln(StringIO.StringIO(outs))
+    # os.system("rm " + seqn + ".hits.fsa")
+    # os.system("rm " + seqn + ".muscle")
     #    	print "Processing:",k1
     ### get gap position and truncate the alignment###
     start, end = get_gap_pos(seqn, alndic)
@@ -351,7 +346,6 @@ for seqn, info in input_sequences.items():
     ### start bootstrap ###
     perdict = {}  # record alignmet score for each iteration
     pervote = {}  # record vote after nper bootstrap
-    ### If any equal score, average the vote ###
     for j in range(nper):
         random_scores = random_aln_score(trunc_alndic, seqn, match, mismatch, ngap)
         perdict[j] = random_scores
@@ -393,7 +387,13 @@ for seqn, info in input_sequences.items():
     outfile.write(seqn + "\t")
     for level in levels:
         levels_votes = votes_by_level[level]
-        outfile.write(level + ":" + max(levels_votes, key=levels_votes.get) + ";" + str(max(levels_votes.values())) + ";")
+        outfile.write(level + ":" + max(levels_votes, key=levels_votes.get) + ";")
+    outfile.write("\t")
+    for level in levels:
+        levels_votes = votes_by_level[level]
+        outfile.write(level + ":" + str(max(levels_votes.values())) + ";")
+    outfile.write("\t;".join(info.hits))
+
     outfile.write("\n")
 
 for seqn in rejects:
