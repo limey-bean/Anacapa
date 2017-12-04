@@ -10,9 +10,9 @@
  barC_length = args[3] # expected seq length of the barcode.
 
 ## path to output
-path = paste(odirpath, "/paired/" ,barC, sep='')
-mergedoutpath=paste(odirpath, "/dada2_out/paired/merged/",barC, sep='')
-unmergedoutpath=paste(odirpath, "/dada2_out/paired/unmerged/",barC, sep='')
+path = paste(odirpath,"/paired/",barC,  sep='')
+mergedoutpath=paste(odirpath,"/", barC,"/dada2_bowtie2/paired/merged", sep='')
+unmergedoutpath=paste(odirpath,"/", barC,"/dada2_bowtie2/paired/unmerged", sep='')
 
 # Install packages that are not currently installed -----
 # This chunk may need attention, putting it here as a starting point - gsk
@@ -68,10 +68,14 @@ filt_path <- file.path(path, "filtered") # Place filtered files in filtered/ sub
 filtFs <- file.path(filt_path, paste0(sample.names, "_F_filt.fastq.gz"))
 filtRs <- file.path(filt_path, paste0(sample.names, "_R_filt.fastq.gz"))
 
+#should fix empty file problem
+exists <- file.exists(filtFs) & file.exists(filtRs)
+filtFs <- filtFs[exists]
+filtRs <- filtRs[exists]
 
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, minLen = 70,
                      maxN=0, maxEE=c(2,2), truncQ=0, rm.phix=TRUE,
-                     compress=F, multithread=F) # On Windows set multithread=FALSE
+                     compress=F,matchIDs=TRUE, multithread=F) # On Windows set multithread=FALSE
 head(out)
 
 ####################

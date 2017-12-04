@@ -9,8 +9,8 @@
  barC_length = args[3] # expected seq length of the barcode.
 
 ## path to output
-path = paste(odirpath, "/unpaired_2/" ,barC, sep='')
-outpath=paste(odirpath, "/dada2_out/unpaired_R/",barC, sep='')
+path = paste(odirpath,  "/unpaired_R/",barC,  sep='')
+outpath=paste(odirpath,"/", barC, "/dada2_bowtie2/unpaired_R/", sep='')
 
 
 ############################################################################################Forward Reads reads
@@ -132,7 +132,7 @@ nochime_r_fname.txt = paste(outpath,"/", "nochim_reverse",barC,".txt", sep='')
 
 #modify table so that there are unique specific names for each read, and that also include sample realtive abundance.
 makes.sense.seqtabRo.nochim <- t(seqtabRo.nochim)
-makes.sense.seqtabRo.nochim <- cbind(seqeunces = rownames(makes.sense.seqtabRo.nochim), makes.sense.seqtabRo.nochim)
+makes.sense.seqtabRo.nochim <- cbind(sequences = rownames(makes.sense.seqtabRo.nochim), makes.sense.seqtabRo.nochim)
 rownames(makes.sense.seqtabRo.nochim) <- NULL
 makes.sense.seqtabRo.nochim <- as.data.frame(makes.sense.seqtabRo.nochim)
 makes.sense.seqtabRo.nochim$seqnum <- 1:nrow(makes.sense.seqtabRo.nochim) 
@@ -144,6 +144,6 @@ makes.sense.seqtabRo.nochim[[reverse_barC]] <- NULL
 
 # final data transfermations, and export of reads as fasta files and accompanying data table.
 nochim_reverse  <- makes.sense.seqtabRo.nochim[,c(which(colnames(makes.sense.seqtabRo.nochim)==reversebarCseqnum),which(colnames(makes.sense.seqtabRo.nochim)!=reversebarCseqnum))]
-nochim_reverse_seq <- data.frame(nochim_reverse[[reversebarCseqnum]],nochim_reverse$seqeunces)
+nochim_reverse_seq <- data.frame(nochim_reverse[[reversebarCseqnum]],nochim_reverse$sequences)
 nochim_reverse_seq.fasta = dataframe2fas(nochim_reverse_seq, file= nochime_r_fname.fasta)
 write.table(nochim_reverse, file = nochime_r_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
