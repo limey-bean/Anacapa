@@ -51,10 +51,11 @@ list.files(path)
 ### Filter and Trim
 ####################
 
+
 # Sort ensures forward/reverse reads are in same order
 fnFo <- sort(list.files(path, pattern="_Paired_1_singletons.fastq"))
 # Extract sample names, assuming filenames have format: SAMPLENAME_XXX.fastq
-sample.names <- sapply(strsplit(fnFo, "_Paired_1_singletons.fastq"), `[`, 1)
+sample.namesO <- sapply(strsplit(fnFo, "_Paired_1_singletons.fastq"), `[`, 1)
 # Specify the full path to the fnFo and fnRs
 fnFo <- file.path(path, fnFo)
 
