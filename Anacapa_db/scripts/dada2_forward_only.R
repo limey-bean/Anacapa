@@ -62,13 +62,16 @@ fnFo <- file.path(path, fnFo)
 plotQualityProfile(fnFo[1:2])
 
 filt_path <- file.path(path, "filtered") # Place filtered files in filtered/ subdirectory
-filtFos <- file.path(filt_path, paste0(sample.names, "_F_filto.fastq.gz"))
+filtFos <- file.path(filt_path, paste0(sample.namesO, "_F_filto.fastq.gz"))
 
 
 out <- filterAndTrim(fnFo, filtFos, minLen = 70,
                      maxN=0, maxEE=c(2), truncQ=0, rm.phix=TRUE,
                      compress=TRUE, multithread=TRUE) # On Windows set multithread=FALSE
 head(out)
+
+exists <- file.exists(filtFos) 
+filtFos <- filtFos[exists]
 
 ####################
 ### learn errors
@@ -83,6 +86,7 @@ plotErrors(errFo, nominalQ=TRUE)
 
 derepFso <- derepFastq(filtFos, verbose=TRUE)
 # Name the derep-class objects by the sample names
+sample.names <- sapply(strsplit(basename(filtFos), "_F_filto.fastq.gz"), `[`, 1)
 names(derepFso) <- sample.names
 
 ####################
@@ -107,7 +111,6 @@ table(nchar(getSequences(seqtabFo)))
 
 seqtabFo.nochim <- removeBimeraDenovo(seqtabFo, method="consensus", multithread=TRUE, verbose=TRUE)
 dim(seqtabFo.nochim)
-
 sum(seqtabFo.nochim)/sum(seqtabFo)
 
 ####################
@@ -115,9 +118,14 @@ sum(seqtabFo.nochim)/sum(seqtabFo)
 ####################
 
 getN <- function(x) sum(getUniques(x))
-track <- cbind(out, sapply(dadaFos, getN), rowSums(seqtabFo), rowSums(seqtabFo.nochim))
+rownames(out) <- sample.namesO
+out_nonzeros <- out[sample.names,]
+track <- cbind(out_nonzeros, sapply(dadaFos, getN), rowSums(seqtabFo), rowSums(seqtabFo.nochim))
 colnames(track) <- c("input", "filtered", "denoised", "tabled", "nonchim")
 rownames(track) <- sample.names
+functionally_useless <- cbind(out[-(which(rownames(out) %in% sample.names)),],0,0,0)
+colnames(functionally_useless) <- c("input", "filtered", "denoised", "tabled", "nonchim")
+track <- rbind(track, functionally_useless)
 head(track)
 
 ###########################################
