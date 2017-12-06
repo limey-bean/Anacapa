@@ -16,23 +16,40 @@ unmergedoutpath=paste(odirpath,"/", barC,"/dada2_bowtie2/paired/unmerged", sep='
 
 # Install packages that are not currently installed -----
 # This chunk may need attention, putting it here as a starting point - gsk
- .cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble")
- .bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings", "dada2")
- 
- .inst <- .cran_packages %in% installed.packages()
- if (any(!.inst)) {
-   install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
- }
-# 
- .inst <- .bioc_packages %in% installed.packages()
- if (any(!.inst)) {
-   source("http://bioconductor.org/biocLite.R")
-   biocLite(.bioc_packages[!.inst])
- }
+
+# 1. Download packages from CRAN
+.cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble", "devtools", "Matrix", "mgcv")
+.inst <- .cran_packages %in% installed.packages()
+if (any(!.inst)) {
+  install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
+}
+
+# 2. Download packages from biocLite
+.bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings")
+.inst <- .bioc_packages %in% installed.packages()
+if (any(!.inst)) {
+  source("http://bioconductor.org/biocLite.R")
+  biocLite(.bioc_packages[!.inst])
+}
+
+.dada_version = "1.6.0"
+.dada_version_gh = "v1.6"
+if("dada2" %in% installed.packages()){
+  if(packageVersion("dada2") == .dada_version) {
+    cat("congrats, right version of dada2")
+  } else {
+    devtools::install_github("benjjneb/dada2", ref=.dada_version_gh)
+  }
+}
+
 ####################################################################################### process paired end reads
 
 library("dada2")
 cat(paste("dada2 package version:", packageVersion("dada2")))
+if(packageVersion("dada2") != '1.6.0') {
+  stop("Please make sure you have dada version ", .dada_version, " installed")
+}
+
 library("seqRFLP")
 library("plyr")
 library("Biostrings")
