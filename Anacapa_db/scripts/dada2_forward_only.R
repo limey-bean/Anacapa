@@ -124,7 +124,7 @@ out_nonzeros <- out[sample.names,]
 track <- cbind(out_nonzeros, sapply(dadaFos, getN), rowSums(seqtabFo), rowSums(seqtabFo.nochim))
 colnames(track) <- c("input", "filtered", "denoised", "tabled", "nonchim")
 rownames(track) <- sample.names
-functionally_useless <- cbind(out[-(which(rownames(out) %in% sample.names)),],0,0,0)
+functionally_useless <- cbind(out[-(which(rownames(out) %in% sample.names)),],0,0,0,0)
 colnames(functionally_useless) <- c("input", "filtered", "denoised", "tabled", "nonchim")
 track <- rbind(track, functionally_useless)
 head(track)
