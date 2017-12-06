@@ -42,6 +42,11 @@ if("dada2" %in% installed.packages()){
   }
 }
 
+if(!("dada2" %in% installed.packages())){
+  # if the user doesn't have dada2 installed, install version 1.6 from github
+  devtools::install_github("benjjneb/dada2", ref=.dada_version_gh)
+}
+
 ####################################################################################### process paired end reads
 
 library("dada2")
