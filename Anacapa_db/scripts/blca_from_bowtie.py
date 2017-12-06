@@ -104,6 +104,7 @@ def usage():
     print "\t-f\t\tAlignment mismatch penalty. Default: -2.5"
     print "\t-g\t\tAlignment gap penalty. Default: -2\n - Other:"
     print "\t-t\t\tExtra number of nucleotides to include at the beginning and end of the hits. Default: 10"
+    print "\t-p\t\tPath to muscle"
     print "\t-h\t\tShow program usage and quit"
 
 
