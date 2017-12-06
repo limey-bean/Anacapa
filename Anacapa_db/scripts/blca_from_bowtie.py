@@ -86,7 +86,7 @@ class SamEntry(object):
 
 
 def usage():
-    print "\n<< Bayesian-based LCA taxonomic classification method >>\n\n   Please make sure the following softwares are in your PATH:\n\t1.muscle (http://www.drive5.com/muscle/downloads.htm), muscle should be the program's name.\n\t2.ncbi-blast suite (ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)\n\t3.Biopython should be installed locally.\n"
+    print "\n<< Bayesian-based LCA taxonomic classification method"
     print 'Usage: python ' + sys.argv[0] + ' -i <sam file> [option]\n'
     print " \nArguments:\n - Required:"
     print "\t-i\t\tInput fasta file.\n - Taxonomy Profiling Options [filtering of hits]:"
@@ -104,6 +104,7 @@ def usage():
     print "\t-f\t\tAlignment mismatch penalty. Default: -2.5"
     print "\t-g\t\tAlignment gap penalty. Default: -2\n - Other:"
     print "\t-t\t\tExtra number of nucleotides to include at the beginning and end of the hits. Default: 10"
+    print "\t-p\t\tPath to muscle"
     print "\t-h\t\tShow program usage and quit"
 
 
@@ -123,13 +124,14 @@ ngap = -2  # gap penalty
 match = 1  # match score
 mismatch = -2.5  # mismatch penalty
 levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
+muscle_path = 'muscle'
 
-opts, args = getopt.getopt(sys.argv[1:], "a:b:c:d:e:f:g:i:j:lm:n:o:r:q:t:s:h",
+opts, args = getopt.getopt(sys.argv[1:], "a:b:c:d:e:f:g:i:j:lm:n:o:r:q:t:s:p:h",
                            ['Minimum bitscore', 'Minimum Identity', 'Minimum Coverage', 'Top Proportion',
                             'Minimum evalue', 'Alignment Mismatch Penalty', 'Alignment Gap Penalty', 'Input File',
                             'Maximum Subjects', 'Long Output', 'Alignment Match Score', 'Number of Bootstrap to Run',
                             'Output File', 'Taxonomy File of Database', 'Reference FASTA file',
-                            'Number of nt Length of Sequence', 'help'])
+                            'Number of nt Length of Sequence', 'Path to muscle', 'help'])
 for o, a in opts:
     if o == "-i":
         sam_file_name = a
@@ -164,6 +166,8 @@ for o, a in opts:
         tax = a
     elif o == "-a":
         bset = float(a)
+    elif o == "-p":
+        muscle_path = a
     elif o in ('-h', '--help'):
         print usage()
         sys.exit(1)
@@ -279,7 +283,7 @@ def read_tax_acc(taxfile):
 ################################################################
 
 ## check whether muscle is located in the path
-check_program("muscle")
+# check_program("muscle")
 
 ### read in pre-formatted lineage information ###
 acc2tax = read_tax_acc(tax)
@@ -330,7 +334,7 @@ for seqn, info in input_sequences.items():
     fifsa = "\n".join(fifsa)
     # os.system("rm " + seqn + ".dblist")
     ### Run muscle ###
-    proc = subprocess.Popen(['muscle', '-quiet', '-clw'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    proc = subprocess.Popen([muscle_path, '-quiet', '-clw'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     outs, errs = proc.communicate(fifsa)
     # print outs
     # print errs
