@@ -11,11 +11,20 @@ args = commandArgs(trailingOnly=TRUE)
 if (length(args) != 4) {
   stop("please make sure there are 4 arguments: the barcode name, the path to fastq files, the expected seq length of the barcode, and the type of reads being processed")
 }
+
+# FOR TESTING
+# barC = "BAT16S"
+# odirpath = "/u/home/g/gaurav/bat_test"
+# barC_length = 200
+# paired_or_not = "forward"
+
 barC = args[1]  #barcode target
 odirpath = args[2]  #path to the fastq files
 barC_length = args[3] # expected seq length of the barcode.
 paired_or_not = args[4] # type of reads- should be "paired", "forward", or "reverse
 
+
+# confirm that the user has specified paired_or_not properly
 if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
   stop("Please specify sequence type as 'paired', 'forward', or 'reverse'")
 }
@@ -35,37 +44,42 @@ if (paired_or_not == "paired") {
   
 }
 
+# Confirm that the user has Write access to the path
+if (file.access(path, mode = 2) != 0) {
+  stop("Please make sure that you have write access to the supplied path.")
+}
+
 # Manage packages -----
 
 # 1. Download packages from CRAN
-.cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble", "devtools", "Matrix", "mgcv")
-.inst <- .cran_packages %in% installed.packages()
-if (any(!.inst)) {
-  install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
-}
-
-# 2. Download packages from biocLite
-.bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings")
-.inst <- .bioc_packages %in% installed.packages()
-if (any(!.inst)) {
-  source("http://bioconductor.org/biocLite.R")
-  biocLite(.bioc_packages[!.inst])
-}
-
-.dada_version = "1.6.0"
-.dada_version_gh = "v1.6"
-if("dada2" %in% installed.packages()){
-  if(packageVersion("dada2") == .dada_version) {
-    cat("congrats, right version of dada2")
-  } else {
-    devtools::install_github("benjjneb/dada2", ref=.dada_version_gh)
-  }
-}
-
-if(!("dada2" %in% installed.packages())){
-  # if the user doesn't have dada2 installed, install version 1.6 from github
-  devtools::install_github("benjjneb/dada2", ref=.dada_version_gh)
-}
+# .cran_packages  <-  c("ggplot2", "plyr", "dplyr","seqRFLP", "reshape2", "tibble", "devtools", "Matrix", "mgcv")
+# .inst <- .cran_packages %in% installed.packages()
+# if (any(!.inst)) {
+#   install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
+# }
+# 
+# # 2. Download packages from biocLite
+# .bioc_packages <- c("phyloseq", "genefilter", "impute", "Biostrings")
+# .inst <- .bioc_packages %in% installed.packages()
+# if (any(!.inst)) {
+#   source("http://bioconductor.org/biocLite.R")
+#   biocLite(.bioc_packages[!.inst])
+# }
+# 
+# .dada_version = "1.6.0"
+# .dada_version_gh = "v1.6"
+# if("dada2" %in% installed.packages()){
+#   if(packageVersion("dada2") == .dada_version) {
+#     cat("congrats, right version of dada2")
+#   } else {
+#     devtools::install_github("benjjneb/dada2", ref=.dada_version_gh)
+#   }
+# }
+# 
+# if(!("dada2" %in% installed.packages())){
+#   # if the user doesn't have dada2 installed, install version 1.6 from github
+#   devtools::install_github("benjjneb/dada2", ref=.dada_version_gh)
+# }
 
 library("dada2")
 cat(paste("dada2 package version:", packageVersion("dada2")))
@@ -103,10 +117,10 @@ dir.create(path = paste0(path, "/plots"))
 
 # Make a vector of two randomly sampled files with non-zero amounts of sequence data
 files_for_qual_plot <- sample(fnFs[file.size(fnFs) > 0], 2, replace = F)
-plotQualityProfile(files_for_qual_plot)# + ggsave(filename = paste0(path, "/plots/forward_qualities.pdf"))
+plotQualityProfile(files_for_qual_plot) + ggsave(filename = paste0(path, "/plots/forward_qualities.pdf"))
 if(paired_or_not == "paired") {
   files_for_qual_plot_R <- sample(fnRs[file.size(fnRs) > 0], 2, replace = F)
-  plotQualityProfile(files_for_qual_plot_R) #+ ggsave(filename = paste0(path, "/plots/reverse_qualities.pdf"))
+  plotQualityProfile(files_for_qual_plot_R) + ggsave(filename = paste0(path, "/plots/reverse_qualities.pdf"))
 }
 
 
@@ -135,13 +149,6 @@ if(paired_or_not == "paired") {
 }
 head(filtered_seqs)
 
-if(paired_or_not == "paired") {
-  filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_F_filt.fastq.gz"), `[`, 1)
-} else if (paired_or_not == "forward") {
-  filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_F_filt.fastq.gz"), `[`, 1)
-} else {
-  filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_R_filt.fastq.gz"), `[`, 1)
-}
 
 # Check for cases where the filtering step left zero sequences in the output file----
 
@@ -149,9 +156,15 @@ if (paired_or_not == "paired") {
   exists <- file.exists(filtered_seqs_name) & file.exists(filtered_seqs_name_R)
   filtered_seqs_name <- filtered_seqs_name[exists]
   filtered_seqs_name_R <- filtered_seqs_name_R[exists]
+  filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_F_filt.fastq.gz"), `[`, 1) 
+} else if (paired_or_not == "forward") {
+  exists <- file.exists(filtered_seqs_name) 
+  filtered_seqs_name <- filtered_seqs_name[exists]
+  filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_F_filt.fastq.gz"), `[`, 1)
 } else {
   exists <- file.exists(filtered_seqs_name) 
   filtered_seqs_name <- filtered_seqs_name[exists]
+  filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_R_filt.fastq.gz"), `[`, 1)
 }
 
 # Learn errors and save plots---------
@@ -161,7 +174,7 @@ if (paired_or_not == "paired"){
   plotErrors(error_profile, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/forward_error_profile.pdf"))
   plotErrors(error_profile_R, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/reverse_error_profile.pdf"))
 } else {
-  error_profile <- learnErrors(filtFos, multithread=TRUE)
+  error_profile <- learnErrors(filtered_seqs_name, multithread=TRUE)
   plotErrors(error_profile, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/singleton_error_profile.pdf"))
 }
 
@@ -203,24 +216,32 @@ seqtab_nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE
 # Track the status of the sequences through the steps ----
 getN <- function(x) {sum(getUniques(x))}
 
-rownames(filtered_seqs) <- filtered_sample_names
-filtered_seqs_nonzeros <- filtered_seqs[filtered_sample_names,]
-functionally_useless <- cbind(filtered_seqs[-(which(rownames(filtered_seqs_nonzeros) %in% filtered_sample_names)),],0,0,0,0)
-colnames(functionally_useless) <- c("input", "filtered", "denoised", "tabled", "nonchim")
+rownames(filtered_seqs) <- all_sample_names
+
+filtered_seqs <- as.data.frame(filtered_seqs) %>% rownames_to_column("name")
+
+filtered_seqs_nonzeros <- filtered_seqs %>% filter(name %in% filtered_sample_names) 
+functionally_useless <- filtered_seqs %>% filter(!(name %in% filtered_sample_names)) %>% rename(input = reads.in, filtered = reads.out)
+# functionally_useless <- data.frame(input = filtered_seqs[-(which(rownames(filtered_seqs) %in% filtered_sample_names)),1],
+#                                    filtered = filtered_seqs[-(which(rownames(filtered_seqs) %in% filtered_sample_names)),2])
 
 if (paired_or_not == "paired") {
-  track <- data.frame(input = filtered_seqs_nonzeros[,"reads.in"], filtered = filtered_seqs_nonzeros[,"reads.out"], 
-                      denoised = sapply(dadaFs, getN), 
+  track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
+                      input = filtered_seqs_nonzeros[,"reads.in"], 
+                      filtered = filtered_seqs_nonzeros[,"reads.out"], 
+                      denoised = sapply(dada_output, getN), 
                       merged = sapply(mergers, getN), 
                       tabled = rowSums(seqtab),
                       nochim = rowSums(seqtab_nochim)) 
 } else {
-  track <- data.frame(input = filtered_seqs_nonzeros[,"reads.in"], filtered = filtered_seqs_nonzeros[,"reads.out"], 
-                      denoised = sapply(dadaFs, getN), 
+  track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
+                      input = filtered_seqs_nonzeros[,"reads.in"], 
+                      filtered = filtered_seqs_nonzeros[,"reads.out"], 
+                      denoised = sapply(dada_output, getN), 
                       tabled = rowSums(seqtab),
                       nochim = rowSums(seqtab_nochim)) 
 }
-track <- rbind(track, functionally_useless)
+track <- plyr::rbind.fill(track, functionally_useless)
 
 head(track)
 
@@ -245,14 +266,20 @@ if (paired_or_not == "paired") {
   nochim_fname.txt = paste(outpath,"/", "nochim_reverse",barC,".txt", sep='')
 }
 
-makes.sense.seqtab.nochim <- t(seqtab_nochim)
-nochim_merged <- makes.sense.seqtab.nochim %>% data.frame %>%
+seqtab_nochim <- t(seqtab_nochim)
+nochim_merged <- seqtab_nochim %>% data.frame %>%
   rownames_to_column %>% rename(sequence = rowname) %>% # make sequences into a column
   mutate(!!working_barcode_seqnum := paste0(working_barcode_name,"_",row_number())) %>% # Make a new column w seq number
   select(!!working_barcode_seqnum,everything()) # reorder the columns
 
 # Save this table 
-write.table(nochim_merged, file = nochim_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
+if(paired_or_not == "paired") {
+  dir.create(mergedoutpath, recursive = T)
+  write.table(nochim_merged, file = nochim_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
+} else {
+  dir.create(outpath, recursive = T)
+  write.table(nochim_merged, file = nochim_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
+}
 
 # Make a fasta file out of the sequences in this table
 nochim_merged_seq <- nochim_merged %>% select(!!working_barcode_seqnum, sequence)
@@ -260,7 +287,7 @@ nochim_merged_seq.fasta = dataframe2fas(nochim_merged_seq, file= nochim_fname.fa
 
 # If working with unpaired reads, this is the end! --------------
 if(paired_or_not != "paired"){
-  quit("Done!")
+  stop("Done!")
 }
 
 # If working with paired data, there's more to be done ----------
@@ -292,10 +319,10 @@ mine_unmerged <- function(df, seqs_list, forward_or_reverse) {
 }
 
 pairedsum_unmerged_table$sequenceF <- apply(pairedsum_unmerged_table, 1, function(x) 
-  mine_unmerged(x, seqs_list = dadaFs, forward_or_reverse = "forward"))
+  mine_unmerged(x, seqs_list = dada_output, forward_or_reverse = "forward"))
 
 pairedsum_unmerged_table$sequenceR <- apply(pairedsum_unmerged_table, 1, function(x) 
-  mine_unmerged(x, seqs_list = dadaRs, forward_or_reverse = "reverse"))
+  mine_unmerged(x, seqs_list = dada_output_R, forward_or_reverse = "reverse"))
 
 
 ##############################################################
@@ -321,7 +348,10 @@ pairedsum_unmerged_table$sequenceF_N_Rrc <- paste(pairedsum_unmerged_table$seque
 pairedsum_unmerged_dada2 <- pairedsum_unmerged_table %>% filter(keep == TRUE) %>% select(sequenceF_N_Rrc, id, abundance)
 
 
-#View(pairedsum_unmerged_dada2 %>% group_by(sequenceF_N_Rrc) %>% summarise(sum= n()))
+
+if (nrow(pairedsum_unmerged_dada2) == 0) {
+  stop("Done! None of the paired-but-unmerged reads were kept.")
+}
 
 # Spread the dataframe, and sum up the abundances per id
 unmerged_seqtab <- dcast(pairedsum_unmerged_dada2, sequenceF_N_Rrc ~ id, fun.aggregate = sum) %>% 
