@@ -26,7 +26,8 @@ paired_or_not = args[4] # type of reads- should be "paired", "forward", or "reve
 
 # confirm that the user has specified paired_or_not properly
 if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
-  stop("Please specify sequence type as 'paired', 'forward', or 'reverse'")
+  cat("Please specify sequence type as 'paired', 'forward', or 'reverse'")
+  quit()
 }
 
 ## path to output
@@ -287,7 +288,8 @@ nochim_merged_seq.fasta = dataframe2fas(nochim_merged_seq, file= nochim_fname.fa
 
 # If working with unpaired reads, this is the end! --------------
 if(paired_or_not != "paired"){
-  stop("Done with analyzing your unpaired reads!")
+  cat("Done with analyzing your unpaired reads!\n\n")
+  quit()
 }
 
 # If working with paired data, there's more to be done ----------
@@ -350,7 +352,8 @@ pairedsum_unmerged_dada2 <- pairedsum_unmerged_table %>% filter(keep == TRUE) %>
 
 
 if (nrow(pairedsum_unmerged_dada2) == 0) {
-  stop("Done with analzing your paired reads! None of the paired-but-unmerged reads were kept.")
+  cat("Done with analyzing your paired reads! None of the paired-but-unmerged reads were kept.\n\n")
+  quit()
 }
 
 # Spread the dataframe, and sum up the abundances per id
@@ -412,4 +415,5 @@ nochim_unmerged_seq_R.fasta = dataframe2fas(nochim_unmerged_seq_R, file= nochim_
 
 # write summary table 
 write.table(unmerged_seqtab_nochim, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
-stop("Done with analzing your paired reads!")
+cat("Done with analzing your paired reads!\n\n")
+quit()
