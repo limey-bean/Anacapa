@@ -1,6 +1,8 @@
 # Written by Jesse Gomer (jessegomer@gmail.com)
 # for the University of California Conservation Consortium's CALeDNA Program
 
+# command to run: python path/to/append_blca_to_summary.py -o optional/path/to/output/txtfile path/to/summary_dada2.txt path/to/blca.out
+
 import argparse
 import shutil
 from collections import namedtuple
