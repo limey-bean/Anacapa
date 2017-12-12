@@ -48,11 +48,11 @@ rm -r ${OUT}/paired/${MB}/filtered
 ########################################
 ### end to end mode
 
-bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}.fasta -S ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_end_to_end.sam --no-hd --no-sq --very-sensitive --end-to-end --no-unal -p 120 -k 100 --un ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_end_to_end_reject.fasta --omit-sec-seq
+bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}.fasta -S ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_end_to_end.sam --no-hd --no-sq --very-sensitive --end-to-end --no-unal -p 120 -k 100 --un ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_end_to_end_reject.fasta
 
 ### local mode
 
-bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_end_to_end_reject.fasta -S ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 100 --un ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_end_to_end_and_local_reject.fasta --omit-sec-seq
+bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_end_to_end_reject.fasta -S ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 100 --un ${OUT}/${MB}/dada2_bowtie2/paired/merged/nochim_merged${MB}_end_to_end_and_local_reject.fasta
 
 ########################################
 # Summarize bowtie2 runs on merged paired reads and append to dada2 output
@@ -65,11 +65,11 @@ python ${DB}/scripts/append_bowtie_to_summary.py ${OUT}/${MB}/dada2_bowtie2/pair
 ########################################
 
 ### end to end mode
-bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -1 ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}F.fasta -2 ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}R.fasta -S ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end.sam --no-hd --no-sq --very-sensitive --end-to-end --no-unal -p 120 -k 100 --fr --rf --no-mixed --un-conc ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end_reject.fasta --omit-sec-seq --no-discordant
+bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -1 ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}F.fasta -2 ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}R.fasta -S ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end.sam --no-hd --no-sq --very-sensitive --end-to-end --no-unal -p 120 -k 100 --fr --rf --no-mixed --un-conc ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end_reject.fasta --no-discordant
 
 ### local mode
 
-bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index -f -1 ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end_reject.1.fasta -2 ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end_reject.2.fasta -S ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 100 --un-conc ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end_and_local_reject.fasta --omit-sec-seq --no-discordant
+bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index -f -1 ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end_reject.1.fasta -2 ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end_reject.2.fasta -S ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 100 --un-conc ${OUT}/${MB}/dada2_bowtie2/paired/unmerged/nochim_unmerged${MB}_end_to_end_and_local_reject.fasta --no-discordant
 
 ########################################
 # Summarize bowtie2 runs on unmerged paired reads and append to dada2 output
