@@ -18,9 +18,9 @@
 #cutadapt vars
 ERROR_QC1=".3"															## max percent errors allowed in between adapter or reverse complemented primer + adapter sequence and read sequence
 FILE_TYPE_QC1="fastq"													# fasta or fastq. 
-F_ADAPT="file:${DB}/adapters_and_PrimAdapt_rc/g_nextera_Forward_adapter.txt"   # path to file with the forward primer + adapter "g"
+F_ADAPT="file:${DB}/adapters_and_PrimAdapt_rc/g_${ADAPT}_Forward_adapter.txt"   # path to file with the forward primer + adapter "g"
 Rrc_PRIM_ADAPT="file:${DB}/adapters_and_PrimAdapt_rc/a_Reverse_PrimAdapt_rc.txt"   # path to the reverse complemented Reverse_adapter "a" that matches the forward primer + adapter "g"
-R_ADAPT="file:${DB}/adapters_and_PrimAdapt_rc/G_nextera_Reverse_adapter.txt"   # path to G_Reverse_adapter.txt primer + adapter "G"
+R_ADAPT="file:${DB}/adapters_and_PrimAdapt_rc/G_${ADAPT}_Reverse_adapter.txt"   # path to G_Reverse_adapter.txt primer + adapter "G"
 Frc_PRIM_ADAPT="file:${DB}/adapters_and_PrimAdapt_rc/A_Forward_PrimAdapt_rc.txt"   # path to the reverse complemented forward primer + adapter "A" that matches the reverse primer + adapter "G"
 R_PRIM_RC="file:${DB}/primers/a_reverse_rc_primers.txt"   # path to file with the forward primer + adapter "g"
 
