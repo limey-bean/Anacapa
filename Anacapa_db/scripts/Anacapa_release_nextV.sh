@@ -90,7 +90,7 @@ date
 ###
 
 echo "Preprocessing: 3) Uncompress files"
-gunzip ${OUT}/QC/fastq/*
+gunzip ${OUT}/QC/fastq/*.fastq.gz
 date
 ###
 
