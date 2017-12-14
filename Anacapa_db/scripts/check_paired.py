@@ -55,6 +55,15 @@ try:
         separator = None
 except:
     separator = " "    
+    
+# Make sure that the users path work as output paths
+if not path_to_pairds.endswith("/"):
+  path_to_pairds = path_to_pairds+"/"
+if not path_to_forwards.endswith("/"):
+  path_to_forwards = path_to_forwards+"/"
+if not path_to_reverses.endswith("/"):
+  path_to_reverses = path_to_reverses+"/"
+
 # Defining classes
 class Fastq(object):
     """Fastq object with name and sequence
@@ -111,10 +120,7 @@ if __name__ == "__main__":
     s1_finished = False
     s2_finished = False
     
-    # path_to_pairds = "/paired/"
-    # path_to_forwards = "/unpaired_F/"
-    # path_to_reverses = "/unpaired_R/"
-    # 
+    # Make output directories if they don't already exist
     if not os.path.exists(path_to_pairds):
       os.makedirs(path_to_pairds)
     if not os.path.exists(path_to_forwards):
@@ -127,8 +133,7 @@ if __name__ == "__main__":
     else:
     	outSuffix='.fastq'
 
-    print(path_to_pairds+os.path.basename(in1).replace(outSuffix,"") + "_pairs_R1" + outSuffix)
-
+    # Write the output files
     with myopen(path_to_pairds+os.path.basename(in1).replace(outSuffix,"") + "_pairs_R1" + outSuffix, "w") as out1:
         with myopen(path_to_pairds+os.path.basename(in2).replace(outSuffix,"")+ "_pairs_R2" + outSuffix, "w") as out2:
             with myopen(path_to_forwards+os.path.basename(in1).replace(outSuffix,"") + "_singles" + outSuffix, "w") as out3:
