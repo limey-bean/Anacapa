@@ -80,14 +80,15 @@ mkdir -p ${OUT}/QC/fastq
 ###
 for str in `ls ${IN}/*_${suffix1}.gz`
 do
- str1=${str%_S*}
+ str1=${str%*_${suffix1}.gz}
  i=${str1#${IN}/}
  mod=${i//_/-} 
- cp ${IN}/${i}_*_${suffix1}.gz ${OUT}/QC/fastq/${mod}_1.fastq.gz
- cp ${IN}/${i}_*_${suffix2}.gz ${OUT}/QC/fastq/${mod}_2.fastq.gz
+ cp ${IN}/${i}_${suffix1}.gz ${OUT}/QC/fastq/${mod}_1.fastq.gz
+ cp ${IN}/${i}_${suffix2}.gz ${OUT}/QC/fastq/${mod}_2.fastq.gz
 done
 date
 ###
+
 
 echo "Preprocessing: 3) Uncompress files"
 gunzip ${OUT}/QC/fastq/*.fastq.gz
@@ -163,8 +164,8 @@ do
   mkdir -p ${OUT}/${j}
   mkdir -p ${OUT}/${j}/${j}_sort_by_read_type
   mkdir -p ${OUT}/${j}/${j}_sort_by_read_type/paired
-  mkdir -p ${OUT}/${j}/${j}_sort_by_read_type/unpaired_F/
-  mkdir -p ${OUT}/${j}/${j}_sort_by_read_type/unpaired_R/
+  mkdir -p ${OUT}/${j}/${j}_sort_by_read_type/unpaired_F
+  mkdir -p ${OUT}/${j}/${j}_sort_by_read_type/unpaired_R
  
   for st in `ls ${OUT}/QC/cutadapt_fastq/primer_sort/${j}_*_Paired_1.fastq`
 	do
