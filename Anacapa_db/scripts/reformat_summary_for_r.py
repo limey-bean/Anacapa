@@ -35,7 +35,7 @@ def reformat_summary(summary_file_name, output_file_name, cutoff):
         # a colon in the taxonomy means that something was found
         if ':' in fields[taxonomy_index]:
             taxonomy = truncate_taxonomy(fields[taxonomy_index], fields[confidence_index], cutoff)
-            output_taxonomy = [taxonomy[level] for level in output_levels if level in taxonomy]
+            output_taxonomy = [taxonomy.get(level, '') for level in output_levels]
         else:
             output_taxonomy = ''
         fields_to_write = fields[:taxonomy_index] + [';'.join(output_taxonomy)]
