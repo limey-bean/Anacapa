@@ -33,15 +33,15 @@ if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
 ## path to output
 
 if (paired_or_not == "paired") {
-  path = paste(odirpath,"/paired/",barC,  sep='')
-  mergedoutpath=paste(odirpath,"/", barC,"/dada2_bowtie2/paired/merged", sep='')
-  unmergedoutpath=paste(odirpath,"/", barC,"/dada2_bowtie2/paired/unmerged", sep='')
+  path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/paired",  sep='')
+  mergedoutpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
+  unmergedoutpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
 } else if(paired_or_not == "forward") {
-  path = paste(odirpath,  "/unpaired_F/" ,barC, sep='')
-  outpath=paste(odirpath, "/", barC, "/dada2_bowtie2/unpaired_F", sep='')
+  path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/unpaired_F", sep='')
+  outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
 } else {
-  path = paste(odirpath,  "/unpaired_R/" ,barC, sep='')
-  outpath=paste(odirpath, "/", barC, "/dada2_bowtie2/unpaired_R", sep='')
+  path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/unpaired_R", sep='')
+  outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
   
 }
 
@@ -101,28 +101,28 @@ library("ggplot2")
 list.files(path)
 
 if(paired_or_not == "paired") {
-  fnFs <- sort(list.files(path, pattern="_Paired_1_sorted.fastq"))
-  fnRs <- sort(list.files(path, pattern="_Paired_2_sorted.fastq"))
+  fnFs <- sort(list.files(path, pattern="_Paired_1_pairs_R1.fastq"))
+  fnRs <- sort(list.files(path, pattern="_Paired_2_pairs_R2.fastq"))
   all_sample_names <- sapply(strsplit(fnFs, "_Paired"), `[`, 1)
   fnFs <- file.path(path, fnFs)
   fnRs <- file.path(path, fnRs)
   
 } else {
-  fnFs <- sort(list.files(path, pattern="_Paired_\\d_singletons.fastq"))
-  all_sample_names <- sapply(strsplit(fnFs, "_Paired_\\d_singletons.fastq"), `[`, 1)
+  fnFs <- sort(list.files(path, pattern="_Paired_\\d_singles.fastq"))
+  all_sample_names <- sapply(strsplit(fnFs, "_Paired_\\d_singles.fastq"), `[`, 1)
   fnFs <- file.path(path, fnFs)
 }
 
 # Make plots of sequence quality ------
-dir.create(path = paste0(path, "/plots"))
+#dir.create(path = paste0(path, "/plots"))
 
 # Make a vector of two randomly sampled files with non-zero amounts of sequence data
-files_for_qual_plot <- sample(fnFs[file.size(fnFs) > 0], 2, replace = F)
-plotQualityProfile(files_for_qual_plot) + ggsave(filename = paste0(path, "/plots/forward_qualities.pdf"))
-if(paired_or_not == "paired") {
-  files_for_qual_plot_R <- sample(fnRs[file.size(fnRs) > 0], 2, replace = F)
-  plotQualityProfile(files_for_qual_plot_R) + ggsave(filename = paste0(path, "/plots/reverse_qualities.pdf"))
-}
+#files_for_qual_plot <- sample(fnFs[file.size(fnFs) > 0], 2, replace = F)
+#plotQualityProfile(files_for_qual_plot) + ggsave(filename = paste0(path, "/plots/forward_qualities.pdf"))
+#if(paired_or_not == "paired") {
+#  files_for_qual_plot_R <- sample(fnRs[file.size(fnRs) > 0], 2, replace = F)
+#  plotQualityProfile(files_for_qual_plot_R) + ggsave(filename = paste0(path, "/plots/reverse_qualities.pdf"))
+#}
 
 
 # Make the path to which filtered sequences should be outputted ---------
@@ -172,11 +172,11 @@ if (paired_or_not == "paired") {
 if (paired_or_not == "paired"){
   error_profile <- learnErrors(filtered_seqs_name, multithread=TRUE)
   error_profile_R <- learnErrors(filtered_seqs_name_R, multithread=TRUE)
-  plotErrors(error_profile, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/forward_error_profile.pdf"))
-  plotErrors(error_profile_R, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/reverse_error_profile.pdf"))
+ # plotErrors(error_profile, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/forward_error_profile.pdf"))
+ # plotErrors(error_profile_R, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/reverse_error_profile.pdf"))
 } else {
   error_profile <- learnErrors(filtered_seqs_name, multithread=TRUE)
-  plotErrors(error_profile, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/singleton_error_profile.pdf"))
+ #plotErrors(error_profile, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/singleton_error_profile.pdf"))
 }
 
 # Dereplicate sequences -----------
