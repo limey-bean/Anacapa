@@ -1,6 +1,7 @@
 # Anacapa
 
-### Anacapa_release_V1		10-17-2017
+### Anacapa IN_FLUX as of 12-15-17!  Old scripts are avalible in the V1 branch...
+### Check back in a day or two for updates and instructions on how to use the new scripts!
 #### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Rachel Turba (rturba@ucla.edu ) and Rachel Meyer (rsmeyer@ucla.edu). 
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
 
