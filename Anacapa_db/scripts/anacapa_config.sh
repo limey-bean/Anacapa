@@ -31,6 +31,10 @@ ATS="module load ATS"									#or what ever code is used to load ATS in a bash s
 #load R
 R="module load R/3.4.2"
 
+#load python with numpy
+PYTHONWNUMPY="module load python/2.7.3"
+
+
 #load GCC
 GCC="module load gcc/6.3.0"
 
