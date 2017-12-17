@@ -96,7 +96,7 @@ tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt > 
 tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}no_head.txt 
 tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}no_head.txt 
 
-cat ${OUT}/${MB}/${MB}dada2_out/individual_out/*{MB}no_head.txt > ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp
+cat ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}no_head.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}no_head.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}no_head.txt > ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp
 
 cut -f1,3- ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp > ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt
 
