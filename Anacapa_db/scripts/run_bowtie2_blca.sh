@@ -43,6 +43,7 @@ ${FASTX_TOOLKIT} #load fastx_toolkit
 ${ANACONDA_PYTHON} #load anaconda/python2-4.2
 ${BOWTIE2}
 ${ATS} #load ATS, Hoffman2 specific module for managing submitted jobs.
+${PYTHONWNUMPY}
 date
 ###
 
@@ -90,29 +91,7 @@ bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index -f -1 ${OUT}/$
 
 echo "Concatenate all ASV site frequency tables and sam output"
 
-### delete sequence reads from single read dada2 tables
-
-tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}no_head.txt 
-tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}no_head.txt 
-tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}no_head.txt 
-
-cat ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}no_head.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}no_head.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}no_head.txt > ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp
-
-cut -f1,3- ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp > ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt
-
-
-### delete sequence reads from unmerged paired reads dada2 tables
-
-cut -f1,4- ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmergedCO1.txt  > ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt
-
-# concatenate ASV tables
-
-cat ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/${MB}_dada2_all_ASVs.txt
-
-#delete intermediate files
-#rm ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt 
-#rm ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt
-#rm ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp
+python ${DB}/scripts/merge_asv.py ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}.txt -o ${OUT}/${MB}/${MB}dada2_out/${MB}_dada2_all_ASVs.txt
 
 
 ######################################
