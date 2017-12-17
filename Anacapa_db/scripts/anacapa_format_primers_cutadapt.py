@@ -10,8 +10,8 @@ F_infile = open(sys.argv[2], "r") #fasta of forward primers
 R_infile = open(sys.argv[3], "r") #fasta of reverse primers
 
 out_path = sys.argv[4] +'/'
-prim_adapt = out_path + "adapters_and_PrimAdapt_rc/"
-prim = out_path + "primers/"
+prim_adapt = out_path
+prim = out_path
 
 adapt = sys.argv[1]
 next = "nextera"
