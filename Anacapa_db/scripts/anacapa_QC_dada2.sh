@@ -101,8 +101,8 @@ date
 echo "QC: 1) Run cutadapt to remove 5'sequncing adapters and 3'primers + sequencing adapters, sort for length, and quality."
 
 # Generate cut adapt primer files -> merge reverse complemented primers with adapters for cutting 3'end sequencing past the end of the metabarcode region, and add cutadapt specific characters to primers and primer/adapter combos so that the appropriate ends of reads are trimmed
-mkdir -p ${OUT}/Run_info/
-mkdir -p ${OUT}/Run_info/cutadapt_primers_and_adapters
+mkdir -p ${OUT}/Run_info/cutadapt_primers_and_adapters/primers
+mkdir -p ${OUT}/Run_info/cutadapt_primers_and_adapters/adapters_and_PrimAdapt_rc
 
 echo " "
 echo "Generating Primer and Primer + Adapter files for cutadapt steps.  Your adapter type is ${ADPT}."
