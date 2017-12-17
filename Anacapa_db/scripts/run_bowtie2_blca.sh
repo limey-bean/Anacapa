@@ -92,22 +92,28 @@ echo "Concatenate all ASV site frequency tables and sam output"
 
 ### delete sequence reads from single read dada2 tables
 
-cat ${OUT}/${MB}/${MB}dada2_out/individual_out/*${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp
+tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}no_head.txt 
+tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}no_head.txt 
+tail -n +2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}no_head.txt 
+
+cat ${OUT}/${MB}/${MB}dada2_out/individual_out/*{MB}no_head.txt > ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp
 
 cut -f1,3- ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp > ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt
 
+
 ### delete sequence reads from unmerged paired reads dada2 tables
 
-cut -f1,4- ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmergedCO1.txt   > ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt.tmp
+cut -f1,4- ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmergedCO1.txt  > ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt
 
 # concatenate ASV tables
 
-cat ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt.tmp > ${OUT}/${MB}/${MB}dada2_out/${MB}_dada2_all_ASVs.txt
+cat ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt > ${OUT}/${MB}/${MB}dada2_out/${MB}_dada2_all_ASVs.txt
 
 #delete intermediate files
-rm ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt.tmp 
-rm ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt
-rm ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp
+#rm ${OUT}/${MB}/${MB}dada2_out/unmerged${MB}.txt 
+#rm ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt
+#rm ${OUT}/${MB}/${MB}dada2_out/single${MB}.txt.tmp
+
 
 ######################################
 # concatenate bowtie2 tables and run blca
