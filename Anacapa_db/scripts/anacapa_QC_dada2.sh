@@ -204,7 +204,7 @@ do
     #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
     #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
     #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
-    if [${LOCALMODE} == "TRUE"];
+    if [[${LOCALMODE} == "TRUE"]];
     then
         bash ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
         bash ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
