@@ -11,7 +11,7 @@ RP=""
 ADPT=""
 ILLTYPE=""
 
-while getopts "i:o:d:u:f:r:a:t:l:" opt; do
+while getopts "i:o:d:u:f:r:a:t:l?" opt; do
     case $opt in
         i) IN="$OPTARG" # path to raw .fastq.gz files
         ;;
@@ -29,7 +29,7 @@ while getopts "i:o:d:u:f:r:a:t:l:" opt; do
         ;;
         t) ILLTYPE="$OPTARG"  #need to know trim params cutadapt
         ;;
-        l) LOCALMODE="TRUE" #
+        l) LOCALMODE="TRUE" #run dada2 locally (not on a cluster)
         ;;
     esac
 done
@@ -204,8 +204,9 @@ do
     #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
     #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
     #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
-    if [[${LOCALMODE} == "TRUE"]];
+    if [ "${LOCALMODE}" = "TRUE"  ]
     then
+        echo Running Dada2 inline
         bash ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
         bash ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
         bash ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
