@@ -15,7 +15,7 @@ prim = out_path
 
 adapt = sys.argv[1]
 next = "nextera"
-true = "trueseq"
+true = "truseq"
 
 if adapt == next:
    adapter_Frc='ACACCTGTCTCTTATACACATCTGACGCTGCCGACGA'
