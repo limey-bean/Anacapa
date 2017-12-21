@@ -59,7 +59,7 @@ do
     #make folders for the metabarcode specific output of dada2 and bowtie2
  	echo "${j}"
     # generate runlogs that you can submit at any time!
-    printf "#!/bin/bash\n#$ -l h_rt=20:00:00,h_data=48G\n#$ -N ${j}_bowtie2_blca\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}__bowtie2_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_bowtie2_blca_$JOB_ID.err \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\nsh ${DB}/scripts/run_bowtie2_blca.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_bowtie2_blca.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
+    printf "#!/bin/bash\n#$ -l h_rt=20:00:00,h_data=48G\n#$ -N bowtie2_${j}_blca\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}__bowtie2_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_bowtie2_blca_$JOB_ID.err \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\nsh ${DB}/scripts/run_bowtie2_blca.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_bowtie2_blca.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
     echo ''
     #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
  fi
