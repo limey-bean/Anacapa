@@ -91,7 +91,12 @@ bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index -f -1 ${OUT}/$
 
 echo "Concatenate all ASV site frequency tables and sam output"
 
-python ${DB}/scripts/merge_asv.py ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}.txt -o ${OUT}/${MB}/${MB}dada2_out/${MB}_dada2_all_ASVs.txt
+if [ -a "${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}.txt" ]; # ignore non-metabarcode folders...
+ then
+	python ${DB}/scripts/merge_asv.py ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}.txt -o ${OUT}/${MB}/${MB}dada2_out/${MB}_dada2_all_ASVs.txt
+ else
+	python ${DB}/scripts/merge_asv.py ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt -o ${OUT}/${MB}/${MB}dada2_out/${MB}_dada2_all_ASVs.txt
+fi 
 
 
 ######################################
