@@ -5,7 +5,7 @@
 
 import argparse
 import pandas as pd
-
+import os
 
 def read_table(file_name, rename=None):
     df = pd.read_csv(file_name, sep='\t', header=0, dtype='object')
@@ -25,7 +25,16 @@ def read_table(file_name, rename=None):
     return df
 
 
+def file_has_content(file_name):
+    try:
+        size = os.path.getsize(file_name)
+        return size > 0
+    except OSError:
+        return False
+
+
 def merge(file_names, outfile_name, rename=None):
+    file_names = [fn for fn in file_names if file_has_content(fn)]
     main_df = read_table(file_names[0], rename)
     columns = list(main_df)
     for file_name in file_names[1:]:
