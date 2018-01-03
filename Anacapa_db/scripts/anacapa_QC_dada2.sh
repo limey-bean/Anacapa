@@ -124,9 +124,13 @@ do
  j=${str1#${OUT}/QC/fastq/}
  echo ${j} "..."
  ${CUTADAPT} -e ${ERROR_QC1} -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} -G ${R_ADAPT} -A ${Frc_PRIM_ADAPT} -o ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -p ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq ${str1}_1.fastq ${str1}_2.fastq >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
+ rm ${str1}_1.fastq 
+ rm ${str1}_2.fastq
  # stringent quality fileter to get rid of the junky sequence at the ends - modify in config file
  fastq_quality_trimmer -t ${MIN_QUAL} -l ${MIN_LEN}  -i ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -o ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_1.fastq -Q33
+ rm ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq
  fastq_quality_trimmer -t ${MIN_QUAL} -l ${MIN_LEN}  -i ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq -o ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_2.fastq -Q33
+ rm ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq
  # sort by metabarcode but run additional trimming.  It makes a differnce in merging reads in dada2.  Trimming varies based on seqeuncing platform.
  echo "forward..."
  if [ "${ILLTYPE}" == "MiSeq"  ]; # if MiSeq chop more off the end than if HiSeq - modify length in the vars file
@@ -136,12 +140,16 @@ do
   echo "reverse..."
   ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM}  -u -${MS_R_TRIM} -o ${OUT}/QC/cutadapt_fastq/primer_sort/{name}_${j}_Paired_2.fastq   ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_2.fastq >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
   echo "check"
+  rm ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_1.fastq
+  rm ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_2.fastq
  else
   ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM}  -u -${HS_F_TRIM} -o ${OUT}/QC/cutadapt_fastq/primer_sort/{name}_${j}_Paired_1.fastq  ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_1.fastq >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
   echo "check"
   echo "reverse..."
   ${CUTADAPT} -e ${ERROR_PS} -f ${FILE_TYPE_PS} -g ${R_PRIM}  -u -${HS_R_TRIM} -o ${OUT}/QC/cutadapt_fastq/primer_sort/{name}_${j}_Paired_2.fastq   ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_2.fastq >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
   echo "check"
+  rm ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_1.fastq
+  rm ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_2.fastq
  fi
  date
  echo ${j} "...  check!"
@@ -176,10 +184,13 @@ do
  	k=${st2#${OUT}/QC/cutadapt_fastq/primer_sort/}
     python ${DB}/scripts/check_paired.py ${OUT}/QC/cutadapt_fastq/primer_sort/${k}_Paired_1.fastq ${OUT}/QC/cutadapt_fastq/primer_sort/${k}_Paired_2.fastq ${OUT}/${j}/${j}_sort_by_read_type/paired ${OUT}/${j}/${j}_sort_by_read_type/unpaired_F/ ${OUT}/${j}/${j}_sort_by_read_type/unpaired_R/
     echo ${j} "...check!" 
+    rm ${OUT}/QC/cutadapt_fastq/primer_sort/${k}_Paired_1.fastq
+    rm ${OUT}/QC/cutadapt_fastq/primer_sort/${k}_Paired_2.fastq
   done
  fi
 done
-
+rm -r ${OUT}/QC/fastq
+rm -r ${OUT}/QC/cutadapt_fastq
 ###############################
 # Make sure unassembled reads are still paired and submit dada2 jobs
 ###############################
