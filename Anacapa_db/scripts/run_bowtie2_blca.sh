@@ -98,8 +98,10 @@ python ${DB}/scripts/merge_asv.py ${OUT}/${MB}/${MB}dada2_out/individual_out/noc
 # concatenate bowtie2 tables and run blca
 ######################################
 
-### concat
+# enrich summary file with bowtie2 data
+python ${DB}/scripts/append_bowtie_to_summary.py ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt ${OUT}/${MB}/${MB}bowtie2_out/individual_out/
 
+### concat
 cat ${OUT}/${MB}/${MB}bowtie2_out/individual_out/*.sam > ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam
 
 ### blca

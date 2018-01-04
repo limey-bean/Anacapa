@@ -6,6 +6,7 @@
 import re
 import sys
 import os
+import glob
 import argparse
 import shutil
 from collections import defaultdict, Counter
@@ -69,18 +70,15 @@ class SamEntry(object):
         return max(beginning_s, ending_s)
 
 class SummaryAppender(object):
-    def __init__(self, local_sam_name, end_to_end_sam_name, taxonomy_file_name):
-        with open(taxonomy_file_name) as taxonomy_file:
-            self.taxonomy = self.load_taxonomy_file(taxonomy_file)
-        self.parsed_bowtie_output = {}
-        # each cutoff is a tuple of the cutoff_id,description,max_length_of_taxonomy
-        self.cutoffs = [(0.99, ".99-1.0", 6), (0.97, ".97-.9899", 5), (0.95, ".95-.9699", 4), (0.90, ".90-.9499", 3),
-                        (0.85, ".85-.8999", 2), (0.80, ".80-.8499", 1), (0.00, ".00-.7999", 0)]
+    def __init__(self, bowtie_out_directory):
 
-        with open(local_sam_name) as local_sam_file:
-            self.parsed_bowtie_output.update(self.parse_bowtie_output(local_sam_file, 'local'))
-        with open(end_to_end_sam_name) as sam_file:
-            self.parsed_bowtie_output.update(self.parse_bowtie_output(sam_file, 'end_to_end'))
+        self.parsed_bowtie_output = {}
+        for file_name in glob.glob(bowtie_out_directory + '*.sam'):
+            with open(file_name) as sam_file:
+                if '_local.sam' in file_name:
+                    self.parsed_bowtie_output.update(self.parse_bowtie_output(sam_file, 'local'))
+                elif '_end_to_end.sam' in file_name:
+                    self.parsed_bowtie_output.update(self.parse_bowtie_output(sam_file, 'end_to_end'))
 
     def load_taxonomy_file(self, taxonomy_file):
         taxonomy = {}
@@ -110,54 +108,17 @@ class SummaryAppender(object):
         return summary
 
     def handle_group_of_entries(self, entries, mode):
-        ids = [entry.identity_ratio for entry in entries]
-        overhangs = [entry.cigar_max_s() for entry in entries]
-        id_cutoff, id_group_name, max_taxonomy_length = self.calculate_cutoff_group(max(ids))
-        taxonomies_in_range = [self.taxonomy[entry.rname] for entry in entries if entry.identity_ratio >= id_cutoff]
-        accession_in_range = [entry.rname for entry in entries if entry.identity_ratio >= id_cutoff]
-        taxonomy_consensus = self.determine_taxonomy_consensus(taxonomies_in_range, max_taxonomy_length)
-        match_lengths = [entry.total_match for entry in entries]
         group_info = {}
-        #, , taxonomic_paths_for_all_hits_within_percent_id_bin
-        group_info['percent_ids'] = '{:0.4f}-{:0.4f}'.format(max(ids), min(ids))
-        group_info['percent_id_bin'] = id_group_name
+        # multiple_or_single_hit end_to_end_or_local input_sequence_length
         group_info['single_or_multiple_hit'] = 'single' if len(entries) == 1 else 'multiple'
-        group_info['length_of_hit'] = '{}-{}'.format(max(match_lengths), min(match_lengths))
-        group_info['overhang_or_soft_clipping'] = '{}-{}'.format(max(overhangs), min(overhangs))
-        group_info['consensus_taxonomic_path'] = taxonomy_consensus if taxonomy_consensus else 'not_assignable'
-        group_info['taxonomic_paths_above_cutoff'] = '|'.join(taxonomies_in_range)
-        group_info['accession_above_cutoff'] =  '|'.join(accession_in_range)
-        group_info['mode'] = mode
+        group_info['end_to_end_or_local'] = mode
+        group_info['input_sequence_length'] = str(max([len(entry.seq) for entry in entries]))
+
         return group_info
 
-    def calculate_cutoff_group(self, identity_ratio):
-        for possible_cutoff in self.cutoffs:
-            if identity_ratio >= possible_cutoff[0]:
-                actual_cutoff = possible_cutoff
-                break
-        return actual_cutoff
-
-    def determine_taxonomy_consensus(self, taxonomies, max_taxonomy_length):
-        if max_taxonomy_length <= 0:
-            return None
-
-        if len(taxonomies) == 1:
-            common_path = taxonomies[0].split(';')
-        else:
-            split_taxonomies = [t.split(';') for t in taxonomies]
-            common_path = os.path.commonprefix(split_taxonomies)
-            if len(common_path) == 0:
-                return None
-        # truncate common path to the max length
-        common_path = common_path[:max_taxonomy_length]
-        return ';'.join(common_path)
-
-
-
     def append_to_summary(self, summary_file_name):
-        fields = ['percent_ids','percent_id_bin','mode', 'single_or_multiple_hit', 'length_of_hit', 'overhang_or_soft_clipping',
-                  'consensus_taxonomic_path', 'taxonomic_paths_above_cutoff', 'accession_above_cutoff']
-        no_hit_entry = ['', '', '', '', '', '', 'no_hit', 'no_hit', '']
+        fields = ['single_or_multiple_hit', 'end_to_end_or_local', 'input_sequence_length']
+        no_hit_entry = ['', '', 'no_hit']
 
         current_summary_file = open(summary_file_name).readlines()
         current_header = current_summary_file[0]
@@ -187,16 +148,11 @@ parser.add_argument('-v', '--verbose', help='Print out debugging information',
                     action='store_true')
 
 parser.add_argument('summary_file', type=str,  help='File to append to')
-parser.add_argument('taxonomy_file', type=str, help='Taxonomy file')
-parser.add_argument('local_sam',  type=str, help='The local mode SAM file')
-parser.add_argument('end_to_end_sam', type=str, help='The end-to-end SAM file')
+parser.add_argument('bowtie_out_directory',  type=str, help='The directory where all the SAM files are kept')
 
 if __name__ == '__main__':
     args = parser.parse_args()
-
-    local_sam = args.local_sam
-    end_to_end_sam = args.end_to_end_sam
+    bowtie_out_directory = args.bowtie_out_directory
     summary_file_name = args.summary_file
-    taxonomy_file_name = args.taxonomy_file
-    appender = SummaryAppender(local_sam, end_to_end_sam, taxonomy_file_name)
+    appender = SummaryAppender(bowtie_out_directory)
     appender.append_to_summary(summary_file_name)
