@@ -1,0 +1,12 @@
+name: explore-anacapa-output
+title: explore-anacapa-output
+username:
+account: gauravsk
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 251589
+bundleId: 1162437
+url: https://gauravsk.shinyapps.io/explore-anacapa-output/
+when: 1515109290.02522
+asMultiple: FALSE
+asStatic: FALSE

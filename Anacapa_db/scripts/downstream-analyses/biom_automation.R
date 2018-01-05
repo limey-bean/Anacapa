@@ -110,7 +110,8 @@ OTU <- otu_table(otu, taxa_are_rows = TRUE)
 # tax_phy <- as.matrix(observation_metadata(dat))
 
 ## Gaurav's hacky way to do this (I am getting `NULL` on `observation_metadata()`)
-tax_phy <- as.matrix(colsplit(rownames(otu),";", names = c("Domain","Kingdom","Phylum","Class","Order","Family","Genus","Species")))
+tax_phy <- as.matrix(colsplit(rownames(otu),";", 
+                              names = c("Domain","Kingdom","Phylum","Class","Order","Family","Genus","Species")))
 rownames(tax_phy) <- rownames(otu)
 
 TAX <- tax_table(tax_phy)
