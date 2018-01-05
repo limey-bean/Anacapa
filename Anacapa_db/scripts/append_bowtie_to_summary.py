@@ -113,12 +113,13 @@ class SummaryAppender(object):
         group_info['single_or_multiple_hit'] = 'single' if len(entries) == 1 else 'multiple'
         group_info['end_to_end_or_local'] = mode
         group_info['input_sequence_length'] = str(max([len(entry.seq) for entry in entries]))
+        group_info['max_percent_id'] = str(max([entry.identity_ratio for entry in entries]))
 
         return group_info
 
     def append_to_summary(self, summary_file_name):
-        fields = ['single_or_multiple_hit', 'end_to_end_or_local', 'input_sequence_length']
-        no_hit_entry = ['', '', 'no_hit']
+        fields = ['single_or_multiple_hit', 'end_to_end_or_local', 'max_percent_id', 'input_sequence_length']
+        no_hit_entry = ['', '', '', 'no_hit']
 
         current_summary_file = open(summary_file_name).readlines()
         current_header = current_summary_file[0]
