@@ -98,7 +98,7 @@ class NotAvailableHandler(object):
         return 'NA;;{}'.format(self.count)
 
     def decode_if_na(self, taxon):
-        if not taxon.starts_with(self.encoded_na_form):
+        if not taxon.startswith(self.encoded_na_form):
             return taxon
 
         return 'NA'
