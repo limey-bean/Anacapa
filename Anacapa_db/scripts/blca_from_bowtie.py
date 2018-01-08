@@ -85,6 +85,30 @@ class SamEntry(object):
         return max(beginning_s, ending_s)
 
 
+class NotAvailableHandler(object):
+    def __init__(self):
+        self.count = 0
+        self.na_forms = {'na', 'NA', 'Not Available', 'not available', 'Not available'}
+        self.encoded_na_form = 'NA;;'
+
+    def encode_if_na(self, taxon):
+        if taxon not in self.na_forms:
+            return taxon
+        self.count += 1
+        return 'NA;;{}'.format(self.count)
+
+    def decode_if_na(self, taxon):
+        if not taxon.startswith(self.encoded_na_form):
+            return taxon
+
+        return 'NA'
+
+
+
+
+
+
+
 def usage():
     print "\n<< Bayesian-based LCA taxonomic classification method"
     print 'Usage: python ' + sys.argv[0] + ' -i <sam file> [option]\n'
@@ -261,7 +285,7 @@ def cut_gap(alndic, start, end):
     return trunc_alndic
 
 
-def read_tax_acc(taxfile):
+def read_tax_acc(taxfile, not_available_handler):
     tx = open(taxfile)
     acctax = {}
     for l in tx:
@@ -269,9 +293,12 @@ def read_tax_acc(taxfile):
         if len(lne) != 2:
             continue
         if (levels[0] + ':') not in l:
-            acctax[lne[0].split('.')[0]] = dict(zip(levels, lne[1].split(';')))
+            taxons = [not_available_handler.encode_if_na(taxon) for taxon in lne[1].split(';')]
+            acctax[lne[0].split('.')[0]] = dict(zip(levels, taxons))
         else:
-            acctax[lne[0].split(".")[0]] = dict(x.split(":", 1) for x in lne[1].split(";"))
+            pairs = [x.split(":", 1) for x in lne[1].split(";")]
+            encoded = [(level, not_available_handler.encode_if_na(taxon)) for level, taxon in pairs]
+            acctax[lne[0].split(".")[0]] = dict(encoded)
     tx.close()
     return acctax
 
@@ -286,7 +313,8 @@ def read_tax_acc(taxfile):
 # check_program("muscle")
 
 ### read in pre-formatted lineage information ###
-acc2tax = read_tax_acc(tax)
+na_handler = NotAvailableHandler()
+acc2tax = read_tax_acc(tax, na_handler)
 print "> 1 > Read in taxonomy information!"
 SequenceInfo = namedtuple('SequenceInfo', ['seq', 'hits'])
 ### read in input fasta file ###
@@ -381,7 +409,7 @@ for seqn, info in input_sequences.items():
         for level in levels:
             # deal with missing values in the taxonomy
             if level not in hit_taxonomy:
-                hit_taxonomy[level] = "Not available"
+                hit_taxonomy[level] = na_handler.encode_if_na("NA")
 
             if hit in pervote:
                 votes_by_level[level][hit_taxonomy[level]] += pervote[hit]
@@ -391,7 +419,7 @@ for seqn, info in input_sequences.items():
     outfile.write(seqn + "\t")
     for level in levels:
         levels_votes = votes_by_level[level]
-        outfile.write(level + ":" + max(levels_votes, key=levels_votes.get) + ";")
+        outfile.write(level + ":" + na_handler.decode_if_na(max(levels_votes, key=levels_votes.get)) + ";")
     outfile.write("\t")
     for level in levels:
         levels_votes = votes_by_level[level]
