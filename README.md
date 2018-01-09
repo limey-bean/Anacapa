@@ -1,14 +1,18 @@
-# Anacapa
+# Anacapa Toolkit
 
-### Anacapa IN_FLUX as of 12-15-17!  Old scripts are avalible in the V1 branch...
-### Check back in a day or two for updates and instructions on how to use the new scripts!
-#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Rachel Turba (rturba@ucla.edu ) and Rachel Meyer (rsmeyer@ucla.edu). 
+### Anacapa last updated 1-09-2017
+
+#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Baochen Shi (biosbc@gmail.com), Rachel Turba (rturba@ucla.edu ) and Rachel Meyer (rsmeyer@ucla.edu).
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
 
 ## Introduction
-Anacapa Island's name is derived from the Chumash __Ennepah__ or __Anyapakh__ which means "mirage island" (Gudde and Bright, 2004). Much like Anacapa Island, using environmental DNA (eDNA) to uncover Biodiversity seems like an illusion on the horizon. This pipeline... (something amazing)  
+Anacapa Island's name is derived from the Chumash __Ennepah__ or __Anyapakh__ which means "mirage island" (Gudde and Bright, 2004). Much like Anacapa Island, using environmental DNA (eDNA) to uncover Biodiversity seems like an illusion on the horizon. Anacapa toolkit processes eDNA reads and assigns taxonomy using existing software or modifications to existing software.
 
-Anacapa is an automated metabarcoding read processing pipeline.  It is designed to analyze multiple samples and metabarcodes simultaneously. It processes raw fastq reads generated on Illumina HiSeq and MiSeq machines. This pipeline does not require that the raw paired reads overlap, or that both reads in a pair pass qc.  Taxonomy results are generated for all read types, however taxonomy is reported for overlapping (assembled) and non overlapping (unassembled) paired end reads, and also single end reads (discarded forward or discarded reverse) where one of the pairs fails qc. The input is raw Illumina metabarcode sequence data and outputs are species count data for multiple samples and metabarcodes. Successful implementation of Anacap requires: 1) raw illumina sequencing data, 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data, 3) reference libraries that correspond to the metabarcodes of interest made using CRUX, and 4) the dependencies indicated below. 
+Anacapa is an automated metabarcoding read processing toolkit. It is designed to analyze multiple samples and metabarcodes simultaneously. Anacapa accomplishes this in four steps: 1) building reference libraries using CRUX: Creating Reference libraries Using eXisting tools, 2) running QC and assigning Amplicon Sequence Variants (ASV) using Dada2, 3) assigning taxonomy using bowtie2 and a bowtie2 specific Bayesian Least Common Ancestor (BLCA) and 4) Generating ecological diversity summary statistics for a set of samples.  
+
+For details on building reference libraries using CRUX, please refer to the following: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools
+
+It processes raw fastq reads generated on Illumina HiSeq and MiSeq machines. This pipeline does not require that the raw paired reads overlap, or that both reads in a pair pass qc.  Taxonomy results are generated for all read types, however taxonomy is reported for overlapping (assembled) and non overlapping (unassembled) paired end reads, and also single end reads (discarded forward or discarded reverse) where one of the pairs fails qc. The input is raw Illumina metabarcode sequence data and outputs are species count data for multiple samples and metabarcodes. Successful implementation of Anacap requires: 1) raw illumina sequencing data, 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data, 3) reference libraries that correspond to the metabarcodes of interest made using CRUX, and 4) the dependencies indicated below.
 
 The workflow: Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (**md5sum**) and uncompresses (**gunzip**) and then renames the files for readability  readable.  Reads are next trimmed using **cutadapt** (Martin 2011) to remove sequencing adapters from the 5' ends and sequnging adapters and primers from the 3' end of reads.  **Fastx-toolkit** (Gordon and Hannon, 2010) is then used to processed for quality control. Read are retained if they have a Q ≥ 35 and are at lease 100bp after adapter and 3' primer trimming. **Cutadapt** is next used to sort reads by primer, and to trim additional basepairs from the end of read to increase quality going into **dada2**. Prior to running **dada2** there is a paired end read checking step.  Reads that have pairs that passed qc are run separately from unpaired F or unpaired R reads.  **dada2** is then used to denoise, dereplicate, merge (where possible), and remove chimeric sequences from the data set.   **dada2** processed reads are then assigned taxonomy using **Bowtie2** (Langmead and Salzberg, 2012).
 
@@ -18,18 +22,18 @@ The workflow: Anacapa takes raw Illumina fastq format reads and preprocesses the
 (Zack wants to add a paragraph about ESV's VS OTUs. We sort of ignore both really, and go for defined groups like species, genus, family, etc... Is that a shortcomming of the method?)  
 
 
-## Anacapa relies on many programs and databases to run properly. 
-**__First Download the Anacapa_db folder.__** 
+## Anacapa relies on many programs and databases to run properly.
+**__First Download the Anacapa_db folder.__**
 * This folder contains:
 	* Two folders
-		* adapters_and_PrimAdapt_rc	
+		* adapters_and_PrimAdapt_rc
 		* scripts
 	* Two files:
 		* forward_primers.txt
 		* reverse_primers.txt
 
-* adapters_and_PrimAdapt_rc folder contains: 
-	* the forward and reverse nextera adapters 
+* adapters_and_PrimAdapt_rc folder contains:
+	* the forward and reverse nextera adapters
 	* add forward and reverse trueseq (add) adapters.
 
 * scripts folder contains:
@@ -62,9 +66,9 @@ To run Anacap, you need verify that the full path to each of the following progr
 5. R (add versions)
 
 3. Bowtie2: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
-	* Bowtie2 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment. 
-  
-  
+	* Bowtie2 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment.
+
+
 **__Databases to download__**
 
 ## Running this sucker...
@@ -88,7 +92,7 @@ The script to run Anacapa is in the scripts directory.  It is called: anacapa_re
 To run the script you need to run the following command:
 
 sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type ("nextera" or "truseq")>  -t <illumina run type HiSeq or MiSeq>
- 
+
 ### More to come, and it might be a bit buggy.
 * if you choose to take this on...  Good Luck!
 
