@@ -67,10 +67,10 @@ date
 echo " "
 echo " "
 echo "Preprocessing: 1) Generate an md5sum file"  # user can check for file corruption
-md5sum ${IN}/*fastq.gz > ${IN}/*fastq.gz.md5sum  
+md5sum ${IN}/*fastq.gz > ${IN}/*fastq.gz.md5sum
 date
 ###
-echo "Preprocessing: 2) Rename each file for readability" # remove the additional and less relevant information in an illumna fasta file name 
+echo "Preprocessing: 2) Rename each file for readability" # remove the additional and less relevant information in an illumna fasta file name
 ###################################
 suffix1=R1_001.fastq
 suffix2=R2_001.fastq
@@ -83,7 +83,7 @@ for str in `ls ${IN}/*_${suffix1}.gz`
 do
  str1=${str%*_${suffix1}.gz}
  i=${str1#${IN}/}
- mod=${i//_/-} 
+ mod=${i//_/-}
  cp ${IN}/${i}_${suffix1}.gz ${OUT}/QC/fastq/${mod}_1.fastq.gz
  cp ${IN}/${i}_${suffix2}.gz ${OUT}/QC/fastq/${mod}_2.fastq.gz
 done
@@ -124,7 +124,7 @@ do
  j=${str1#${OUT}/QC/fastq/}
  echo ${j} "..."
  ${CUTADAPT} -e ${ERROR_QC1} -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} -G ${R_ADAPT} -A ${Frc_PRIM_ADAPT} -o ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -p ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq ${str1}_1.fastq ${str1}_2.fastq >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
- rm ${str1}_1.fastq 
+ rm ${str1}_1.fastq
  rm ${str1}_2.fastq
  # stringent quality fileter to get rid of the junky sequence at the ends - modify in config file
  fastq_quality_trimmer -t ${MIN_QUAL} -l ${MIN_LEN}  -i ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -o ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_1.fastq -Q33
@@ -158,7 +158,7 @@ date
 ###
 
 ###############################
-# Make sure unassembled reads are still paired 
+# Make sure unassembled reads are still paired
 ###############################
 mkdir -p ${OUT}/Run_info/hoffman2
 mkdir -p ${OUT}/Run_info/hoffman2/run_logs
@@ -177,13 +177,13 @@ do
   mkdir -p ${OUT}/${j}/${j}_sort_by_read_type/paired/
   mkdir -p ${OUT}/${j}/${j}_sort_by_read_type/unpaired_F/
   mkdir -p ${OUT}/${j}/${j}_sort_by_read_type/unpaired_R/
- 
+
   for st in `ls ${OUT}/QC/cutadapt_fastq/primer_sort/${j}_*_Paired_1.fastq`
 	do
  	st2=${st%*_Paired_1.fastq}
  	k=${st2#${OUT}/QC/cutadapt_fastq/primer_sort/}
     python ${DB}/scripts/check_paired.py ${OUT}/QC/cutadapt_fastq/primer_sort/${k}_Paired_1.fastq ${OUT}/QC/cutadapt_fastq/primer_sort/${k}_Paired_2.fastq ${OUT}/${j}/${j}_sort_by_read_type/paired ${OUT}/${j}/${j}_sort_by_read_type/unpaired_F/ ${OUT}/${j}/${j}_sort_by_read_type/unpaired_R/
-    echo ${j} "...check!" 
+    echo ${j} "...check!"
     rm ${OUT}/QC/cutadapt_fastq/primer_sort/${k}_Paired_1.fastq
     rm ${OUT}/QC/cutadapt_fastq/primer_sort/${k}_Paired_2.fastq
   done
@@ -206,14 +206,14 @@ do
  	echo "${j}"
 	mkdir -p ${OUT}/${j}/${j}dada2_out
     # generate runlogs that you can submit at any time!
-    printf "#!/bin/bash\n#$ -l h_rt=10:00:00,h_data=48G\n#$ -N paired_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_paired_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_paired_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t paired\n\necho _END_ [run_dada2_paired.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
-    printf "#!/bin/bash\n#$ -l h_rt=10:00:00,h_data=48G\n#$ -N upaired_F_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_F_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_F_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t forward\n\necho _END_ [run_dada2_unpaired_F.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
-    printf "#!/bin/bash\n#$ -l h_rt=10:00:00,h_data=48G\n#$ -N upaired_R_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_R_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_R_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t reverse\n\necho _END_ [run_dada2_unpaired_R.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
+    printf "#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N paired_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_paired_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_paired_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t paired\n\necho _END_ [run_dada2_paired.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
+    printf "#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N upaired_F_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_F_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_F_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t forward\n\necho _END_ [run_dada2_unpaired_F.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
+    printf "#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N upaired_R_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_R_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_R_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t reverse\n\necho _END_ [run_dada2_unpaired_R.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
     echo ''
     # submit jobs to run dada2 and bowtie2
-    #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
-    #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
-    #qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
+    qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
+    qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
+    qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
     if [ "${LOCALMODE}" = "TRUE"  ]
     then
         echo Running Dada2 inline
@@ -227,4 +227,3 @@ date
 echo "if a dada2 job fails you can find the job submission file in ${OUT}/Run_info/hoffman2/run_scripts"
 date
 echo "good_luck!"
-

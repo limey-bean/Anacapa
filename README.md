@@ -1,6 +1,6 @@
 # Anacapa Toolkit
 
-### Anacapa last updated 1-09-2017
+### Anacapa last updated 1-09-2017, Big Bug in run_dada2_bowtie2.  Fixing today
 
 #### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Baochen Shi (biosbc@gmail.com), Rachel Turba (rturba@ucla.edu ) and Rachel Meyer (rsmeyer@ucla.edu).
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
