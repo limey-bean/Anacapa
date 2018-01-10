@@ -62,7 +62,7 @@ cat ${OUT}/${MB}/${MB}dada2_out/individual_out/*${MB}.fasta > ${OUT}/${MB}/${MB}
 mkdir -p ${OUT}/${MB}/${MB}bowtie2_out
 mkdir -p ${OUT}/${MB}/${MB}bowtie2_out/individual_out
 
-#single read global 
+#single read global
 
 echo "Run Bowtie2 on merged, forward, and reverse dada2 ASV fasta file"
 
@@ -70,7 +70,7 @@ bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/
 
 #single read local mode
 
-bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_end_to_end_reject.fasta -S ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 100 --un ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_end_to_end_and_local_reject.fasta 
+bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_end_to_end_reject.fasta -S ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 100 --un ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_end_to_end_and_local_reject.fasta
 
 ############# paired reads global and local
 
@@ -94,12 +94,14 @@ mkdir -p ${OUT}/${MB}/${MB}_taxonomy_tables
 
 python ${DB}/scripts/merge_asv.py ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}.txt -o ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt
 
+cp ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_detailed.txt
+
 ######################################
 # concatenate bowtie2 tables and run blca
 ######################################
 
 # enrich summary file with bowtie2 data
-python ${DB}/scripts/append_bowtie_to_summary.py ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt ${OUT}/${MB}/${MB}bowtie2_out/individual_out/
+python ${DB}/scripts/append_bowtie_to_summary.py ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_detailed.txt ${OUT}/${MB}/${MB}bowtie2_out/individual_out/
 
 ### concat
 cat ${OUT}/${MB}/${MB}bowtie2_out/individual_out/*.sam > ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam
@@ -107,7 +109,7 @@ cat ${OUT}/${MB}/${MB}bowtie2_out/individual_out/*.sam > ${OUT}/${MB}/${MB}bowti
 ### blca
 
 echo "Run blca on sam output"
-python ${DB}/scripts/blca_from_bowtie.py -i ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b 0.8 -p ${MUSCLE}
+python ${DB}/scripts/blca_from_bowtie.py -i ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b 0.8 -p ${DB}/muscle
 
 ######################################
 # Add blca taxonomy to the asv table
@@ -115,3 +117,4 @@ python ${DB}/scripts/blca_from_bowtie.py -i ${OUT}/${MB}/${MB}bowtie2_out/${MB}_
 
 echo "Add blca taxonomy to the ASV site frequency table"
 python ${DB}/scripts/append_blca_to_summary.txt ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt ${OUT}/${MB}/${MB}bowtie2_blca_out/${MB}_bowtie2_all.sam.blca.out
+python ${DB}/scripts/append_blca_to_summary.txt ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_detailed.txt ${OUT}/${MB}/${MB}bowtie2_blca_out/${MB}_bowtie2_all.sam.blca.out
