@@ -17,17 +17,16 @@ For details on building reference libraries using CRUX, please refer to the foll
 This step of the toolkit simultaneously processes raw fastq reads for single or multiple samples with single or multiple metabarcode targets generated on Illumina HiSeq and MiSeq machines. It is not required that all samples contain reads for each metabarcode. This script trims nextera and truseq adapters, removes low quality reads, and sorts reads by metabarcode primer sequence. Clean reads are processed with dada2 to generate ASV for each metabarcode. Dada2 denoises, dereplicates, merges (where possible), and removes chimeric sequences from the data set. The input is raw Illumina metabarcode sequence data [\*.fastq.gz] reads and outputs are site frequency tables of ASV and species count data for multiple samples and metabarcodes. Successful implementation of this step requires: 1) raw illumina sequencing data and 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data.
 
 #### Step 3: Assigning taxonomy using bowtie2 and a bowtie2 specific Bayesian Least Common Ancestor (BLCA) algorithm
-The Anacapa toolkit determines the best taxonomic hits for an ASV using bowtie2.  Because Anacapa considers paired merged, paired unmerged, and unpaired sequencing reads, a fast and flexible read aligner is required. Bowtie2 handles all possible kinds of data resulting from sequencing runs, and it uses CRUX databases as reference libraries. All reads are globally aligned against the CRUX database. Any reads that fail to align are then aligned locally. The best hits (the top 100 bowtie 2 returns) are then processed with BLCA to assign taxonomy.  The bowtie2 BLCA algorithm was adapted from (add blast BLCA). Add explanation of BLCA....
+The Anacapa toolkit determines the best taxonomic hits for an ASV using bowtie2.  Because Anacapa considers paired merged, paired unmerged, and unpaired sequencing reads, a fast and flexible read aligner is required. Bowtie2 handles all possible kinds of data resulting from sequencing runs, and it uses CRUX databases as reference libraries. All reads are globally aligned against the CRUX database. Any reads that fail to align are then aligned locally. The best hits (the top 100 bowtie 2 returns) are then processed with BLCA to assign taxonomy.  The bowtie2 BLCA algorithm was adapted from (add blast BLCA). Add explanation of BLCA.... [Jesse is this accurate?  more text?]
 
 
 #### Step 4: Generating ecological diversity summary statistics for a set of samples
 
+Zack and Gaurav do you wanna take a stab at this?
+
+## add this stuff to the above text
 The workflow: Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (**md5sum**) and uncompresses (**gunzip**) and then renames the files for readability  readable.  Reads are next trimmed using **cutadapt** (Martin 2011) to remove sequencing adapters from the 5' ends and sequnging adapters and primers from the 3' end of reads.  **Fastx-toolkit** (Gordon and Hannon, 2010) is then used to processed for quality control. Read are retained if they have a Q ≥ 35 and are at lease 100bp after adapter and 3' primer trimming. **Cutadapt** is next used to sort reads by primer, and to trim additional basepairs from the end of read to increase quality going into **dada2**. Prior to running **dada2** there is a paired end read checking step.  Reads that have pairs that passed qc are run separately from unpaired F or unpaired R reads.  **dada2** is then used to denoise, dereplicate, merge (where possible), and remove chimeric sequences from the data set.   **dada2** processed reads are then assigned taxonomy using **Bowtie2** (Langmead and Salzberg, 2012).
-
-
 *	elaborate on dada2 and the bowtie2 process and **R** (Team, RC, 2000)
-
-(Zack wants to add a paragraph about ESV's VS OTUs. We sort of ignore both really, and go for defined groups like species, genus, family, etc... Is that a shortcomming of the method?)  
 
 
 ## Anacapa relies on many programs and databases to run properly.
@@ -39,45 +38,60 @@ The workflow: Anacapa takes raw Illumina fastq format reads and preprocesses the
 	* Two files:
 		* forward_primers.txt
 		* reverse_primers.txt
+		* __The two files are examples of how to format the primer forward and reverse input files.  It is VERY IMPORTANT that you modify these files or make new files to reflect your data set!__
 
 * adapters_and_PrimAdapt_rc folder contains:
 	* the forward and reverse nextera adapters
-	* add forward and reverse trueseq (add) adapters.
+	* the forward and reverse trueseq adapters.
+
 
 * scripts folder contains:
+	* anacapa_bowtie2_blca.sh
 	* anacapa_config.sh
 	* anacapa_format_primers_cutadapt.py
-	* anacapa_release_V1_dada2_plus_bowtie2.sh
-	* anacapa_vars.sh
-	* check_paired.pl
-	* dada2_paired.R
-	* dada2_unpaired_F.R
-	* dada2_unpaired_R.R
-	* run_dada2_bowtie2_paired.sh
-	* run_dada2_bowtie2_unpaired_F.sh
-	* run_dada2_bowtie2_unpaired_R.sh
-	* pending -> bowtie2summary script
+	* anacapa_QC_dada2.sh
+	* anacapa_vars_nextV.sh
+	* append_blca_to_summary.py
+	* append_bowtie_to_summary.py
+	* blca_from_bowtie.py
+	* check_paired.py
+	* dada2_unified_script.R
+	* group_alignments_to_db.py
+	* group_alignments_to_files_p_mod.py
+	* group_alignments_to_files.py
+	* merge_asv.py
+	* reformat_summary_for_r.py
+	* run_bowtie2_blca.sh
+	* run_dada2.sh
+	* sqlite_storage.py
+	* summarize_bowtie2_hits_full_taxonomy.py
+	* summarize_bowtie2_hits.py
+	* and a directory for downstream-analyses
 
-* The two files are examples of how to format the primer forward and reverse input files.  It is VERY IMPORTANT that you modify these files to reflect your data set!
 
-**__Programs__**
+
+**__Programs__** [Jesse can I get you to verify these?]
 To run Anacap, you need verify that the full path to each of the following programs is correctly indicated in the anacapa_config.sh file.  
 
 1. cutadapt: http://cutadapt.readthedocs.io/en/stable/index.html
 
 2. fastxtoolkit (add versions)
 
-3. Python (add versions)
+3. anaconda/python2-4.2
+	* make sure biopython is installed
 
-4. Perl (add versions)
+4. R 3.4.2
 
-5. R (add versions)
-
-3. Bowtie2: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+5. Bowtie2: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
 	* Bowtie2 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment.
 
+6. muscle: https://www.drive5.com/muscle/downloads.htm
 
-**__Databases to download__**
+
+**__CRUX Databases to download__**
+Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
+
+Users can also make their own libraries using CRUX.  Sliva and greengees libraries can easily be converted to Anacapa compatible libraries.  [make documentation for this.]
 
 ## Running this sucker...
 
