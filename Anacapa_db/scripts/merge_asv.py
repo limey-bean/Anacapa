@@ -7,6 +7,7 @@ import argparse
 import pandas as pd
 import os
 
+
 def read_table(file_name, rename=None):
     df = pd.read_csv(file_name, sep='\t', header=0, dtype='object')
     columns = list(df)
@@ -19,8 +20,14 @@ def read_table(file_name, rename=None):
     df = df.rename(columns={old_id: new_id})
     sequence_column_names = ['sequence', 'sequencesF', 'sequencesR']
     for name in sequence_column_names:
-        if name in columns:
-            df = df.drop([name], axis=1)
+        if name not in columns:
+            df[name] = ''
+
+    special_columns = [new_id] + sequence_column_names
+    data_columns = [col for col in columns if col not in special_columns]
+
+    #reorder the dataframe
+    df = df.loc[:, special_columns + data_columns]
 
     return df
 
