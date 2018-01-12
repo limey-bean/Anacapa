@@ -93,7 +93,18 @@ Download taxonomy reference libraries from this google drive folder: https://dri
 
 Users can also make their own libraries using CRUX.  Sliva and greengees libraries can easily be converted to Anacapa compatible libraries.  [make documentation for this.]
 
-## Running this sucker...
+## How to run the QC / dada2 step:
+```
+sh ~/Anacapa_db/scripts/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq> -l (add flag (-l), no text required, if running locally)
+```
+
+## How to run the bowtie2 blca step:
+
+```
+# sh ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l (add flag (-l), no text required, if running locally)
+```
+
+
 
 This is a preliminary attempt a documentation...  To run the latest version of Anacapa using the 6 primer sets that are commonly used for CALeDNA projects, you will need to download the following:
 * Download the Anacapa_db folder
