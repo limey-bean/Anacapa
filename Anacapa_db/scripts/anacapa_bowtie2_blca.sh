@@ -1,19 +1,23 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
+# sh ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l (add flag (-l), no text required, if running locally)
 OUT=""
 DB=""
 UN=""
 
 
-while getopts "o:d:u:" opt; do
+while getopts "o:d:u:l?" opt; do
     case $opt in
         o) OUT="$OPTARG" # path to desired Anacapa output
         ;;
         d) DB="$OPTARG"  # path to Anacapa_db
         ;;
         u) UN="$OPTARG"  # need username for submitting sequencing job
+        ;;
+        u) UN="$OPTARG"  # need username for submitting sequencing job
+        ;;
+        l) LOCALMODE="TRUE" #run dada2 locally (not on a cluster)
         ;;
     esac
 done
@@ -22,11 +26,11 @@ done
 # This pipeline was developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), and Gaurav Kandlikar (gkandlikar@ucla.edu), and with contributions from Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
 # Last Updated 11-18-2017
 #
-# The purpose of this script is to process raw fastq.gz files from an Illumina sequencing and generate summarized taxonomic assignment tables for multiple metabarcoding targets.
+# The purpose of these script is to process raw fastq.gz files from an Illumina sequencing and generate summarized taxonomic assignment tables for multiple metabarcoding targets.
 #
 # This script is currently designed to run on UCLA's Hoffman2 cluster.  Please adjust the code to work with your computing resources. (e.g. module / path names to programs, submitting jobs for processing if you have a cluster, etc)
 #
-# This script runs in two phases, the first is the qc phase that follows the anacapa_release.  The second phase follows the run_dada2_bowtie2.sh scripts, and includes dada2 denoising, mergeing (if reads are paired) and chimera detection / bowtie2 sequence assignment phase.
+# This script runs in two phases, the first is a QC and dada2 seqeunce dereplication, denoising, mergeing (if reads are paired) and chimera detection.  The second phase runs bowtie2 and our blowtie2 modified blca run_scripts.
 #
 ######################################
 
@@ -62,6 +66,11 @@ do
     printf "#!/bin/bash\n#$ -l h_rt=20:00:00,h_data=48G\n#$ -N bowtie2_${j}_blca\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}__bowtie2_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_bowtie2_blca_$JOB_ID.err \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\nsh ${DB}/scripts/run_bowtie2_blca.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_bowtie2_blca.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
     echo ''
     qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
+    if [ "${LOCALMODE}" = "TRUE"  ]  # if you are running loally (no hoffman2) you can run these jobs one after the other.
+    then
+        echo Running Dada2 inline
+        bash ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
+    fi
  fi
 done
 date

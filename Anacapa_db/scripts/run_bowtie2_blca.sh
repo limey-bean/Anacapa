@@ -53,6 +53,7 @@ date
 
 echo "Concatenate merged, forward, and reverse dada2 ASV fasta files"
 
+# merge all of the single reads together so that they are processed together
 cat ${OUT}/${MB}/${MB}dada2_out/individual_out/*${MB}.fasta > ${OUT}/${MB}/${MB}dada2_out/individual_out/single_read_${MB}.fasta
 
 
@@ -62,14 +63,14 @@ cat ${OUT}/${MB}/${MB}dada2_out/individual_out/*${MB}.fasta > ${OUT}/${MB}/${MB}
 mkdir -p ${OUT}/${MB}/${MB}bowtie2_out
 mkdir -p ${OUT}/${MB}/${MB}bowtie2_out/individual_out
 
-#single read global
+
 
 echo "Run Bowtie2 on merged, forward, and reverse dada2 ASV fasta file"
-
+# find best taxonomic hits for single reads in using bowtie2's global alighmnet mode (end-to-end) first.  I only considers full length alighnments, and recovers up to -k returns (default = 100). The reads not assigned in global mode are then run in local alighnment mode. -p is the number of threads --no-hd and --no-sq suppress the header lines --no-unal means do not add unaligned reads to the sam file (output). --very-sensitive is a preset option in bowtie2 is slow but designed to be more accurate and sensitive
 bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/${MB}/${MB}dada2_out/individual_out/single_read_${MB}.fasta -S ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_end_to_end.sam --no-hd --no-sq --very-sensitive --end-to-end --no-unal -p 120 -k 100 --un ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_end_to_end_reject.fasta
 
 #single read local mode
-
+# reads that do not get hits in global alignment mode are run through local alignment.  This mode does not require the hit to be the entire length of the query.  This includes partial matches to full length references, or full matches to short references.
 bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_end_to_end_reject.fasta -S ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 100 --un ${OUT}/${MB}/${MB}bowtie2_out/individual_out/single_read_${MB}_end_to_end_and_local_reject.fasta
 
 ############# paired reads global and local
@@ -78,10 +79,10 @@ bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -U ${OUT}/
 
 echo "Run Bowtie2 on unmerged dada2 ASV fasta files"
 
+# same logic as above but applied to paired end reads.
 bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index  -f -1 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}F.fasta -2 ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}R.fasta -S ${OUT}/${MB}/${MB}bowtie2_out/individual_out/paired_unmereged_read_${MB}_end_to_end.sam --no-hd --no-sq --very-sensitive --end-to-end --no-unal -p 120 -k 100 --fr --rf --no-mixed --un-conc ${OUT}/${MB}/${MB}bowtie2_out/individual_out/paired_unmereged_read_${MB}_end_to_end_reject.fasta --no-discordant
 
 #unmerged pair reads local
-
 bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index -f -1 ${OUT}/${MB}/${MB}bowtie2_out/individual_out/paired_unmereged_read_${MB}_end_to_end_reject.1.fasta -2 ${OUT}/${MB}/${MB}bowtie2_out/individual_out/paired_unmereged_read_${MB}_end_to_end_reject.2.fasta -S ${OUT}/${MB}/${MB}bowtie2_out/individual_out/paired_unmereged_read_${MB}_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 100 --un-conc ${OUT}/${MB}/${MB}bowtie2_out/individual_out/paired_unmereged_read_${MB}_end_to_end_and_local_reject.fasta --no-discordant
 
 
@@ -91,10 +92,11 @@ bowtie2 -x ${DB}/${MB}/${MB}_bowtie2_database/${MB}_bowtie2_index -f -1 ${OUT}/$
 
 echo "Concatenate all ASV site frequency tables and sam output"
 mkdir -p ${OUT}/${MB}/${MB}_taxonomy_tables
-
-python ${DB}/scripts/merge_asv.py ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}.txt -o ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt
-
-cp ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_detailed.txt
+# combine all dada2 tables for a given metabarcode, match samples in ASV tables.
+# make a breif summary table
+python ${DB}/scripts/merge_asv1.py ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}.txt -o ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt
+# make a detailed sumary table.
+python ${DB}/scripts/merge_asv.py ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_forward${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_merged${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_reverse${MB}.txt ${OUT}/${MB}/${MB}dada2_out/individual_out/nochim_unmerged${MB}.txt -o ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_detailed.txt
 
 ######################################
 # concatenate bowtie2 tables and run blca
@@ -103,7 +105,7 @@ cp ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt ${OUT}/${MB}/
 # enrich summary file with bowtie2 data
 python ${DB}/scripts/append_bowtie_to_summary.py ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_detailed.txt ${OUT}/${MB}/${MB}bowtie2_out/individual_out/
 
-### concat
+### concat all of the sam files for blca
 cat ${OUT}/${MB}/${MB}bowtie2_out/individual_out/*.sam > ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam
 
 ### blca
