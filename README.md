@@ -8,13 +8,13 @@
 ## Introduction
 Anacapa Island's name is derived from the Chumash __Ennepah__ or __Anyapakh__ which means "mirage island" (Gudde and Bright, 2004). Much like Anacapa Island, using environmental DNA (eDNA) to uncover Biodiversity seems like an illusion on the horizon. Anacapa toolkit processes eDNA reads and assigns taxonomy using existing software or modifications to existing software.
 
-Anacapa is an automated metabarcoding read processing toolkit. It is designed to analyze multiple samples and metabarcodes simultaneously. Anacapa accomplishes this in four steps: 1) building reference libraries using CRUX: Creating Reference libraries Using eXisting tools, 2) running QC and assigning Amplicon Sequence Variants (ASV) using Dada2, 3) assigning taxonomy using bowtie2 and a bowtie2 specific Bayesian Least Common Ancestor (BLCA) and 4) Generating ecological diversity summary statistics for a set of samples.  This toolkit does not require that paired reads overlap, or that both reads in a pair pass QC.  Taxonomy results are generated for all read types and the user can decide which read types they wish to retain.
+Anacapa is an automated metabarcoding read processing toolkit. It is a modular toolkit that is is designed to analyze multiple samples and metabarcodes simultaneously. Anacapa accomplishes this in four steps: 1) building reference libraries using CRUX: Creating Reference libraries Using eXisting tools, 2) running QC and assigning Amplicon Sequence Variants (ASV) using Dada2, 3) assigning taxonomy using bowtie2 and a bowtie2 specific Bayesian Least Common Ancestor (BLCA) and 4) Generating ecological diversity summary statistics for a set of samples.  This toolkit does not require that paired reads overlap, or that both reads in a pair pass QC.  Taxonomy results are generated for all read types and the user can decide which read types they wish to retain.
 
 #### Step 1: CRUX: Creating Reference libraries Using eXisting tools
-For details on building reference libraries using CRUX, please refer to the following: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools. The output of CRUX consists of two reference libraries. Each Library contains unique metabarcode specific reads that correspond NCBI accession version numbers. Libraries consist of fasta and taxonomy files and a bowtie2 index library.  The libraries are unfiltered or filtered.  Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments.  In CRUX robust means that any read with the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA' is excluded from the library. Prebuilt CRUX reference libraries (CO1-Leray, 12S-MiFish, 16S-V4, 18S-EMP, Fungal ITS (FITS), Plant ITS2 (PITS), and PPM cytochrome Oxidase [add refs and primer sequence] can be found at [link to fig share].
+For details on building reference libraries using CRUX, please refer to the following: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools. The output of CRUX consists of two reference libraries. Each Library contains unique metabarcode specific reads that correspond NCBI accession version numbers. Libraries consist of fasta and taxonomy files and a bowtie2 index library.  The libraries are unfiltered or filtered.  Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments.  In CRUX robust means that any read with the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA' is excluded from the library. Prebuilt CRUX reference libraries (CO1-Leray, 12S-MiFish, 16S-V4, 18S-EMP, Fungal ITS (FITS), Plant ITS2 (PITS), and PPM cytochrome Oxidase [add refs and primer sequence] can be found at [link to dryad].
 
 #### Step 2: Running QC and assigning Amplicon Sequence Variants (ASV) using dada2
-This step of the toolkit simultaneously processes raw fastq reads for single or multiple samples with single or multiple metabarcode targets generated on Illumina HiSeq and MiSeq machines. It is not required that all samples contain reads for each metabarcode. This script trims nextera and truseq adapters, removes low quality reads, and sorts reads by metabarcode primer sequence. Clean reads are processed with dada2 to generate ASV for each metabarcode. Dada2 denoises, dereplicates, merges (where possible), and removes chimeric sequences from the data set. The input is raw Illumina metabarcode sequence data [\*.fastq.gz] reads and outputs are site frequency tables of ASV and species count data for multiple samples and metabarcodes. Successful implementation of this step requires: 1) raw illumina sequencing data and 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data.
+This step of the toolkit simultaneously processes raw fastq reads for single or multiple samples with single or multiple metabarcode targets generated on Illumina HiSeq and MiSeq machines. It is not required that all samples contain reads for each metabarcode. This script trims nextera and truseq adapters (**cutadapt**; Martin 2011), removes low quality reads, and sorts reads by metabarcode primer sequence (**cutadapt**). Clean reads are processed with dada2 to generate ASV for each metabarcode. Dada2 denoises, dereplicates, merges (where possible), and removes chimeric sequences from the data set. The input is raw Illumina metabarcode sequence data [\*.fastq.gz] reads and outputs are site frequency tables of ASV and species count data for multiple samples and metabarcodes. Successful implementation of this step requires: 1) raw illumina sequencing data and 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data.
 
 #### Step 3: Assigning taxonomy using bowtie2 and a bowtie2 specific Bayesian Least Common Ancestor (BLCA) algorithm
 The Anacapa toolkit determines the best taxonomic hits for an ASV using bowtie2.  Because Anacapa considers paired merged, paired unmerged, and unpaired sequencing reads, a fast and flexible read aligner is required. Bowtie2 handles all possible kinds of data resulting from sequencing runs, and it uses CRUX databases as reference libraries. All reads are globally aligned against the CRUX database. Any reads that fail to align are then aligned locally. The best hits (the top 100 bowtie 2 returns) are then processed with BLCA to assign taxonomy.  The bowtie2 BLCA algorithm was adapted from (add blast BLCA). Add explanation of BLCA.... [Jesse is this accurate?  more text?]
@@ -92,6 +92,24 @@ To run Anacap, you need verify that the full path to each of the following progr
 Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
 
 Users can also make their own libraries using CRUX.  Sliva and greengees libraries can easily be converted to Anacapa compatible libraries.  [make documentation for this.]
+
+**_Hoffman users running the QC dada2 need to do the following before dada2 will run_**
+```
+qrsh
+module load module load R/3.4.2
+module load gcc/6.3.0
+R # will open R in terminal to go back to bach quit() I think...
+source("https://bioconductor.org/biocLite.R")
+biocLite(suppressUpdates = FALSE)
+```
+if given this option "would you like to use a personal library" say "y"
+This is the reason that it is not possible to install this in the R script, because it requires user input.
+```
+biocLite("ShortRead", suppressUpdates = FALSE)
+biocLite("devtools")
+```
+this bit could take a very long time so no worries....
+
 
 ## How to run the QC / dada2 step:
 ```

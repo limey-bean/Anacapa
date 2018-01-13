@@ -68,7 +68,7 @@ do
     qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
     if [ "${LOCALMODE}" = "TRUE"  ]  # if you are running loally (no hoffman2) you can run these jobs one after the other.
     then
-        echo Running Dada2 inline
+        echo "Running Dada2 inline"
         bash ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
     fi
  fi
