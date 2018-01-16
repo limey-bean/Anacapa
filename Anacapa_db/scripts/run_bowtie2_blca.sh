@@ -118,5 +118,5 @@ python ${DB}/scripts/blca_from_bowtie.py -i ${OUT}/${MB}/${MB}bowtie2_out/${MB}_
 ######################################
 
 echo "Add blca taxonomy to the ASV site frequency table"
-python ${DB}/scripts/append_blca_to_summary.txt ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt ${OUT}/${MB}/${MB}bowtie2_blca_out/${MB}_bowtie2_all.sam.blca.out
-python ${DB}/scripts/append_blca_to_summary.txt ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_detailed.txt ${OUT}/${MB}/${MB}bowtie2_blca_out/${MB}_bowtie2_all.sam.blca.out
+python ${DB}/scripts/append_blca_to_summary.py ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_brief.txt ${OUT}/${MB}/${MB}bowtie2_blca_out/${MB}_bowtie2_all.sam.blca.out
+python ${DB}/scripts/append_blca_to_summary.py ${OUT}/${MB}/${MB}_taxonomy_tables/${MB}_ASV_taxonomy_detailed.txt ${OUT}/${MB}/${MB}bowtie2_blca_out/${MB}_bowtie2_all.sam.blca.out
