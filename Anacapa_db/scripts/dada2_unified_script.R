@@ -1,5 +1,4 @@
 #!/usr/bin/env Rscript
-# NOTE! Currently unstable, needs to be tested (gsk testing as of 6 December 2017)
 # Interpret the input variables -----
 
 ##### command arguments for running script ADD Soon!
@@ -42,7 +41,7 @@ if (paired_or_not == "paired") {
 } else {
   path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/unpaired_R", sep='')
   outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
-  
+
 }
 
 # Confirm that the user has Write access to the path
@@ -106,7 +105,7 @@ if(paired_or_not == "paired") {
   all_sample_names <- sapply(strsplit(fnFs, "_Paired"), `[`, 1)
   fnFs <- file.path(path, fnFs)
   fnRs <- file.path(path, fnRs)
-  
+
 } else {
   fnFs <- sort(list.files(path, pattern="_Paired_\\d_singles.fastq"))
   all_sample_names <- sapply(strsplit(fnFs, "_Paired_\\d_singles.fastq"), `[`, 1)
@@ -126,7 +125,7 @@ if(paired_or_not == "paired") {
 
 
 # Make the path to which filtered sequences should be outputted ---------
-filt_path <- file.path(path, "filtered") 
+filt_path <- file.path(path, "filtered")
 
 if(paired_or_not == "paired") {
   filtered_seqs_name <- file.path(filt_path, paste0(all_sample_names, "_F_filt.fastq.gz"))
@@ -146,7 +145,7 @@ if(paired_or_not == "paired") {
   filtered_seqs <- filterAndTrim(fnFs, filtered_seqs_name, minLen = 70,
                                  maxN=0, maxEE=c(2), truncQ=0, rm.phix=TRUE,
                                  compress=TRUE, multithread=TRUE) # On Windows set multithread=FALSE
-  
+
 }
 head(filtered_seqs)
 
@@ -157,13 +156,13 @@ if (paired_or_not == "paired") {
   exists <- file.exists(filtered_seqs_name) & file.exists(filtered_seqs_name_R)
   filtered_seqs_name <- filtered_seqs_name[exists]
   filtered_seqs_name_R <- filtered_seqs_name_R[exists]
-  filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_F_filt.fastq.gz"), `[`, 1) 
+  filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_F_filt.fastq.gz"), `[`, 1)
 } else if (paired_or_not == "forward") {
-  exists <- file.exists(filtered_seqs_name) 
+  exists <- file.exists(filtered_seqs_name)
   filtered_seqs_name <- filtered_seqs_name[exists]
   filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_F_filt.fastq.gz"), `[`, 1)
 } else {
-  exists <- file.exists(filtered_seqs_name) 
+  exists <- file.exists(filtered_seqs_name)
   filtered_seqs_name <- filtered_seqs_name[exists]
   filtered_sample_names <- sapply(strsplit(basename(filtered_seqs_name), "_R_filt.fastq.gz"), `[`, 1)
 }
@@ -200,13 +199,13 @@ if (paired_or_not == "paired"){
 
 # Merge F and R if paired, and make sequence table -----
 if (paired_or_not == "paired") {
-  mergers <- mergePairs(dada_output, derep_seqs, dada_output_R, derep_seqs_R, 
+  mergers <- mergePairs(dada_output, derep_seqs, dada_output_R, derep_seqs_R,
                         returnRejects=TRUE, verbose=TRUE,minOverlap = 20, maxMismatch = 2)
   # Inspect the merger data.frame from the first sample
   head(mergers[[1]])
-  
+
   seqtab <- makeSequenceTable(mergers)
-  
+
 } else {
   seqtab <- makeSequenceTable(derep_seqs)
 }
@@ -221,26 +220,26 @@ rownames(filtered_seqs) <- all_sample_names
 
 filtered_seqs <- as.data.frame(filtered_seqs) %>% rownames_to_column("name")
 
-filtered_seqs_nonzeros <- filtered_seqs %>% filter(name %in% filtered_sample_names) 
+filtered_seqs_nonzeros <- filtered_seqs %>% filter(name %in% filtered_sample_names)
 functionally_useless <- filtered_seqs %>% filter(!(name %in% filtered_sample_names)) %>% rename(input = reads.in, filtered = reads.out)
 # functionally_useless <- data.frame(input = filtered_seqs[-(which(rownames(filtered_seqs) %in% filtered_sample_names)),1],
 #                                    filtered = filtered_seqs[-(which(rownames(filtered_seqs) %in% filtered_sample_names)),2])
 
 if (paired_or_not == "paired") {
   track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
-                      input = filtered_seqs_nonzeros[,"reads.in"], 
-                      filtered = filtered_seqs_nonzeros[,"reads.out"], 
-                      denoised = sapply(dada_output, getN), 
-                      merged = sapply(mergers, getN), 
+                      input = filtered_seqs_nonzeros[,"reads.in"],
+                      filtered = filtered_seqs_nonzeros[,"reads.out"],
+                      denoised = sapply(dada_output, getN),
+                      merged = sapply(mergers, getN),
                       tabled = rowSums(seqtab),
-                      nochim = rowSums(seqtab_nochim)) 
+                      nochim = rowSums(seqtab_nochim))
 } else {
   track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
-                      input = filtered_seqs_nonzeros[,"reads.in"], 
-                      filtered = filtered_seqs_nonzeros[,"reads.out"], 
-                      denoised = sapply(dada_output, getN), 
+                      input = filtered_seqs_nonzeros[,"reads.in"],
+                      filtered = filtered_seqs_nonzeros[,"reads.out"],
+                      denoised = sapply(dada_output, getN),
                       tabled = rowSums(seqtab),
-                      nochim = rowSums(seqtab_nochim)) 
+                      nochim = rowSums(seqtab_nochim))
 }
 track <- plyr::rbind.fill(track, functionally_useless)
 
@@ -273,7 +272,7 @@ nochim_merged <- seqtab_nochim %>% data.frame %>%
   mutate(!!working_barcode_seqnum := paste0(working_barcode_name,"_",row_number())) %>% # Make a new column w seq number
   select(!!working_barcode_seqnum,everything()) # reorder the columns
 
-# Save this table 
+# Save this table
 if(paired_or_not == "paired") {
   dir.create(mergedoutpath, recursive = T)
   write.table(nochim_merged, file = nochim_fname.txt, row.names=FALSE, sep="\t", quote=FALSE)
@@ -296,7 +295,7 @@ if(paired_or_not != "paired"){
 try <- ldply(mergers)  #merge all dataframes resulting from merger
 
 
-pairedsum_unmerged_table <- try %>% select(id = .id, forward, reverse, abundance, accept) %>% data.frame %>% 
+pairedsum_unmerged_table <- try %>% select(id = .id, forward, reverse, abundance, accept) %>% data.frame %>%
   filter(accept == FALSE) %>% select(-accept) # remove the ones that worked well during merge
 
 ##############################################################
@@ -305,25 +304,25 @@ pairedsum_unmerged_table <- try %>% select(id = .id, forward, reverse, abundance
 
 mine_unmerged <- function(df, seqs_list, forward_or_reverse) {
   seq_obj <- seqs_list[[(df[1])]]
-  
+
   # Make sure nothing silly is happening
   if (!(forward_or_reverse %in% c("forward","reverse"))){
     stop("forward_or_reverse must be specified as 'forward' or 'reverse'")
   }
-  
+
   if (forward_or_reverse == "forward") {
     seq <- seq_obj$sequence[as.numeric(df[2])]
   } else {
     seq <- seq_obj$sequence[as.numeric(df[3])]
   }
-  
+
   return(seq)
 }
 
-pairedsum_unmerged_table$sequenceF <- apply(pairedsum_unmerged_table, 1, function(x) 
+pairedsum_unmerged_table$sequenceF <- apply(pairedsum_unmerged_table, 1, function(x)
   mine_unmerged(x, seqs_list = dada_output, forward_or_reverse = "forward"))
 
-pairedsum_unmerged_table$sequenceR <- apply(pairedsum_unmerged_table, 1, function(x) 
+pairedsum_unmerged_table$sequenceR <- apply(pairedsum_unmerged_table, 1, function(x)
   mine_unmerged(x, seqs_list = dada_output_R, forward_or_reverse = "reverse"))
 
 
@@ -357,7 +356,7 @@ if (nrow(pairedsum_unmerged_dada2) == 0) {
 }
 
 # Spread the dataframe, and sum up the abundances per id
-unmerged_seqtab <- dcast(pairedsum_unmerged_dada2, sequenceF_N_Rrc ~ id, fun.aggregate = sum) %>% 
+unmerged_seqtab <- dcast(pairedsum_unmerged_dada2, sequenceF_N_Rrc ~ id, fun.aggregate = sum) %>%
   data.frame %>% column_to_rownames( "sequenceF_N_Rrc") %>% t()
 
 
@@ -391,14 +390,14 @@ unmerged_seqtab_nochim$sequencesRrc <- NULL
 
 # Reorder the columns (seqF, seqR, all the samples)
 
-unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% select(sequencesF, sequencesR, everything()) %>% 
+unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% select(sequencesF, sequencesR, everything()) %>%
   mutate(!!unmergedbarCseqnum := paste0(unmergedbarC, "_", row_number())) %>% select(!!unmergedbarCseqnum, everything())
 
 
 # ########################################
 # ### make output files
 # #########################################
-# 
+#
 # make file paths
 
 nochim_unfnameF.fasta = paste(unmergedoutpath,"/", "nochim_unmerged",barC,"F",".fasta", sep='')
@@ -413,7 +412,7 @@ nochim_unmerged_seq_R <- data.frame(unmerged_seqtab_nochim[[unmergedbarCseqnum]]
 nochim_unmerged_seq_F.fasta = dataframe2fas(nochim_unmerged_seq_F, file= nochim_unfnameF.fasta)
 nochim_unmerged_seq_R.fasta = dataframe2fas(nochim_unmerged_seq_R, file= nochim_unfnameR.fasta)
 
-# write summary table 
+# write summary table
 write.table(unmerged_seqtab_nochim, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
 cat("Done with analzing your paired reads!\n\n")
 quit()
