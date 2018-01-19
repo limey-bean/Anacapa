@@ -86,12 +86,13 @@ To run Anacap, you need verify that the full path to each of the following progr
 	* Bowtie2 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment.
 
 6. muscle: https://www.drive5.com/muscle/downloads.htm
+	* **__muscle must be installed within the anacapa_db folder__**
 
 
 **__CRUX Databases to download__**
 Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
 
-Users can also make their own libraries using CRUX.  Sliva and greengees libraries can easily be converted to Anacapa compatible libraries.  [make documentation for this.]
+Users can also make their own libraries using CRUX.  Sliva and greengeens libraries can easily be converted to Anacapa compatible libraries.  [make documentation for this.]
 
 **_Hoffman users running the QC dada2 need to do the following before dada2 will run_**
 ```
@@ -113,13 +114,13 @@ this bit could take a very long time so no worries....
 
 ## How to run the QC / dada2 step:
 ```
-sh ~/Anacapa_db/scripts/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq> -l (add flag (-l), no text required, if running locally)
+sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq> -l (add flag (-l), no text required, if running locally)
 ```
 
 ## How to run the bowtie2 blca step:
 
 ```
-# sh ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l (add flag (-l), no text required, if running locally)
+# sh ~/Anacapa_db/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l (add flag (-l), no text required, if running locally)
 ```
 
 
