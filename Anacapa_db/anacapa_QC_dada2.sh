@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq> -l (add flag (-l), no text required, if running locally)
+# sh ~/Anacapa_db/scripts/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq>
 IN=""
 OUT=""
 DB=""
@@ -12,7 +12,7 @@ ADPT=""
 ILLTYPE=""
 
 
-while getopts "i:o:d:u:f:r:a:t:l?" opt; do
+while getopts "i:o:d:u:f:r:a:t:" opt; do
     case $opt in
         i) IN="$OPTARG" # path to raw .fastq.gz files
         ;;
@@ -29,8 +29,6 @@ while getopts "i:o:d:u:f:r:a:t:l?" opt; do
         a) ADPT="$OPTARG"  # need adapter for cutadapt
         ;;
         t) ILLTYPE="$OPTARG"  #need to know trim params cutadapt
-        ;;
-        l) LOCALMODE="TRUE" #run dada2 locally (not on a cluster)
         ;;
     esac
 done

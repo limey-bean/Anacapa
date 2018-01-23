@@ -4,6 +4,9 @@
 # Last Updated 9-15-2017
 
 
+#Local mode
+#Uncomment the following line (delete the #) if you are NOT running on a cluster (e.g. Hoffman2)
+#LOCALMODE=TRUE
 
 #############################
 # Paths to programs / load programs

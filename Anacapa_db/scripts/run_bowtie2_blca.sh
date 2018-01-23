@@ -1,14 +1,14 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -m <metabarcode> -l -u <hoffman_account_user_name>
+# sh ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -m <metabarcode> -u <hoffman_account_user_name>
 OUT=""
 DB=""
 MB=""
 UN=""
 
 
-while getopts "o:d:m:u:l?" opt; do
+while getopts "o:d:m:u:" opt; do
     case $opt in
         o) OUT="$OPTARG" # path to desired Anacapa output
         ;;
@@ -17,8 +17,6 @@ while getopts "o:d:m:u:l?" opt; do
         m) MB="$OPTARG"  # need username for submitting sequencing job
         ;;
         u) UN="$OPTARG"  # need username for submitting sequencing job
-        ;;
-        l) LOCALMODE="TRUE" #run dada2 locally (not on a cluster)
         ;;
     esac
 done
