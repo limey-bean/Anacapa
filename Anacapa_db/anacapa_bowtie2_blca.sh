@@ -15,8 +15,6 @@ while getopts "o:d:u:l?" opt; do
         ;;
         u) UN="$OPTARG"  # need username for submitting sequencing job
         ;;
-        u) UN="$OPTARG"  # need username for submitting sequencing job
-        ;;
         l) LOCALMODE="TRUE" #run dada2 locally (not on a cluster)
         ;;
     esac
@@ -57,13 +55,12 @@ date
 echo "Assign taxonomy!: 1) submit bowtie2 and blca for the dada2 output for each metabarcode"
 for j in `ls ${OUT}/`
 do
- echo "Process metabarcode reads for with dada2: submit many jobs"
  if [[ "${j}" != "QC" && "${j}" != "Run_info" ]]; # ignore non-metabarcode folders...
  then
     #make folders for the metabarcode specific output of dada2 and bowtie2
  	echo "${j}"
     # generate runlogs that you can submit at any time!
-    printf "#!/bin/bash\n#$ -l h_rt=20:00:00,h_data=48G\n#$ -N bowtie2_${j}_blca\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}__bowtie2_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_bowtie2_blca_$JOB_ID.err \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\nsh ${DB}/scripts/run_bowtie2_blca.sh  -o ${OUT} -d ${DB} -m ${j}\n\necho _END_ [run_bowtie2_blca.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
+    printf "#!/bin/bash\n#$ -l highp,h_rt=210:00:00,h_data=20G\n#$ -N bowtie2_${j}_blca\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_bowtie2_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_bowtie2_blca_$JOB_ID.err \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\nsh ${DB}/scripts/run_bowtie2_blca.sh  -o ${OUT} -d ${DB} -m ${j} -u ${UN}\n\necho _END_ [run_bowtie2_blca.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
     echo ''
     qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
     if [ "${LOCALMODE}" = "TRUE"  ]  # if you are running loally (no hoffman2) you can run these jobs one after the other.
