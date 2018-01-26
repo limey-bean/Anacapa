@@ -11,7 +11,7 @@ if (length(args) != 3) {
 
 # need base library and dplyr, if ran dada2 should have it installed
 # but just incase you do not have dplyr... Download package from CRAN
-.cran_packages  <-  c("dplyr","readr")
+.cran_packages  <-  c("dplyr","readr", "stringr")
 .inst <- .cran_packages %in% installed.packages()
 if (any(!.inst)) {
   install.packages(.cran_packages[!.inst], repos = "http://cran.rstudio.com/")
@@ -25,12 +25,14 @@ outputfile = args[3]
 
 library("dplyr")
 library("readr")
+library("stringr")
 
 # open file to summarize
 df <- read_delim(inputfile, delim = "\t" )
 
 # ignore the first column and for each row with the same taxonomic path, sum the counts per column
-by_taxon <- df %>% select(-1,) %>% group_by(`sum taxonomy`) %>% summarize_all(funs(sum))
+by_taxon <- df %>% mutate(sum.taxonomy = stringr::str_replace_all(as.character(`sum taxonomy`), ";;", ";NA;")) %>% 
+  group_by(sum.taxonomy) %>% summarize_if(is.numeric, sum)
 
 # export summarized file
 
