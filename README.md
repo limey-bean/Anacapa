@@ -125,13 +125,13 @@ this bit could take a very long time so no worries....
 
 ## How to run the QC / dada2 step:
 ```
-sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq> -l (add flag (-l), no text required, if running locally)
+sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq>
 ```
 
 ## How to run the bowtie2 blca step:
 
 ```
-# sh ~/Anacapa_db/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l (add flag (-l), no text required, if running locally)
+# sh ~/Anacapa_db/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
 ```
 
 
