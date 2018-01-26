@@ -48,7 +48,9 @@ class SamEntry(object):
             self.md_z_flags = raw_row[18].split(':')[-1]
 
         total_match_count, total_count = self.calulate_match_count(self.md_z_flags)
-        self.identity_ratio = total_match_count / total_count
+        self.identity_ratio_old = total_match_count / total_count
+        self.identity_ratio = total_match_count / float(len(self.seq))
+
         self.total_match = total_match_count
 
     def calulate_match_count(self, md_z_flags):
@@ -325,6 +327,7 @@ with open(sam_file_name) as sam_file:
         pieces = line.strip().split('\t')
         entry = SamEntry(pieces)
         # entry does not match filter
+        # change this to identity_ratio_old to get the old way back
         if entry.identity_ratio < iset:
             possible_rejects.add(entry.qname)
         elif entry.qname in input_sequences:
