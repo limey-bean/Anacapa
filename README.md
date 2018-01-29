@@ -108,9 +108,9 @@ Users can also make their own libraries using CRUX.  Sliva and greengeens librar
 **_Hoffman users running the QC dada2 need to do the following before dada2 will run_**
 ```
 qrsh
-module load module load R/3.4.2
+module load R/3.4.2
 module load gcc/6.3.0
-R # will open R in terminal to go back to bach quit() I think...
+R
 source("https://bioconductor.org/biocLite.R")
 biocLite(suppressUpdates = FALSE)
 ```
