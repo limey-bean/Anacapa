@@ -122,6 +122,12 @@ biocLite("devtools")
 ```
 this bit could take a very long time so no worries....
 
+also make sure that biopython is installed.
+
+```
+pip install biopython --user
+```
+
 
 ## How to run the QC / dada2 step:
 ```
