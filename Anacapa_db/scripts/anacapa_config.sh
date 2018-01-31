@@ -37,6 +37,8 @@ R="module load R/3.4.2"
 #load python with numpy
 PYTHONWNUMPY="module load python/2.7.3"
 
+MUSCLE="${DB}/muscle"
+
 
 #load GCC
 GCC="module load gcc/6.3.0"

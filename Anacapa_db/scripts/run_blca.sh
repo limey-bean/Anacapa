@@ -51,7 +51,7 @@ date
 ### blca
 
 echo "Run blca on sam output"
-python ${DB}/scripts/blca_from_bowtie.py -i ${FN} -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b 0.8 -p ${DB}/muscle
+python ${DB}/scripts/blca_from_bowtie.py -i ${FN} -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${BLCAB} -p ${MUSCLE}
 
 ######################################
 # Add blca taxonomy to the asv table
