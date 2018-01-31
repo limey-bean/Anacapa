@@ -4,8 +4,6 @@
 # Example usage python blca_from_bowtie.py  -i take_3_local.sam -r CO1_labeled_taxonomy.txt -q CO1_.fasta  -b 0.8 -p path/to/muscle
 import sys
 import os
-import math
-import subprocess
 import StringIO
 
 try:
@@ -16,11 +14,9 @@ except ImportError:
 
 import random
 import subprocess
-import getopt
 import re
 from collections import namedtuple, defaultdict
-
-# import argparse
+import argparse
 
 '''
 BLCA Core annotation tool
@@ -106,100 +102,45 @@ class NotAvailableHandler(object):
         return 'NA'
 
 
+parser = argparse.ArgumentParser(description='Bayesian-based LCA taxonomic classification method')
+##### Required arguments #####
+required = parser.add_argument_group('required arguments')
+required.add_argument("-i","--sam", help="Input SAM file",type=str, required=True)
+required.add_argument('-q', '--reference', help="Reference fasta file", type=str, required=True)
+required.add_argument("-r","--tax", help="reference taxonomy file for the Database",type=str, required=True)
 
+##### Taxonomy filtering arguments #####
+taxoptions = parser.add_argument_group('taxonomy profiling options [filtering of hits]')
+taxoptions.add_argument("-n","--nper",help="number of times to bootstrap. Default: 100",type=int,default=100)
+taxoptions.add_argument("-b","--iset",help="minimum identity score to include", type=float, default=0.8)
+##### Alignment control arguments #####
+alignoptions = parser.add_argument_group('alignment control arguments')
+alignoptions.add_argument("-m","--match",default=1.0,help="alignment match score. Default: 1",type=float)
+alignoptions.add_argument("-f","--mismatch",default=-2.5,help="alignment mismatch penalty. Default: -2.5",type=float)
+alignoptions.add_argument("-g","--ngap",default=-2.0,help="alignment gap penalty. Default: -2",type=float)
+##### Other arguments #####
+optional = parser.add_argument_group('other arguments')
+optional.add_argument('-p', '--muscle', help='Path to call muscle default: muscle', default='muscle')
+optional.add_argument("-o","--outfile",help="output file name. Default: <fasta>.blca.out",type=str)
+##### parse arguments #####
+args = parser.parse_args()
 
-
-
-
-def usage():
-    print "\n<< Bayesian-based LCA taxonomic classification method"
-    print 'Usage: python ' + sys.argv[0] + ' -i <sam file> [option]\n'
-    print " \nArguments:\n - Required:"
-    print "\t-i\t\tInput fasta file.\n - Taxonomy Profiling Options [filtering of hits]:"
-    print "\t-n\t\tNumber of times to bootstrap. Default: 100"
-    print "\t-j\t\tMaximum number of subjects to include for each query reads. Default: 50"
-    print "\t-d\t\tProportion of hits to include from top hit. Default: 0.1 [0-1]"
-    print "\t-e\t\tMinimum evalue to include for blastn. Default: 0.1"
-    print "\t-a\t\tMinimum bitscore to include for blastn hits. Default: 100"
-    print "\t-c\t\tMinimum coverage to include. Default: 0.85 [0-1]"
-    print "\t-b\t\tMinimum identity score to include. Default: 0.90 [0-1.0]"
-    print "\t-r\t\tReference Taxonomy file for the Database. Default: db/16SMicrobial.ACC.taxonomy"
-    print "\t-q\t\tRefernece blast database. Default: db/16SMicrobial"
-    print "\t-o\t\tOutput file name. Default: <fasta>.blca.out\n - Alignment Options:"
-    print "\t-m\t\tAlignment match score. Default: 1"
-    print "\t-f\t\tAlignment mismatch penalty. Default: -2.5"
-    print "\t-g\t\tAlignment gap penalty. Default: -2\n - Other:"
-    print "\t-t\t\tExtra number of nucleotides to include at the beginning and end of the hits. Default: 10"
-    print "\t-p\t\tPath to muscle"
-    print "\t-h\t\tShow program usage and quit"
-
-
-####set up default parameters #######
 ### bootstrap times ###
-nper = 100  # number of bootstrap to permute
+nper = args.nper  # number of bootstrap to permute
 ### Filter hits per query ###
-iset = float(0.9)  # identify threshold
-eset = float(0.1)  # evalue threshold
-gap = 10  # number of nucleotides to include at the beginning and end of the hits
-topper = float(0.1)  # top percentage to include hits
-cvrset = float(0.80)  # coverage to include
-bset = float(100)  # minimum bitscore to include
-nsub = 50  # maximum number of subjects to include
+iset = args.iset  # identify threshold
 ### Alignment options ###
-ngap = -2  # gap penalty
-match = 1  # match score
-mismatch = -2.5  # mismatch penalty
+ngap = args.ngap  # gap penalty
+match = args.match  # match score
+mismatch = args.mismatch  # mismatch penalty
+
+sam_file_name = args.sam
+outfile_name = args.outfile or (sam_file_name + '.blca.out')
+reference_fasta = args.reference
+tax = args.tax
+muscle_path = args.muscle
+
 levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
-muscle_path = 'muscle'
-
-opts, args = getopt.getopt(sys.argv[1:], "a:b:c:d:e:f:g:i:j:lm:n:o:r:q:t:s:p:h",
-                           ['Minimum bitscore', 'Minimum Identity', 'Minimum Coverage', 'Top Proportion',
-                            'Minimum evalue', 'Alignment Mismatch Penalty', 'Alignment Gap Penalty', 'Input File',
-                            'Maximum Subjects', 'Long Output', 'Alignment Match Score', 'Number of Bootstrap to Run',
-                            'Output File', 'Taxonomy File of Database', 'Reference FASTA file',
-                            'Number of nt Length of Sequence', 'Path to muscle', 'help'])
-for o, a in opts:
-    if o == "-i":
-        sam_file_name = a
-        outfile_name = sam_file_name + '.blca.out'
-    elif o == "-n":
-        nper = float(a)
-    elif o == "-j":
-        nsub = int(a)
-    elif o == "-t":
-        gap = float(a)
-    elif o == "-c":
-        cvrset = float(a)
-    elif o == "-l":
-        longout = True
-    elif o == "-d":
-        topper = float(a)
-    elif o == "-e":
-        eset = float(a)
-    elif o == "-f":
-        mismatch = float(a)
-    elif o == "-g":
-        ngap = float(a)
-    elif o == "-q":
-        reference_fasta = a
-    elif o == "-m":
-        match = float(a)
-    elif o == "-b":
-        iset = float(a)
-    elif o == "-o":
-        outfile_name = a
-    elif o == "-r":
-        tax = a
-    elif o == "-a":
-        bset = float(a)
-    elif o == "-p":
-        muscle_path = a
-    elif o in ('-h', '--help'):
-        print usage()
-        sys.exit(1)
-    else:
-        assert False, 'unhandle option'
-
 
 def check_program(prgname):
     '''Check whether a program has been installed and put in the PATH'''
@@ -216,7 +157,7 @@ def get_dic_from_aln(aln):
     alignment = AlignIO.read(aln, "clustal")
     alndic = {}
     for r in alignment:
-        alndic[r.id] = r.seq
+        alndic[r.id] = list(r.seq)
     return alndic
 
 
