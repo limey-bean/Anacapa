@@ -122,7 +122,6 @@ alignoptions.add_argument("-g","--ngap",default=-2.0,help="alignment gap penalty
 optional = parser.add_argument_group('other arguments')
 optional.add_argument('-p', '--muscle', help='Path to call muscle default: muscle', default='muscle')
 optional.add_argument("-o","--outfile",help="output file name. Default: <fasta>.blca.out",type=str)
-optional.add_argument("-h","--help",help="show this help message and exit",action="help")
 ##### parse arguments #####
 args = parser.parse_args()
 
@@ -158,7 +157,7 @@ def get_dic_from_aln(aln):
     alignment = AlignIO.read(aln, "clustal")
     alndic = {}
     for r in alignment:
-        alndic[r.id] = r.seq
+        alndic[r.id] = list(r.seq)
     return alndic
 
 
