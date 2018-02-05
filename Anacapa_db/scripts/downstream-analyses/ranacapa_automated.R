@@ -9,8 +9,8 @@ library(plotly)
 library(optparse)
 args <- commandArgs(trailingOnly=TRUE)
 
-# To Do:
-# Taxonomic barplots by (Phylum, Class, Order, maybe Fam/Genus/Sp? but probably not if interactive)
+# TO RUN THIS SCRIPT
+# Rscript /path/to/input_biom /path/to/input_meta /path/to/output_directory rarefaction_depth rarefaction_replicates
 
 input_biom_path <- args[1]
 input_meta_path <- args[2]
