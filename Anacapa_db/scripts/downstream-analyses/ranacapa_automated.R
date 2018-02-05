@@ -10,7 +10,7 @@ library(optparse)
 args <- commandArgs(trailingOnly=TRUE)
 
 # TO RUN THIS SCRIPT
-# Rscript /path/to/input_biom /path/to/input_meta /path/to/output_directory rarefaction_depth rarefaction_replicates
+# Rscript ranacapa_automated.R /path/to/input_biom /path/to/input_meta /path/to/output_directory rarefaction_depth rarefaction_replicates
 
 input_biom_path <- args[1]
 input_meta_path <- args[2]
