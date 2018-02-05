@@ -74,19 +74,20 @@ colors(6)
 #           trace = "none", density.info = "none", srtCol = 45, cexCol = .5, colsep = seq(from = 5, to = 30, by = 5),
 #           lhei = c(1,7,1), lwid = c(0.1,10), lmat = rbind(c(0,0),c(2,1), c(3,4)), row)
 
-subdir_names_clean <- str_replace(subdir_names, "-taxonomy-tables", "")
-subdir_names_clean[3] <- "crux-blast-blca-80\nid-100returns-0over-16s"
-
-group_names <- c("Blast BLCA\n80ID, 0 Over", "Blast BLCA\n90ID 10 Over", "CRUX-Blast-BLCA\n80ID 100 Returns\n0 Over",
+# 
+# group_names <- c("Blast BLCA\n80ID, 0 Over", "Blast BLCA\n90ID 10 Over", "CRUX-Blast-BLCA\n80ID 100 Returns\n0 Over",
+#                  "Filtered 16S", "Greengenes", "Silva", "Unfiltered 16S")
+group_names <- c("CRUX-Blast-BLCA\n80ID 100 Returns\n0 Over",
                  "Filtered 16S", "Greengenes", "Silva", "Unfiltered 16S")
 
-pdf("figures/heatmap-v1.pdf", height = 15, width = 22)
-superheat.2(comparisons_df, membership.cols = rep(1:7, each = 5), heat.pal = colors(7),
+
+# pdf("figures/heatmap-v1.pdf", height = 15, width = 22)
+superheat.2(comparisons_df, membership.cols = rep(1:length(all_files_to_compare), each = 5), heat.pal = colors(7),
             grid.vline.col = "white", grid.vline.size = 2, bottom.label.text.size = 7, bottom.label.size = .15,
             legend.breaks = 0:6, bottom.label.col = "white", pretty.order.rows = F, pretty.order.cols = F,
-            X.text.size = .15,X.text = as.matrix(comparisons_df), bottom.cluster.group.names = group_names,
+            X.text.size = .15,X.text = as.matrix(comparisons_df), bottom.label.names = group_names,
             yt = (colSums(comparisons_df)/nrow(comparisons_df)/6), yt.plot.type = "bar",
             yt.bar.col = "black",yt.obs.col = rep("grey", 35), yt.point.size = 1.25, yt.num.ticks = 6,
             yt.axis.name = "Average percentage\nof taxonomy\nassigned correctly", left.label = "none", 
             left.label.size = 0, yt.axis.size = 20, yt.axis.name.size = 20,yt.lim = c(0,1))
-dev.off()
+# dev.off()
