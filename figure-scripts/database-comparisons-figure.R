@@ -1,17 +1,47 @@
-library(readr)
-library(dplyr); library(reshape2); library(stringr); library(gplots)
-mock <- read_delim("~/Desktop/mock_3_actual_taxonomy_summary.txt", delim ="\t")
+# Script to make comparison figure to compare CRUX and a few other 16s databases
+# Data stored in Anacapa/data-for-comparisons
 
-file_names <- list.files("~/Desktop/", pattern = "16S*")
 
-actuals <- lapply(file_names, function(x) read_delim(file = file.path("~/Desktop", x), delim = "\t"))
+library(tidyverse)
+library(gplots)
+library(reshape2)
+# NOTE!
+# Using a modified version of superheat::superheat...
+# Need to figure out how to make this smoother
+library(superheat)
 
-names(actuals) <- file_names
+# Read in the mock dataset
+mock <- read_delim("data-for-figs/compare-16s-databases/mock_3_actual_taxonomy_summary.txt", delim ="\t")
+# Fix some "Not Available" calls to just read NAs
 mock$`actual taxonomy` <- str_replace(mock$`actual taxonomy`, "Not Available", "NA")
-actuals <- lapply(actuals, function(x) x %>% mutate(`sum taxonomy` = str_replace(`sum taxonomy`, "Not Available", "NA")))
-
 mock <- cbind(mock,colsplit(mock$`actual taxonomy`, ";", names = c("phylum", "class", "order", "family", "genus", "species")))
-actuals <- lapply(actuals, function(x) cbind(x, colsplit(x$`sum taxonomy`, ";", names = c("phylum", "class", "order", "family", "genus", "species"))))
+
+
+# Import all the files to compare. The structure is slightly convoluted, so a brief explanation:
+# All files will be saved in a single list, named "all_files_to_compare"
+# The list will have as many elements as there are databases (as of this writing, 7 databases)
+# Each of the 7 elements is in turn a list, with 5 elements each.
+# Each of the 5 is one percent_confidence cutoff (60,70,80,90,95).
+subdir_names <- list.files("data-for-figs/compare-16s-databases/", pattern = "taxonomy-tables")
+file_names <- list.files("data-for-figs/compare-16s-databases/blast-blca-80id-0over-taxonomy-tables/")
+all_files_to_compare <- lapply(subdir_names, function(subdir) lapply(file_names, function(each_file) 
+  read_delim(file.path("data-for-figs/compare-16s-databases/", subdir, each_file), delim = "\t")))
+names(all_files_to_compare) <- subdir_names
+
+# Take care of some quirks in taxonomy paths
+all_files_to_compare <- lapply(all_files_to_compare, function(each_db) lapply(each_db, function(x)
+  x %>% mutate(`sum taxonomy` = str_replace(`sum taxonomy`, "Not Available", "NA"), # Fix the Not Available issue, if it persists
+               `sum taxonomy` = str_replace_all(`sum taxonomy`, "[a-z]__", ""),     # Greengenes taxonomy has p__/c__ for each level
+               `sum taxonomy` = str_replace_all(`sum taxonomy`, "D_[1-9]__", ""),   # Silve has D_1__ etc.
+               `sum taxonomy` = str_replace_all(`sum taxonomy`, "^;", "NA;"),       # Replace first empty with NA
+               `sum taxonomy` = str_replace_all(`sum taxonomy`, ";$", ";NA"),
+               `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"),
+               `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"),
+               `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"),
+               `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"))))     
+# Split up the single `sum taxonomy` column into a column for each level
+all_files_to_compare <- lapply(all_files_to_compare, function(each_db) lapply(each_db, function(x)
+  separate(x,"sum taxonomy", sep = ";", into = c("phylum", "class", "order", "family", "genus", "species"), remove = FALSE)))
 
 compare_mock_to_actual <- function(v1,v2) {
   same <- (v1 == v2) | (is.na(v1) & is.na(v2))
@@ -19,22 +49,44 @@ compare_mock_to_actual <- function(v1,v2) {
   return(same)
 }
 
-
-comparisons <-lapply(actuals, function(x) cbind(seq_name = mock$seq_name, actual_taxonomy = mock$`actual taxonomy`, assigned_taxonomy = x$`sum taxonomy`,
+comparisons <-lapply(all_files_to_compare, function(each_db) lapply(each_db, function(x) 
+  cbind(seq_name = mock$seq_name, actual_taxonomy = mock$`actual taxonomy`, assigned_taxonomy = x$`sum taxonomy`,
                                                 sapply(c("phylum", "class", "order", "family", "genus", "species"), 
-                                                       function(y) compare_mock_to_actual(v1 = x[,y], v2 = mock[,y]))))
-
-comparisons <- lapply(comparisons, function(x) as.data.frame(cbind(x, num_levels_idd = 
-                                                                     as.numeric(apply(x, 1, function(y) 
-                                                                       sum(as.logical(y[c("phylum", "class", "order", "family", "genus", "species")])))))))
+                                                       function(y) compare_mock_to_actual(v1 = x[,y], v2 = mock[,y])))))
+comparisons <- lapply(comparisons, function(each_db) lapply(each_db, function(x) as.data.frame(cbind(x, num_levels_idd = 
+                                                                     as.character(apply(x, 1, function(y) 
+                                                                       sum(as.logical(y[c("phylum", "class", "order", "family", "genus", "species")]))))))))
 
 
 comparisons_for_graphs <- as.data.frame(sapply(1:length(comparisons), function(x) 
   as.numeric(as.character(comparisons[[x]]$num_levels_idd))))
-colnames(comparisons_for_graphs) <- names(comparisons)
-rownames(comparisons_for_graphs) <- mock$seq_name
-colors <- colorRampPalette(c("white", "royalblue4"))
+
+comparisons_df <- data.frame(lapply(comparisons, function(each_db) lapply(each_db, function(x) as.numeric(as.character(x$num_levels_idd)))))
+
+colnames(comparisons_df) <- paste(rep(subdir_names, each = 5), file_names, sep = "_")
+
+
+rownames(comparisons_df) <- mock$seq_name
+colors <- colorRampPalette(c("white", "black"))
 colors(6)
-heatmap.2(as.matrix(comparisons_for_graphs), Rowv = NA, Colv = NA, col = colors(6), 
-          trace = "none", density.info = "none", breaks = 0:6, srtCol = 45, cexCol = .5, colsep = 3,
-          ColSideColors = c(rep("red",3),rep("darkgreen",2)))
+
+# heatmap.2(as.matrix(comparisons_df), Rowv = NA, Colv = NA, col = colors(6), 
+#           trace = "none", density.info = "none", srtCol = 45, cexCol = .5, colsep = seq(from = 5, to = 30, by = 5),
+#           lhei = c(1,7,1), lwid = c(0.1,10), lmat = rbind(c(0,0),c(2,1), c(3,4)), row)
+
+subdir_names_clean <- str_replace(subdir_names, "-taxonomy-tables", "")
+subdir_names_clean[3] <- "crux-blast-blca-80\nid-100returns-0over-16s"
+
+group_names <- c("Blast BLCA\n80ID, 0 Over", "Blast BLCA\n90ID 10 Over", "CRUX-Blast-BLCA\n80ID 100 Returns\n0 Over",
+                 "Filtered 16S", "Greengenes", "Silva", "Unfiltered 16S")
+
+pdf("figures/heatmap-v1.pdf", height = 15, width = 22)
+superheat.2(comparisons_df, membership.cols = rep(1:7, each = 5), heat.pal = colors(7),
+            grid.vline.col = "white", grid.vline.size = 2, bottom.label.text.size = 7, bottom.label.size = .15,
+            legend.breaks = 0:6, bottom.label.col = "white", pretty.order.rows = F, pretty.order.cols = F,
+            X.text.size = .15,X.text = as.matrix(comparisons_df), bottom.cluster.group.names = group_names,
+            yt = (colSums(comparisons_df)/nrow(comparisons_df)/6), yt.plot.type = "bar",
+            yt.bar.col = "black",yt.obs.col = rep("grey", 35), yt.point.size = 1.25, yt.num.ticks = 6,
+            yt.axis.name = "Average percentage\nof taxonomy\nassigned correctly", left.label = "none", 
+            left.label.size = 0, yt.axis.size = 20, yt.axis.name.size = 20,yt.lim = c(0,1))
+dev.off()
