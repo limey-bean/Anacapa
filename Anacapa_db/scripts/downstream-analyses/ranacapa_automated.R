@@ -9,10 +9,12 @@ library(plotly)
 library(optparse)
 args <- commandArgs(trailingOnly=TRUE)
 
+# TO RUN THIS SCRIPT
+# Rscript ranacapa_automated.R /path/to/input_biom /path/to/input_meta /path/to/output_directory rarefaction_depth rarefaction_replicates
 
 input_biom_path <- args[1]
 input_meta_path <- args[2]
-
+#
 anacapa_biom <- read.table(input_biom_path, header = 1, sep = "\t", stringsAsFactors = F)
 metadata <- read.table(input_meta_path, header = 1, sep = "\t", stringsAsFactors = F)
 output_path <- args[3]
@@ -33,8 +35,8 @@ physeq_obj <- convert_anacapa_to_phyloseq(anacapa_biom, metadata)
 p <- ggrare(physeq_obj,color = colnames(metadata[1]),step = 1000, se=FALSE) + theme_bw() + theme_ranacapa()
 ggsave(plot = p, filename = file.path(output_path, "rarefaction_overall.pdf"))
 
-rarefaction_depth = 2000
-rarefaction_reps  = 2
+rarefaction_depth = args[4]
+rarefaction_reps  = args[5]
 
 physeq_obj_rare <- custom_rarefaction(physeq_obj, sample_size = rarefaction_depth, replicates = rarefaction_reps)
 
@@ -157,3 +159,10 @@ for (current_variable in colnames(metadata)){
   cat("\n\n ------------------ \n\n")
 }
 sink()
+
+p <- plot_bar(physeq_obj_rare, fill = "Phylum")
+ggsave(plot = p, file = file.path(output_path, "barplot_by_phylum.pdf"))
+p <- plot_bar(physeq_obj_rare, fill = "Class")
+ggsave(plot = p, file = file.path(output_path, "barplot_by_class.pdf"))
+p <- plot_bar(physeq_obj_rare, fill = "Order")
+ggsave(plot = p, file = file.path(output_path, "barplot_by_order.pdf"))
