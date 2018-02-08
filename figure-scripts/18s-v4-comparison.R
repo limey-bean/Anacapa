@@ -1,34 +1,18 @@
-# Script to make comparison figure to compare CRUX and a few other 16s databases
-# Data stored in Anacapa/data-for-comparisons
-
-
-library(tidyverse)
-library(gplots)
-library(reshape2)
-# NOTE!
-# Using a modified version of superheat::superheat...
-# Need to figure out how to make this smoother
-library(superheat)
-
-# Read in the mock dataset
-mock <- read_delim("data-for-figs/compare-16s-databases/mock_3_actual_taxonomy_summary.txt", delim ="\t")
-# Fix some "Not Available" calls to just read NAs
-mock$`actual taxonomy` <- str_replace(mock$`actual taxonomy`, "Not Available", "NA")
-mock <- cbind(mock,colsplit(mock$`actual taxonomy`, ";", names = c("phylum", "class", "order", "family", "genus", "species")))
-
-
-# Import all the files to compare. The structure is slightly convoluted, so a brief explanation:
-# All files will be saved in a single list, named "all_files_for_heatmap_for_heatmap"
-# The list will have as many elements as there are databases (as of this writing, 7 databases)
-# Each of the 7 elements is in turn a list, with 5 elements each.
-# Each of the 5 is one percent_confidence cutoff (60,70,80,90,95).
-subdir_names <- list.files("data-for-figs/compare-16s-databases/", pattern = "taxonomy-tables")
-file_names <- list.files("data-for-figs/compare-16s-databases/filtered-16s-taxonomy-tables/")
+subdir_names <- list.files("data-for-figs/compare-18S-databases/18/", pattern = "taxonomy_table")
+file_names <- list.files("data-for-figs/compare-18S-databases/18S_V4/Crux_filtered_18S_V4-taxonomy_table/")
 all_files <- lapply(subdir_names, function(subdir) lapply(file_names, function(each_file) 
-  read_delim(file.path("data-for-figs/compare-16s-databases/", subdir, each_file), delim = "\t")))
+  read_delim(file.path("data-for-figs/compare-18S-databases/18S_V4/", subdir, each_file), delim = "\t")))
 names(all_files) <- subdir_names
 
-# Take care of some quirks in taxonomy paths
+mock <- read_delim("data-for-figs/compare-18S-databases/18S_V4/18S_V4_taxonomy.txt", delim ="\t")
+mock$`actual taxonomy` <- str_replace(mock$`actual taxonomy`, "Not Available", "NA")
+mock <- cbind(mock,colsplit(mock$`actual taxonomy`, ";", names = c("phylum", "class", "order", "family", "genus", "species")))
+mock <- mock %>% arrange(seq_name)
+# ---------
+
+
+
+
 all_files_for_heatmap <- lapply(all_files, function(each_db) lapply(each_db, function(x)
   x %>% mutate(`sum taxonomy` = str_replace(`sum taxonomy`, "Not Available", "NA"), # Fix the Not Available issue, if it persists
                `sum taxonomy` = str_replace_all(`sum taxonomy`, "[a-z]__", ""),     # Greengenes taxonomy has p__/c__ for each level
@@ -51,11 +35,11 @@ compare_mock_to_actual <- function(v1,v2) {
 
 comparisons <-lapply(all_files_for_heatmap, function(each_db) lapply(each_db, function(x) 
   cbind(seq_name = mock$seq_name, actual_taxonomy = mock$`actual taxonomy`, assigned_taxonomy = x$`sum taxonomy`,
-                                                sapply(c("phylum", "class", "order", "family", "genus", "species"), 
-                                                       function(y) compare_mock_to_actual(v1 = x[,y], v2 = mock[,y])))))
+        sapply(c("phylum", "class", "order", "family", "genus", "species"), 
+               function(y) compare_mock_to_actual(v1 = x[,y], v2 = mock[,y])))))
 comparisons <- lapply(comparisons, function(each_db) lapply(each_db, function(x) as.data.frame(cbind(x, num_levels_idd = 
-                                                                     as.character(apply(x, 1, function(y) 
-                                                                       sum(as.logical(y[c("phylum", "class", "order", "family", "genus", "species")]))))))))
+                                                                                                       as.character(apply(x, 1, function(y) 
+                                                                                                         sum(as.logical(y[c("phylum", "class", "order", "family", "genus", "species")]))))))))
 
 
 comparisons_for_graphs <- as.data.frame(sapply(1:length(comparisons), function(x) 
@@ -70,32 +54,13 @@ rownames(comparisons_df) <- mock$seq_name
 colors <- colorRampPalette(c("white", "black"))
 colors(6)
 
-heatmap.2(as.matrix(comparisons_df), Rowv = NA, Colv = NA, col = colors(6),
-          trace = "none", density.info = "none", srtCol = 45, cexCol = .5, colsep = seq(from = 5, to = 30, by = 5),
-          lhei = c(1,7,1), lwid = c(0.1,10), lmat = rbind(c(0,0),c(2,1), c(3,4)), row)
 
-# 
-# group_names <- c("Blast BLCA\n80ID, 0 Over", "Blast BLCA\n90ID 10 Over", "CRUX-Blast-BLCA\n80ID 100 Returns\n0 Over",
-#                  "Filtered 16S", "Greengenes", "Silva", "Unfiltered 16S")
-group_names <- c("CRUX\nUnfiltered 16S",
-                 "CRUX\nFiltered 16S", "Greengenes", "Silva")
+group_names <- c("CRUX\nFiltered 18S-V4","CRUX\nUnfiltered 18S-V4", "Silva")
 
 
-pdf("figures/heatmap-16s_crux_v_greengenes_v_silva.pdf", height = 15, width = 22)
-superheat.2(comparisons_df, membership.cols = rep(c(2,1,3,4), each = 5), 
-            heat.pal = colors(7),
-            grid.vline.col = "white", grid.vline.size = 2, bottom.label.text.size = 7,
-            bottom.label.size = .15,
-            legend.breaks = 0:6, bottom.label.col = "white", pretty.order.rows = F, pretty.order.cols = F,
-            X.text.size = .15,X.text = as.matrix(comparisons_df), bottom.label.names = group_names,
-            # yt = (colSums(comparisons_df)/nrow(comparisons_df)/6), yt.plot.type = "bar",
-            # yt = barplot_of_empties, yt.plot.type = "bar",
-            # yt.bar.col = "black",yt.obs.col = rep("grey", length(all_files_for_heatmap)*5), yt.point.size = 1.25, yt.num.ticks = 6,
-            # yt.axis.name = "Average percentage\nof taxonomy\nassigned correctly", left.label = "none", 
-            left.label.size = 0, yt.axis.size = 20, yt.axis.name.size = 20,yt.lim = c(0,1))
-dev.off()
 
-# Make the histogram include the unkown calls from Anacapa ----
+
+#-------------
 all_files_for_barplot <- lapply(all_files, function(each_db) lapply(each_db, function(x)
   x %>% mutate(`sum taxonomy` = str_replace(`sum taxonomy`, "Not Available", "NA"), # Fix the Not Available issue, if it persists
                `sum taxonomy` = str_replace_all(`sum taxonomy`, "[a-z]__", ""),     # Greengenes taxonomy has p__/c__ for each level
@@ -122,31 +87,63 @@ comparisons_e <-lapply(all_files_for_barplot, function(each_db) lapply(each_db, 
                function(y) compare_mock_to_actual_with_empties(assigned_taxonomy = x[,y], mock_taxonomy = mock[,y])))))
 comparisons_e <- lapply(comparisons_e, function(each_db) 
   lapply(each_db, function(x) as.data.frame(cbind(#x, 
-                                                  num_levels_correct = 
-                                                    apply(x, 1, function(y) 
-                                                      sum(y[c("phylum", "class", "order", "family", "genus", "species")] == "TRUE")),
-                                                  num_levels_wrong = 
-                                                    apply(x, 1, function(y) 
-                                                      sum(y[c("phylum", "class", "order", "family", "genus", "species")] == "FALSE")),
-                                                  num_levels_ambig = 
-                                                    apply(x, 1, function(y) 
-                                                      sum(y[c("phylum", "class", "order", "family", "genus", "species")] == "empty"))
-                                                  ))))
+    num_levels_correct = 
+      apply(x, 1, function(y) 
+        sum(y[c("phylum", "class", "order", "family", "genus", "species")] == "TRUE")),
+    num_levels_wrong = 
+      apply(x, 1, function(y) 
+        sum(y[c("phylum", "class", "order", "family", "genus", "species")] == "FALSE")),
+    num_levels_ambig = 
+      apply(x, 1, function(y) 
+        sum(y[c("phylum", "class", "order", "family", "genus", "species")] == "empty"))
+  ))))
 barplot_of_empties <- do.call(cbind, lapply(comparisons_e, function(each_db) sapply(each_db, function(x) 
   c(sum(x[,"num_levels_correct"]),
     sum(x[,"num_levels_wrong"]),
     sum(x[,"num_levels_ambig"])))))
+comparisons_e
 colnames(barplot_of_empties) <- paste0(rep(names(comparisons_e), each = 5), 
                                        c("60", "70", "80", "90", "95"))
 
 barplot_of_empties <- barplot_of_empties/colSums(barplot_of_empties)
-barplot_of_empties <- barplot_of_empties %>% tbl_df %>% select(6:10, 1:5, 11:15, 16:20) %>% as.matrix
+# barplot_of_empties <- barplot_of_empties %>% tbl_df %>% select(6:10, 1:5, 11:15, 16:20) %>% as.matrix
 rownames(barplot_of_empties) <- c("correct", "wrong", "ambiguous call")
+
+# Add the Silva stuff
+v418s_file_list <- list.files("data-for-figs/compare-18S-databases/18S_V4/Silva_V4_18S_coded/")
+silva_performance <- lapply(v418s_file_list, function(x) 
+  read.table(paste0("data-for-figs/compare-18S-databases/18S_V4/Silva_V4_18S_coded/",x), header = T, sep = "\t",stringsAsFactors = F))
+names(silva_performance) <- v418s_file_list
+v418s_silv_bar <- sapply(silva_performance, function(x) colSums(x[,3:5]))
+v418s_silv_bar <- v418s_silv_bar/colSums(v418s_silv_bar)
+rownames(v418s_silv_bar) <- c("correct", "wrong", "ambiguous call")
+barplot_of_empties <- cbind(barplot_of_empties,v418s_silv_bar )
 colnames(barplot_of_empties) <- NULL
-# pdf("figures/16s_database_accuracy_comparisons_v1.pdf", height = 7, width = 14)
+
+pdf("figures/18s_v4_database_accuracy_comparisons_v1.pdf", height = 7, width = 14)
 barplot(barplot_of_empties, legend = rownames(barplot_of_empties),
         args.legend = list(x = "topright", bty = "n", inset=c(0, -0.1), 
                            horiz = T),
         ylab = "Proportion of taxonomic calls done correctly",
-        col = c("black", "grey", "white"))
-# dev.off()
+        col = c("black", "grey", "white"), main = "18S-V4")
+dev.off()
+
+
+
+comparisons_df <- cbind(comparisons_df, sapply(silva_performance, function(x) x[,"TRUE."]))
+
+
+pdf("figures/heatmap-18s_v4_heatmap.pdf", height = 15, width = 22)
+superheat.2(comparisons_df, membership.cols = rep(c(1,2,3), each = 5), 
+            heat.pal = colors(7),
+            grid.vline.col = "white", grid.vline.size = 2, bottom.label.text.size = 7,
+            bottom.label.size = .15,
+            legend.breaks = 0:6, bottom.label.col = "white", pretty.order.rows = F, pretty.order.cols = F,
+            X.text.size = .15,X.text = as.matrix(comparisons_df), bottom.label.names = group_names,
+            # yt = (colSums(comparisons_df)/nrow(comparisons_df)/6), yt.plot.type = "bar",
+            # yt = barplot_of_empties, yt.plot.type = "bar",
+            # yt.bar.col = "black",yt.obs.col = rep("grey", length(all_files_for_heatmap)*5), yt.point.size = 1.25, yt.num.ticks = 6,
+            # yt.axis.name = "Average percentage\nof taxonomy\nassigned correctly", left.label = "none", 
+            left.label.size = 0, yt.axis.size = 20, yt.axis.name.size = 20,yt.lim = c(0,1))
+dev.off()
+
