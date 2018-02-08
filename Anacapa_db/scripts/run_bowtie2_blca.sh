@@ -145,8 +145,7 @@ else
       echo "${str} is empty, nothing to submit"
     fi
   done
-fi
-date
+
 
 # need to check if the array is done before moving on to the next step
 filename="${OUT}/${MB}/${MB}bowtie2_out/${MB}_complete_outfiles.txt"
@@ -159,6 +158,8 @@ for line in $filelines ; do
     sleep 600
   done
 done
+fi
+date
 
 # concatonate sam files
 cat ${OUT}/${MB}/${MB}bowtie2_out/individual_out/*.blca.out >> ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam.blca.out
