@@ -121,6 +121,14 @@ This is the reason that it is not possible to install this in the R script, beca
 biocLite("ShortRead", suppressUpdates = FALSE)
 biocLite("devtools")
 ```
+you may also need to install MASS, mgcv, and rpart
+```
+install.packages("MASS")
+install.packages("mgcv")
+install.packages("rpart")
+```
+
+
 this bit could take a very long time so no worries....
 
 also make sure that biopython is installed.
