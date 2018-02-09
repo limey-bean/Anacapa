@@ -97,6 +97,7 @@ To run Anacap, you need verify that the full path to each of the following progr
 	* Bowtie2 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment.
 
 6. muscle: https://www.drive5.com/muscle/downloads.htm
+	* version muscle3.8.31
 	* **__muscle must be installed within the anacapa_db folder__**
 
 
