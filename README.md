@@ -134,9 +134,10 @@ this bit could take a very long time so no worries....
 also make sure that biopython is installed.
 
 ```
+module load anconda
 pip install biopython --user
 ```
-
+"user" not user name
 
 ## How to run the QC / dada2 step:
 ```
