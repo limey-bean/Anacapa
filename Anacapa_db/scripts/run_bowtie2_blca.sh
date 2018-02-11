@@ -29,7 +29,7 @@ done
 #
 # This script is currently designed to run on UCLA's Hoffman2 cluster.  Please adjust the code to work with your computing resources. (e.g. module / path names to programs, submitting jobs for processing if you have a cluster, etc)
 #
-# This script runs in two phases, the first is the qc phase that follows the anacapa_release.  The second phase follows the run_dada2_bowtie2.sh scripts, and includes dada2 denoising, mergeing (if reads are paired) and chimera detection / bowtie2 sequence assignment phase.
+# This script runs in two phases. The first is the qc phase that follows the anacapa_release.  The second phase follows the run_dada2_bowtie2.sh scripts, and includes dada2 denoising, merging (if reads are paired) and chimera detection / bowtie2 sequence assignment phase.
 #
 ######################################
 
@@ -59,7 +59,7 @@ mkdir -p ${OUT}/${MB}/${MB}bowtie2_out/individual_out
 
 
 echo "Run Bowtie2 on merged, forward, and reverse dada2 ASV fasta file"
-# find best taxonomic hits for single reads in using bowtie2's global alighmnet mode (end-to-end) first.  I only considers full length alighnments, and recovers up to -k returns (default = 100). The reads not assigned in global mode are then run in local alighnment mode. -p is the number of threads --no-hd and --no-sq suppress the header lines --no-unal means do not add unaligned reads to the sam file (output). --very-sensitive is a preset option in bowtie2 is slow but designed to be more accurate and sensitive
+# find best taxonomic hits for single reads in using bowtie2's global alignment mode (end-to-end) first.  It only considers full length alighnments, and recovers up to -k returns (default = 100). The reads not assigned in global mode are then run in local alighnment mode. -p is the number of threads --no-hd and --no-sq suppress the header lines --no-unal means do not add unaligned reads to the sam file (output). --very-sensitive is a preset option in bowtie2 is slow but designed to be more accurate and sensitive
 
 list="merged forward reverse"
 
