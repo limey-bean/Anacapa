@@ -97,6 +97,7 @@ To run Anacap, you need verify that the full path to each of the following progr
 	* Bowtie2 does not need to be installed in the crux_release_V1_db folder, however you will need to verify that the Crux_config.sh is modified for you computing environment.
 
 6. muscle: https://www.drive5.com/muscle/downloads.htm
+	* version muscle3.8.31
 	* **__muscle must be installed within the anacapa_db folder__**
 
 
@@ -120,14 +121,23 @@ This is the reason that it is not possible to install this in the R script, beca
 biocLite("ShortRead", suppressUpdates = FALSE)
 biocLite("devtools")
 ```
+you may also need to install MASS, mgcv, and rpart
+```
+install.packages("MASS")
+install.packages("mgcv")
+install.packages("rpart")
+```
+
+
 this bit could take a very long time so no worries....
 
 also make sure that biopython is installed.
 
 ```
+module load anconda
 pip install biopython --user
 ```
-
+"user" not your user name 
 
 ## How to run the QC / dada2 step:
 ```
