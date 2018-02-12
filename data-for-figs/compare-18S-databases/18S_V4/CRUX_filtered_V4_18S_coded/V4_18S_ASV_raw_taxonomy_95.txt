@@ -1,5 +1,5 @@
 seq_name	mock_sanger	TRUE	FALSE	EMPTY
-KU900218.1_extraction	1	4	0	1
+KU900218.1_extraction	1	4	0	2
 KU900219.1_extraction	1	3	0	3
 KU900220.1_extraction	1	1	0	5
 KU900221.1_extraction	1	2	0	4

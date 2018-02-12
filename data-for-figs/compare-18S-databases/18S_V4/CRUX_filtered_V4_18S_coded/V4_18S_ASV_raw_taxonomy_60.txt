@@ -10,4 +10,4 @@ KU900225.1_extraction	1	6	0	0
 KU900226.1_extraction	1	5	0	1
 KU900227.1_extraction	1	6	0	0
 KU900228.1_extraction	1	5	0	1
-KU900229.1_extraction	1	5	0	1
+KU900229.1_extraction	1	6	0	0
