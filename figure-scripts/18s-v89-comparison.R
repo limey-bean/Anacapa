@@ -1,3 +1,8 @@
+library(dplyr)
+library(readr)
+library(stringr)
+library(reshape2)
+library(tidyr)
 subdir_names <- list.files("data-for-figs/compare-18S-databases/18S_V8-9/", pattern = "taxonomy_table")
 file_names <- list.files("data-for-figs/compare-18S-databases/18S_V8-9/Crux_filtered_18S_V8-9-taxonomy_table/")
 all_files <- lapply(subdir_names, function(subdir) lapply(file_names, function(each_file) 
@@ -12,6 +17,7 @@ mock <- mock %>% arrange(seq_name)
 
 
 
+all_files <- lapply(all_files, function(each_database) lapply(each_database, function(each_file) arrange(each_file, seq_name)))
 
 all_files_for_heatmap <- lapply(all_files, function(each_db) lapply(each_db, function(x)
   x %>% mutate(`sum taxonomy` = str_replace(`sum taxonomy`, "Not Available", "NA"), # Fix the Not Available issue, if it persists
@@ -110,9 +116,9 @@ barplot_of_empties <- barplot_of_empties/colSums(barplot_of_empties)
 rownames(barplot_of_empties) <- c("correct", "wrong", "ambiguous call")
 
 # Add the Silva stuff
-v418s_file_list <- list.files("data-for-figs/compare-18S-databases/18S_V8-9/Silva_V8-9_18S_coded/")
+v418s_file_list <- list.files("data-for-figs/compare-18S-databases/18S_V8-9/Silva_V4_18S_coded/")
 silva_performance <- lapply(v418s_file_list, function(x) 
-  read.table(paste0("data-for-figs/compare-18S-databases/18S_V8-9/Silva_V8-9_18S_coded/",x), header = T, sep = "\t",stringsAsFactors = F))
+  read.table(paste0("data-for-figs/compare-18S-databases/18S_V8-9/Silva_V4_18S_coded/",x), header = T, sep = "\t",stringsAsFactors = F))
 names(silva_performance) <- v418s_file_list
 v418s_silv_bar <- sapply(silva_performance, function(x) colSums(x[,3:5]))
 v418s_silv_bar <- v418s_silv_bar/colSums(v418s_silv_bar)
@@ -120,30 +126,63 @@ rownames(v418s_silv_bar) <- c("correct", "wrong", "ambiguous call")
 barplot_of_empties <- cbind(barplot_of_empties,v418s_silv_bar )
 colnames(barplot_of_empties) <- NULL
 
-pdf("figures/18s_V8-9_database_accuracy_comparisons_v1.pdf", height = 7, width = 14)
+# pdf("figures/18S_V8-9_database_accuracy_comparisons_v1.pdf", height = 7, width = 14)
 barplot(barplot_of_empties, legend = rownames(barplot_of_empties),
         args.legend = list(x = "topright", bty = "n", inset=c(0, -0.1), 
                            horiz = T),
         ylab = "Proportion of taxonomic calls done correctly",
-        col = c("black", "grey", "white"), main = "18S-V8-9")
-dev.off()
-
+        col = c("black", "grey", "white"), main = "18S-V4")
+# dev.off()
 
 
 comparisons_df <- cbind(comparisons_df, sapply(silva_performance, function(x) x[,"TRUE."]))
 
 
-pdf("figures/heatmap-18s_V8-9_heatmap.pdf", height = 15, width = 22)
-superheat.2(comparisons_df, membership.cols = rep(c(1,2,3), each = 5), 
-            heat.pal = colors(7),
-            grid.vline.col = "white", grid.vline.size = 2, bottom.label.text.size = 7,
-            bottom.label.size = .15,
-            legend.breaks = 0:6, bottom.label.col = "white", pretty.order.rows = F, pretty.order.cols = F,
-            X.text.size = .15,X.text = as.matrix(comparisons_df), bottom.label.names = group_names,
-            # yt = (colSums(comparisons_df)/nrow(comparisons_df)/6), yt.plot.type = "bar",
-            # yt = barplot_of_empties, yt.plot.type = "bar",
-            # yt.bar.col = "black",yt.obs.col = rep("grey", length(all_files_for_heatmap)*5), yt.point.size = 1.25, yt.num.ticks = 6,
-            # yt.axis.name = "Average percentage\nof taxonomy\nassigned correctly", left.label = "none", 
-            left.label.size = 0, yt.axis.size = 20, yt.axis.name.size = 20,yt.lim = c(0,1))
-dev.off()
+# pdf("figures/heatmap-18S_V8-9_heatmap.pdf", height = 15, width = 22)
+superheat(comparisons_df, membership.cols = rep(c("CRUX\n18S-V4 Filtered","CRUX\n18S-V4 Unfiltered","Silva"), each = 5), 
+          heat.pal = colors(7),
+          grid.vline.col = "white", grid.vline.size = 2, bottom.label.text.size = 7,
+          bottom.label.size = .15,
+          legend.breaks = 0:6, bottom.label.col = "white", pretty.order.rows = F, pretty.order.cols = F,
+          X.text.size = 0,X.text = as.matrix(comparisons_df),# bottom.label.names = group_names,
+          # yt = (colSums(comparisons_df)/nrow(comparisons_df)/6), yt.plot.type = "bar",
+          # yt = barplot_of_empties, yt.plot.type = "bar",
+          # yt.bar.col = "black",yt.obs.col = rep("grey", length(all_files_for_heatmap)*5), yt.point.size = 1.25, yt.num.ticks = 6,
+          # yt.axis.name = "Average percentage\nof taxonomy\nassigned correctly", 
+          left.label = "none", 
+          left.label.size = 0, yt.axis.size = 20, yt.axis.name.size = 20,yt.lim = c(0,1))
+# dev.off()
 
+
+# Try to redo all of this cleanly
+# to_plot_ggbar <- barplot_of_empties %>% t %>% data.frame() %>% tibble::rownames_to_column() %>% gather(.,db, percentage, -rowname) 
+
+# With new V4 data --------------
+v418s_file_list_1 <- list.files("data-for-figs/compare-18S-databases/18S_V8-9/CRUX_filtered_V8-9_18S_coded/")
+crux_f_performance <- lapply(v418s_file_list_1, function(x) 
+  read.table(paste0("data-for-figs/compare-18S-databases/18S_V8-9/CRUX_filtered_V8-9_18S_coded/",x), header = T, sep = "\t",stringsAsFactors = F))
+names(crux_f_performance) <- v418s_file_list_1
+v418s_cruxf_bar <- sapply(crux_f_performance, function(x) colSums(x[,3:5]))
+v418s_cruxf_bar <- v418s_cruxf_bar/colSums(v418s_cruxf_bar)
+rownames(v418s_cruxf_bar) <- c("correct", "wrong", "ambiguous call")
+
+
+v418s_file_list_2 <- list.files("data-for-figs/compare-18S-databases/18S_V8-9/CRUX_unfiltered_V8-9_18S_coded/")
+crux_uf_performance <- lapply(v418s_file_list_2, function(x) 
+  read.table(paste0("data-for-figs/compare-18S-databases/18S_V8-9/CRUX_unfiltered_V8-9_18S_coded/",x), header = T, sep = "\t",stringsAsFactors = F))
+names(crux_uf_performance) <- v418s_file_list_2
+v418s_cruxuf_bar <- sapply(crux_uf_performance, function(x) colSums(x[,3:5]))
+v418s_cruxuf_bar <- v418s_cruxuf_bar/colSums(v418s_cruxuf_bar)
+rownames(v418s_cruxuf_bar) <- c("correct", "wrong", "ambiguous call")
+
+for_full_bar <- cbind(v418s_cruxf_bar,v418s_cruxuf_bar,v418s_silv_bar)
+
+barplot(for_full_bar, legend = rownames(barplot_of_empties),
+        args.legend = list(x = "topright", bty = "n", inset=c(0, -0.1), 
+                           horiz = T),
+        ylab = "Proportion of taxonomic calls done correctly",
+        col = c("black", "grey", "white"), main = "18S-V4")
+
+
+for_heatmap <- sapply(crux_uf_performance, function(x) x[,"TRUE."])
+for_heatmap <- cbind(sapply(crux_f_performance, function(x) x[,"TRUE."]),for_heatmap)
