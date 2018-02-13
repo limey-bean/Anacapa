@@ -177,18 +177,21 @@ rownames(v418s_cruxuf_bar) <- c("correct", "wrong", "ambiguous call")
 
 for_full_bar <- cbind(v418s_cruxf_bar,v418s_cruxuf_bar,v418s_silv_bar)
 
+pdf("figures/18s_v4_database_accuracy_comparisons.pdf")
 barplot(for_full_bar, legend = rownames(barplot_of_empties),
         args.legend = list(x = "topright", bty = "n", inset=c(0, -0.1), 
                            horiz = T),
         ylab = "Proportion of taxonomic calls done correctly",
         col = c("black", "grey", "white"), main = "18S-V4")
-
+dev.off()
 
 
 for_heatmap <- sapply(crux_f_performance, function(x) x[,"TRUE."])
 for_heatmap <- cbind(for_heatmap,sapply(crux_uf_performance, function(x) x[,"TRUE."]))
 for_heatmap <- cbind(for_heatmap,sapply(silva_performance, function(x) x[,"TRUE."]))
-superheat(for_heatmap, membership.cols = rep(c("CRUX 18S V4\nFiltered","CRUX 18S V8-9\nUnfiltered","Silva 18S V8-9"), each = 5), 
+pdf("figures/heatmap-18s_v4.pdf")
+superheat(for_heatmap, membership.cols = rep(c("CRUX 18S V4\nFiltered","CRUX 18S V4\nUnfiltered",
+                                               "Silva 18S V4"), each = 5), 
           heat.pal = colors(7),
           grid.vline.col = "white", grid.vline.size = 2, bottom.label.text.size = 7,
           bottom.label.size = .15,
@@ -200,3 +203,4 @@ superheat(for_heatmap, membership.cols = rep(c("CRUX 18S V4\nFiltered","CRUX 18S
           # yt.axis.name = "Average percentage\nof taxonomy\nassigned correctly", 
           left.label = "none", 
           left.label.size = 0, yt.axis.size = 20, yt.axis.name.size = 20,yt.lim = c(0,1))
+dev.off()
