@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 ### this script is run as follows
 # ~/Anacapa_db/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>

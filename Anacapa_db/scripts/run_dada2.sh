@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 ### this script is run as follows
 # ~/Anacapa_db/scripts/run_bowtie2_make_3_Sfolders.sh -o <out_dir> -d <database_directory> -m <metabarcode name>   
