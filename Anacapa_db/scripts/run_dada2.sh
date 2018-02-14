@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/run_bowtie2_make_3_Sfolders.sh -o <out_dir> -d <database_directory> -m <metabarcode name>   
+# ~/Anacapa_db/scripts/run_bowtie2_make_3_Sfolders.sh -o <out_dir> -d <database_directory> -m <metabarcode name>   
 OUT=""
 DB=""
 MB=""
@@ -13,9 +13,9 @@ while getopts "o:d:m:t:" opt; do
         ;;
         d) DB="$OPTARG"  # path to Anacapa_db
         ;;
-        m) MB="$OPTARG"  # need username for submitting sequencing job
+        m) MB="$OPTARG"  # metabarcode name
         ;;
-        t) TYP="$OPTARG"  # need username for submitting sequencing job
+        t) TYP="$OPTARG"  # type of reads
         ;;
     esac
 done

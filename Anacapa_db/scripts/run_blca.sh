@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -m <metabarcode> -f <sam file name>
+# ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -m <metabarcode> -f <sam file name>
 OUT=""
 DB=""
 MB=""
@@ -13,9 +13,9 @@ while getopts "o:d:m:f:" opt; do
         ;;
         d) DB="$OPTARG"  # path to Anacapa_db
         ;;
-        m) MB="$OPTARG"  # need username for submitting sequencing job
+        m) MB="$OPTARG"  # metabarcode name
         ;;
-        f) FN="$OPTARG"  # need username for submitting sequencing job
+        f) FN="$OPTARG"  # input filename
         ;;
     esac
 done

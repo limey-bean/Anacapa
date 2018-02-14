@@ -1,7 +1,8 @@
 # Adapted from https://github.com/qunfengdong/BLCA/ by Jesse Gomer
 # for the University of California Conservation Consortium's CALeDNA Program
 
-# Example usage python blca_from_bowtie.py  -i take_3_local.sam -r CO1_labeled_taxonomy.txt -q CO1_.fasta  -b 0.8 -p path/to/muscle
+# Example usage:
+# python blca_from_bowtie.py -i take_3_local.sam -r CO1_labeled_taxonomy.txt -q CO1_.fasta -b 0.8 -p path/to/muscle
 import sys
 import os
 import StringIO

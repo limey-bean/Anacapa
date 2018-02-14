@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -m <metabarcode> -u <hoffman_account_user_name>
+# ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -m <metabarcode> -u <hoffman_account_user_name>
 OUT=""
 DB=""
 MB=""
@@ -14,7 +14,7 @@ while getopts "o:d:m:u:" opt; do
         ;;
         d) DB="$OPTARG"  # path to Anacapa_db
         ;;
-        m) MB="$OPTARG"  # need username for submitting sequencing job
+        m) MB="$OPTARG"  # metabarcode name
         ;;
         u) UN="$OPTARG"  # need username for submitting sequencing job
         ;;
@@ -136,7 +136,7 @@ else
     then
  	   echo "${str}"
      # generate runlogs that you can submit at any time!
-     printf "#!/bin/bash\n#$ -l highp,h_rt=200:00:00,h_data=20G\n#$ -N bowtie2_${j}_blca\n#$ -cwd\n#$ -m bea\n#$ -M ${UN} \n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_blca_$JOB_ID.err \n\necho _BEGIN_ [run_blca.sh]: `date`\n\nsh ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -m ${MB} -f ${str} \n\necho _END_ [run_blca.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_blca_job.sh
+     printf "#!/bin/bash\n#$ -l highp,h_rt=200:00:00,h_data=20G\n#$ -N bowtie2_${j}_blca\n#$ -cwd\n#$ -m bea\n#$ -M ${UN} \n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_blca_$JOB_ID.err \n\necho _BEGIN_ [run_blca.sh]: `date`\n\nbash ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -m ${MB} -f ${str} \n\necho _END_ [run_blca.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_blca_job.sh
      echo ''
      qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_blca_job.sh
      echo "if a blca job(s) fails you can find the job submission file in ${OUT}/Run_info/hoffman2/run_scripts"
