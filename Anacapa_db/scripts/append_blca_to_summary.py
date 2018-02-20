@@ -24,7 +24,7 @@ def read_taxonomy(taxonomy_file_name):
 
 def append_to_summary(summary_file_name, taxonomy_file_name, output_file_name):
     taxonomy = read_taxonomy(taxonomy_file_name)
-    fields = ['taxonomy', 'taxonomy_confidence', 'acessions']
+    fields = ['taxonomy', 'taxonomy_confidence', 'accessions']
 
     missing_taxonomy = TaxonomyEntry('not_found', '', '')
 
@@ -56,6 +56,3 @@ if __name__ == '__main__':
     else:
         outfile = summary_file
     append_to_summary(summary_file, blca_taxonomy, outfile)
-
-
-
