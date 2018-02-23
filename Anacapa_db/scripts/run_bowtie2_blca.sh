@@ -136,7 +136,7 @@ else
     then
  	   echo "${str}"
      # generate runlogs that you can submit at any time!
-     $(BLCA_TEMPLATE) > ${OUT}/Run_info/hoffman2/run_scripts/${j}_blca_job.sh
+     echo $(BLCA_TEMPLATE) > ${OUT}/Run_info/hoffman2/run_scripts/${j}_blca_job.sh
      echo ''
      qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_blca_job.sh
      echo "if a blca job(s) fails you can find the job submission file in ${OUT}/Run_info/hoffman2/run_scripts"
