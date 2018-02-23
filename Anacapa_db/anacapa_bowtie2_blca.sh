@@ -58,7 +58,7 @@ do
     #make folders for the metabarcode specific output of dada2 and bowtie2
  	echo "${j}"
     # generate runlogs that you can submit at any time!
-    printf $BOWTIE2_BLCA_PAIRED_TEMPLATE >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
+    $(BOWTIE2_BLCA_PAIRED_TEMPLATE) > ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
     echo ''
     qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_bowtie2_blca_job.sh
     if [ "${LOCALMODE}" = "TRUE"  ]  # if you are running locally (no hoffman2) you can run these jobs one after the other.

@@ -212,9 +212,9 @@ do
  	echo "${j}"
 	mkdir -p ${OUT}/${j}/${j}dada2_out
     # generate runlogs that you can submit at any time!
-    printf $DADA2_PAIRED_TEMPLATE >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
-    printf $DADA2_PAIRED_F_TEMPLATE >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
-    printf $DADA2_PAIRED_R_TEMPLATE >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
+    $(DADA2_PAIRED_TEMPLATE) > ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
+    $(DADA2_PAIRED_F_TEMPLATE) > ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
+    $(DADA2_PAIRED_R_TEMPLATE) > ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
     echo ''
     # submit jobs to run dada2 and bowtie2 (only works if you have an ATS-like module)
     qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
