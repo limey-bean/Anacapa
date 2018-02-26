@@ -1,0 +1,37 @@
+Assigned Taxonomic Path	Hi_MC21	Mi_MC21	Hi_MC51	Mi_MC51	Hi_MC61	Mi_MC61	Hi_MC11	Mi_MC11
+;Dinophyceae;Peridiniales;;;	0.00	0.00	26.63	26.79	25.76	27.01	0.00	0.00
+;Dinophyceae;Peridiniales;Heterocapsaceae;Heterocapsa;								
+;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas;	22.13	23.08	0.65	0.63	0.00	0.00	22.68	22.56
+;Dinophyceae;Suessiales;Symbiodiniaceae;Symbiodinium;	0.00	0.00	23.58	23.47	21.83	22.65	0.00	0.00
+Chlorophyta;Trebouxiophyceae;Microthamniales;;Asterochloris;	20.78	18.46	0.58	0.51	0.00	0.00	19.19	20.40
+Chlorophyta;Chlorophyceae;Sphaeropleales;Scenedesmaceae;;	17.91	20.67	0.47	0.48	0.00	0.00	18.73	19.03
+;Cryptophyta;Cryptomonadales;Cryptomonadaceae;Cryptomonas;	16.95	15.14	0.56	0.49	0.00	0.00	15.29	17.80
+;;Prymnesiales;Prymnesiaceae;Prymnesium;Prymnesium parvum	0.00	0.00	15.61	16.13	16.76	13.98	0.00	0.00
+;;Isochrysidales;Isochrysidaceae;Isochrysis;Isochrysis galbana	0.00	0.00	14.01	12.42	15.90	13.57	0.00	0.00
+Chlorophyta;Trebouxiophyceae;Chlorellales;Chlorellaceae;Chlorella;	13.35	12.98	0.34	0.04	0.00	0.00	14.19	9.74
+;;;;;	8.50	9.41	0.38	0.21	0.06	0.08	9.55	8.49
+Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Stephanodiscaceae;;	0.00	0.00	0.02	0.01	17.71	18.75	0.00	0.00
+Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Thalassiosiraceae;Thalassiosira;Thalassiosira pseudonana								
+Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Stephanodiscaceae;Cyclotella;	0.00	0.00	15.55	16.08	0.06	0.06	0.00	0.00
+Eustigmatophyceae;;Eustigmatales;Monodopsidaceae;Nannochloropsis;	0.00	0.00	1.50	1.49	1.86	1.85	0.00	0.00
+;Cryptophyta;Pyrenomonadales;;;	0.34	0.00	0.00	0.00	0.00	0.00	0.00	1.78
+;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhinomonas;Rhinomonas nottbecki	0.00	0.00	0.00	0.00	0.00	0.00	0.28	0.00
+;Cryptophyta;Pyrenomonadales;Chroomonadaceae;Chroomonas;	0.00	0.00	0.00	0.00	0.00	0.00	0.08	0.00
+Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Skeletonemataceae;Skeletonema;	0.00	0.00	0.08	0.00	0.00	0.00	0.00	0.00
+Bacillariophyta;;;;;	0.00	0.03	0.00	0.00	0.06	0.00	0.00	0.00
+Chlorophyta;Trebouxiophyceae;Microthamniales;;;	0.03	0.00	0.00	0.00	0.00	0.00	0.02	0.00
+;;Prymnesiales;Prymnesiaceae;Prymnesium;	0.00	0.00	0.02	0.41	0.00	0.39	0.00	0.00
+;Dinophyceae;Gonyaulacales;Amphidomataceae;;	0.00	0.00	0.01	0.00	0.00	0.00	0.00	0.00
+Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;;;	0.00	0.00	0.01	0.05	0.00	0.01	0.00	0.00
+Chlorophyta;Trebouxiophyceae;Chlorellales;Chlorellaceae;Chlorella;Chlorella sp. KMMCC 38	0.01	0.00	0.00	0.00	0.00	0.00	0.00	0.00
+;Dinophyceae;;;;	0.00	0.00	0.01	0.00	0.00	0.30	0.00	0.00
+;;Coccolithales;Calcidiscaceae;Tergestiella;Tergestiella adriatica	0.00	0.00	0.00	0.00	0.00	0.01	0.00	0.00
+;;Isochrysidales;;;	0.00	0.00	0.00	0.28	0.00	0.38	0.00	0.00
+;;Isochrysidales;Noelaerhabdaceae;;	0.00	0.00	0.00	0.00	0.00	0.25	0.00	0.00
+;;Zygodiscales;Braarudosphaeraceae;Braarudosphaera;Braarudosphaera bigelowii	0.00	0.00	0.00	0.00	0.00	0.20	0.00	0.00
+;Dinophyceae;Peridiniales;Heterocapsaceae;;	0.00	0.00	0.00	0.00	0.00	0.40	0.00	0.00
+;Raphidophyceae;Chattonellales;Vacuolariaceae;Merotricha;Merotricha bacillata	0.00	0.19	0.00	0.00	0.00	0.00	0.00	0.21
+;Synurophyceae;Ochromonadales;Ochromonadaceae;Poterioochromonas;	0.00	0.00	0.00	0.41	0.00	0.00	0.00	0.00
+Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Thalassiosiraceae;;	0.00	0.00	0.00	0.04	0.00	0.07	0.00	0.00
+Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Thalassiosiraceae;Thalassiosira;	0.00	0.00	0.00	0.00	0.00	0.02	0.00	0.00
+Chlorophyta;Trebouxiophyceae;Chlorellales;Chlorellaceae;;	0.00	0.06	0.00	0.00	0.00	0.00	0.00	0.00

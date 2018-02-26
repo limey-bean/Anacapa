@@ -1,0 +1,96 @@
+Taxonomy	HiSeq_Length	MiSeq_Length
+Chordata;Actinopteri;Batrachoidiformes;Batrachoididae;Opsanus;Opsanus tau	10.03611943	9.869492835
+Chordata;Actinopteri;Blenniiformes;Blenniidae;;Blenniidae sp. BOLD:ACP9792	6.740491614	6.652000713
+Annelida;Polychaeta;;;;Polychaeta sp. BOLD:ACM6964 a	13.08383169	13.11463226
+unidentified a		
+Annelida;Polychaeta;Phyllodocida;Polynoidae;Lepidonotus;Lepidonotus humilis	6.773204572	6.284856412
+Echinodermata;Ophiuroidea;Ophiurida;;;Ophiurida sp. BOLD:ACQ3159	5.13917877	5.241988228
+Arthropoda;Malacostraca;Isopoda;Sphaeromatidae;Cilicaea;Cilicaea sp. BOLD:AAR9230	4.83070368	5.24436649
+Arthropoda;Malacostraca;Decapoda;Hippolytidae;;Hippolytidae sp. BOLD:AAF4969	4.079116696	3.95237529
+Annelida;Polychaeta;Phyllodocida;Hesionidae;;Hesionidae sp. BOLD:AAG1042	3.962864033	3.972887805
+Arthropoda;Malacostraca;Decapoda;Alpheidae;Alpheus;Alpheus sp. BOLD:ACQ6887	3.75901634	4.046613949
+Arthropoda;Malacostraca;Decapoda;Majidae;Microphrys;Microphrys bicornutus	3.695482908	4.025209584
+Arthropoda;Malacostraca;Decapoda;Eriphiidae;Menippe;Menippe mercenaria	3.727384802	3.831678459
+Chordata;Actinopteri;Gobiiformes;Gobiidae;Coryphopterus;Coryphopterus glaucofraenum	3.797406755	3.608716333
+Annelida;Polychaeta;;;;Polychaeta sp. BOLD:AAG4515	3.492716635	3.465426006
+Arthropoda;Malacostraca;Decapoda;Panopeidae;Panopeus;Panopeus occidentalis	3.017973202	3.049230037
+Annelida;;;;;Annelida sp. BOLD:ACQ1281	2.986071309	2.986800642
+Arthropoda;Malacostraca;Decapoda;Panopeidae;Dyspanopeus;Dyspanopeus sayi	2.674081604	2.797134193
+Arthropoda;Malacostraca;Decapoda;Porcellanidae;Petrolisthes;Petrolisthes armatus	2.180142964	2.21267614
+Arthropoda;Malacostraca;Decapoda;Mithracidae;Mithraculus;Mithraculus forceps	1.711347341	1.708781735
+Mollusca;Gastropoda;;Placobranchidae;Elysia;Elysia subornata	1.679986158	1.713240977
+Echinodermata;Ophiuroidea;Ophiurida;Ophiactidae;Ophiactis;Ophiactis savignyi	1.673497637	1.60651644
+Echinodermata;Ophiuroidea;Ophiurida;Amphiuridae;Amphipholis;Amphipholis squamata	1.645651069	1.609191985
+Arthropoda;Malacostraca;Decapoda;Alpheidae;Alpheus;Alpheus sp. BOLD:ACQ4373	1.283104973	1.385338011
+Arthropoda;Malacostraca;Decapoda;Portunidae;Charybdis;Charybdis hellerii	1.315277222	1.332421666
+Arthropoda;Malacostraca;Decapoda;Alpheidae;Synalpheus;Synalpheus hemphilli	1.11899947	1.079433973
+Annelida;Polychaeta;Phyllodocida;Polynoidae;Harmothoe;Harmothoe longidentis b	1.468027814	1.486414174
+Annelida;Polychaeta;Phyllodocida;Polynoidae;; b		
+Annelida;Polychaeta;Eunicida;Amphinomidae;Eurythoe;Eurythoe complanata c	1.380703139	1.365122778
+Annelida;Polychaeta;Eunicida;Amphinomidae;Eurythoe; c		0
+Platyhelminthes;;;;;Platyhelminthes sp. FLTWO228-14	0.414724616	0.426898151
+Mollusca;Gastropoda;;;;Gastropoda sp. BOLD:ACQ5764	0.289550237	0.298471966
+Chordata;Actinopteri;Batrachoidiformes;Batrachoididae;Opsanus;Opsanus beta	0.422024202	0.088887568
+(blank)	0.156535563	0.300255663
+Platyhelminthes;;Polycladida;Pseudocerotidae;Pseudoceros;Pseudoceros sp. m SCK-2017	0	0.330875795
+Chordata;Actinopteri;Cypriniformes;Cyprinidae;Poropuntius;	0.31280077	0
+Arthropoda;Malacostraca;;;;Malacostraca sp. BOLD:ACQ1097	0.147073136	0.1489387
+Arthropoda;;;;;	0.26765148	0
+Chordata;Actinopteri;Batrachoidiformes;Batrachoididae;Opsanus;	0.000811065	0.266068137
+Arthropoda;Malacostraca;Decapoda;Alpheidae;;Alpheidae sp. BOLD:ACQ5750	0.125444734	0.123966942
+Arthropoda;Malacostraca;Decapoda;Hippolytidae;;Hippolytidae sp. BOLD:ACQ6165	0.078943669	0.123372376
+Arthropoda;Malacostraca;Decapoda;Hippolytidae;;	0.012436331	0.112372912
+Chordata;;;;;	0.08975787	0
+Arthropoda;Insecta;Diptera;;;	0.069751598	0
+Arthropoda;Malacostraca;Decapoda;Palaemonidae;;Palaemonidae sp. BOLD:AAI2206	0.034335089	0.034484809
+Arthropoda;Malacostraca;Decapoda;;;	0.065425917	0
+Annelida;;;;;	0.055422781	0.002972828
+Mollusca;Gastropoda;;Semisulcospiridae;Semisulcospira;	0.032712959	0
+Platyhelminthes;;;;;Platyhelminthes sp. FLTWO130-14	0	0.028539152
+Arthropoda;Malacostraca;Decapoda;Alpheidae;Alpheus;Alpheus schmitti	0	0.022890778
+Cnidaria;Hydrozoa;Leptothecata;Campanulariidae;Campanularia;Campanularia hincksii	0.010003136	0.010107616
+Arthropoda;Malacostraca;Decapoda;Alpheidae;Alpheus;Alpheus colombiensis	0.018924852	0
+Arthropoda;Malacostraca;Decapoda;Eriphiidae;Menippe;	0.018924852	0
+Arthropoda;Malacostraca;Decapoda;Alpheidae;Alpheus;	0.014599172	0
+Annelida;;;;;Annelida sp. BOLD:ACR0235	0.007029231	0.007134788
+Annelida;Polychaeta;;;;	0.011625266	0
+Arthropoda;Malacostraca;Decapoda;Alpheidae;Alpheus;Alpheus sp. BOLD:ACQ2777	0.010273491	0
+Bryozoa;Gymnolaemata;Cheilostomatida;Bugulidae;Bugula;Bugula neritina	0.008921716	0.000594566
+Arthropoda;Malacostraca;Decapoda;Portunidae;Charybdis;	0.006488521	0.002972828
+Chordata;Actinopteri;Batrachoidiformes;Batrachoididae;;Batrachoididae sp. BOLD:AAF9668	0.008921716	0
+Cnidaria;Hydrozoa;Leptothecata;Campanulariidae;Obelia;Obelia bidentata	0.008110651	0
+Chordata;Actinopteri;Batrachoidiformes;Batrachoididae;Opsanus;Opsanus pardus	0	0.007729354
+Arthropoda;Malacostraca;Decapoda;Portunidae;Charybdis;Charybdis lucifera	0	0.00624294
+Platyhelminthes;;;;;Platyhelminthes sp. FLTWO043-14	0.004866391	0.001189131
+Arthropoda;Malacostraca;Decapoda;Alpheidae;;	0.005947811	0
+Arthropoda;Malacostraca;Decapoda;Palaemonidae;;Palaemonidae sp. BOLD:ACG8330	0	0.005945657
+Annelida;Polychaeta;;;;Polychaeta sp. BOLD:ACQ1281	0	0.005648374
+Chordata;Mammalia;Primates;Hominidae;Homo;Homo sapiens	0.004596036	0
+Arthropoda;Malacostraca;Decapoda;Atelecyclidae;Atelecyclus;Atelecyclus sp. BOLD:ACA3968	0.00270355	0
+Porifera;Demospongiae;Poecilosclerida;;;	0.00270355	0
+Annelida;Polychaeta;Eunicida;Amphinomidae;Hermodice;Hermodice carunculata	0.001892485	0
+Annelida;Polychaeta;Sabellida;Sabellidae;Branchiomma;Branchiomma bairdi	0.001892485	0
+Chordata;Ascidiacea;Stolidobranchia;Styelidae;Symplegma;Symplegma brakenhielmi	0.001892485	0
+Chordata;Aves;;;;	0.001892485	0
+Echinodermata;Ophiuroidea;Ophiurida;;;Ophiurida sp. FLTWO134-14	0.001892485	0
+Arthropoda;Malacostraca;Amphipoda;;;Amphipoda sp. BOLD:ACQ1440	0.00162213	0
+Arthropoda;Malacostraca;Amphipoda;Niphargidae;Niphargus;Niphargus gallicus	0.00162213	0
+Chordata;Ascidiacea;Stolidobranchia;Styelidae;Botrylloides;Botrylloides nigrum	0.00162213	0
+;Florideophyceae;;;;	0.001351775	0
+Arthropoda;Insecta;Lepidoptera;Geometridae;Pero;Pero morrisonaria	0.001351775	0
+Annelida;Clitellata;Haplotaxida;Megascolecidae;Metaphire;Metaphire bununa	0.00108142	0
+Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Skeletonemataceae;Skeletonema;	0.00108142	0
+Mollusca;Gastropoda;;Bithyniidae;Bithynia;Bithynia siamensis	0.00108142	0
+Arthropoda;Arachnida;Araneae;Lycosidae;Hog;Hogna radiata	0	0.000891849
+;Florideophyceae;Gigartinales;Kallymeniaceae;Leiomenia;Leiomenia sp. _1Nor	0.000811065	0
+;Florideophyceae;Gracilariales;Gracilariaceae;Gracilaria;Gracilaria vermiculophylla	0.000811065	0
+Arthropoda;Insecta;;;;	0.000811065	0
+Arthropoda;Malacostraca;Amphipoda;;;Amphipoda sp. BOLD:ACQ7829	0.000811065	0
+Arthropoda;Malacostraca;Decapoda;Ocypodidae;Ocypode;Ocypode ceratophthalmus	0.000811065	0
+;Florideophyceae;Gigartinales;Peyssonneliaceae;Ramicrusta;	0.00054071	0
+Arthropoda;Maxillopoda;Sessilia;Balanidae;Amphibalanus;Amphibalanus improvisus	0.00054071	0
+Chordata;Actinopteri;;;;	0.00054071	0
+Chordata;Actinopteri;Cypriniformes;Cyprinidae;Pseudorasbora;Pseudorasbora parva	0.00054071	0
+Mollusca;Gastropoda;;;;	0.00054071	0
+Porifera;Demospongiae;Poecilosclerida;Microcionidae;Clathria;Clathria schoenus	0.00054071	0
+Grand Total		

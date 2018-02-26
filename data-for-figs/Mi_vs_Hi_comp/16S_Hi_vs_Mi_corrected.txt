@@ -1,0 +1,55 @@
+Taxonomy	HiSeq_Length	MiSeq_Length
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides; a	89.85	89.96
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides ovatus a		
+Bacteroidetes;Bacteroidia;Bacteroidales;Tannerellaceae;Parabacteroides;Parabacteroides distasonis	4.41	4.05
+Firmicutes;Clostridia;Clostridiales;Clostridiaceae;;	3.77	4.12
+Bacteroidetes;Bacteroidia;Bacteroidales;Tannerellaceae;Parabacteroides;Parabacteroides merdae	0.53	0.51
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides uniformis	0.43	0.45
+Firmicutes;Erysipelotrichia;Erysipelotrichales;Erysipelotrichaceae;Erysipelatoclostridium;[Clostridium] cocleatum	0.37	0.36
+Firmicutes;Clostridia;Clostridiales;;;	0.29	0.31
+Bacteroidetes;Bacteroidia;Bacteroidales;;;Bacteroidales bacterium	0.10	0.05
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides thetaiotaomicron	0.04	0.04
+Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium;	0.05	0.04
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;Roseburia;Roseburia inulinivorans	0.03	0.04
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides fragilis	0.03	0.03
+Bacteroidetes;Bacteroidia;Bacteroidales;;;	0.03	0.02
+Firmicutes;Bacilli;Lactobacillales;Enterococcaceae;Enterococcus;	0.02	0.02
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;;	0.02	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Prevotellaceae;Paraprevotella;Paraprevotella clara	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides massiliensis	0.00	0.00
+Streptophyta;;Fabales;Fabaceae;;	0.00	0.00
+Tenericutes;Mollicutes;Anaeroplasmatales;Anaeroplasmataceae;Anaeroplasma;	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;;Lachnospiraceae bacterium G11	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;Blautia;	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;;Lachnospiraceae bacterium KNHs209	0.00	0.00
+Bacteroidetes;Sphingobacteriia;Sphingobacteriales;Sphingobacteriaceae;Sphingobacterium;Sphingobacterium sp. 309-37	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;;Flintibacter;Flintibacter butyricus	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;Lachnoclostridium;Lachnoclostridium phytofermentans	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Peptostreptococcaceae;Clostridioides;Clostridioides difficile	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium;Clostridium sp. enrichment culture	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;Blautia;[Ruminococcus] gnavus	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides sp.	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Ruminococcaceae;Ruminiclostridium;[Clostridium] methylpentosum	0.00	0.00
+Firmicutes;Erysipelotrichia;Erysipelotrichales;Erysipelotrichaceae;Turicibacter;	0.00	0.00
+Proteobacteria;Betaproteobacteria;Rhodocyclales;Azonexaceae;Dechloromonas;Dechloromonas sp. enrichment culture	0.00	0.00
+Firmicutes;Bacilli;Lactobacillales;Lactobacillaceae;Lactobacillus;Lactobacillus rhamnosus	0.00	0.00
+Firmicutes;Bacilli;Lactobacillales;Streptococcaceae;Streptococcus;Streptococcus thermophilus	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;;Flavonifractor;Flavonifractor plautii	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Prevotellaceae;Prevotella;Prevotella buccalis	0.00	0.00
+Streptophyta;;;;;	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;;Howardella;Howardella ureilytica	0.00	0.00
+Firmicutes;Erysipelotrichia;Erysipelotrichales;Erysipelotrichaceae;Erysipelatoclostridium;[Clostridium] innocuum	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides caccae	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Barnesiellaceae;Barnesiella;Barnesiella intestinihominis	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Prevotellaceae;Prevotella;Prevotella copri	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides dorei	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides intestinalis	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Muribaculaceae;Muribaculum;Muribaculum intestinale	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;;;Clostridiales bacterium canine oral taxon 162	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;Anaerostipes;	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides sp. BLBE-6	0.00	0.00
+Bacteroidetes;Bacteroidia;Bacteroidales;Porphyromonadaceae;;Porphyromonadaceae bacterium DJF_B175	0.00	0.00
+Bacteroidetes;Sphingobacteriia;Sphingobacteriales;Filobacteriaceae;Filobacterium;Filobacterium rodentium	0.00	0.00
+Firmicutes;Bacilli;Lactobacillales;Lactobacillaceae;Lactobacillus;Lactobacillus gasseri	0.00	0.00
+Firmicutes;Clostridia;Clostridiales;Lachnospiraceae;Lachnoclostridium;	0.00	0.00
+(blank)	0.01	0.00
