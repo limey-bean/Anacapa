@@ -34,6 +34,9 @@ barplot_of_empties <- do.call(cbind, lapply(all_files, function(each_db)
   sapply(each_db, function(x)  colSums(x[,2:4]))))
 barplot_of_empties <- barplot_of_empties/colSums(barplot_of_empties)
 rownames(barplot_of_empties) <- c("correct", "wrong", "ambiguous call")
+colnames(barplot_of_empties) <- paste0(rep(c("CRUX_filtered_", "CRUX_unfiltered_", "Silva_"),each = 5), c(60,70,80,90,95))
+write.csv(barplot_of_empties, "figures/accuracy_percentages_per_barcode/accuracy_18s_V4.csv")
+colnames(barplot_of_empties) <- NULL
 
 
 pdf("figures/18s_v4_database_accuracy_comparisons.pdf", width = 22, height = 7)

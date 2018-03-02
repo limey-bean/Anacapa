@@ -128,6 +128,7 @@ compare_mock_to_actual_with_empties <- function(mock_taxonomy,assigned_taxonomy)
   return(same)
 }
 
+
 comparisons_e <-lapply(all_files_for_barplot, function(each_db) lapply(each_db, function(x) 
   cbind(seq_name = mock$seq_name, actual_taxonomy = mock$`actual taxonomy`, assigned_taxonomy = x$`sum taxonomy`,
         sapply(c("phylum", "class", "order", "family", "genus", "species"), 
@@ -151,9 +152,12 @@ barplot_of_empties <- do.call(cbind, lapply(comparisons_e, function(each_db) sap
 colnames(barplot_of_empties) <- paste0(rep(names(comparisons_e), each = 5), 
                                        c("60", "70", "80", "90", "95"))
 
+
 barplot_of_empties <- barplot_of_empties/colSums(barplot_of_empties)
 barplot_of_empties <- barplot_of_empties %>% tbl_df %>% select(6:10, 1:5, 11:15, 16:20) %>% as.matrix
 rownames(barplot_of_empties) <- c("Correct", "Wrong", "Ambiguous")
+write.csv(barplot_of_empties, "figures/accuracy_percentages_per_barcode/accuracy_16s.csv")
+
 colnames(barplot_of_empties) <- NULL
 pdf("figures/16s_database_accuracy_comparisons_v1.pdf", height = 7, width = 22)
 par(xpd = T, mar = c(5.1,7.1,4.1,2.1), oma = c(0,1,0,0))
