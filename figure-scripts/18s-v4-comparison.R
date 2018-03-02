@@ -19,7 +19,7 @@ group_names <- c("CRUX\nFiltered 18S-V4","CRUX\nUnfiltered 18S-V4", "Silva")
 
 colors <- colorRampPalette(c("white", "black"))
 colors(6)
-pdf("figures/heatmap-18s_v4_heatmap.pdf", height = 15, width = 22)
+pdf("figures/heatmap-18s_V4.pdf", height = 15, width = 22)
 superheat(comparisons_df, membership.cols = rep(group_names, each = 5), 
           heat.pal = colors(7),
           grid.vline.col = "white", grid.vline.size = 2, 
