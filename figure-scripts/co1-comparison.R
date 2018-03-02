@@ -10,19 +10,24 @@ library(superheat)
 mock <- read_delim("data-for-figs/Database_comparisons/compare-CO1_databases/actual-co1-taxonomy.txt", delim ="\t")
 # Split the taxonomy by rank
 mock <- cbind(mock,colsplit(mock$`Actual Taxonomy`, ";", names = c("phylum", "class", "order", "family", "genus", "species")))
-
+mock <- mock %>% mutate(phylum = ifelse(is.na(phylum), "NA", phylum),
+                class = ifelse(is.na(class), "NA", class),
+                order = ifelse(is.na(order), "NA", order),
+                family = ifelse(is.na(family), "NA", family),
+                genus = ifelse(is.na(genus), "NA", genus),
+                species = ifelse(is.na(species), "NA", species))
 # Import all the files to compare. The structure is slightly convoluted, so a brief explanation:
 # All files will be saved in a single list, named "all_files_for_heatmap_for_heatmap"
 # The list will have as many elements as there are databases (as of this writing, 7 databases)
 # Each of the 7 elements is in turn a list, with 5 elements each.
 # Each of the 5 is one percent_confidence cutoff (60,70,80,90,95).
-subdir_names <- list.files("data-for-figs/Database_comparisons/compare-16s-databases/", pattern = "taxonomy-tables")
-file_names <- list.files("data-for-figs/Database_comparisons/compare-16s-databases/filtered-16s-taxonomy-tables/")
+subdir_names <- list.files("data-for-figs/Database_comparisons/compare-CO1_databases/", pattern = "taxonomy-tables")
+file_names <- list.files("data-for-figs/Database_comparisons/compare-CO1_databases/filtered-CO1-taxonomy-tables/")
 
 # Read in all the files into a nested list with the data structure described above
 all_files <- lapply(subdir_names, function(subdir) lapply(file_names, function(each_file) 
-  read_delim(file.path("data-for-figs/Database_comparisons/compare-16s-databases/", subdir, each_file), delim = "\t") %>%
-    select(-Andrew, -HMP, -Extreme))) # Get rid of the Andrew, HMP, and Extreme columns from these too, just to keep things clean
+  read_delim(file.path("data-for-figs/Database_comparisons/compare-CO1_databases/", subdir, each_file), delim = "\t") %>%
+    select(-run1, -run2))) # Get rid of the Andrew, HMP, and Extreme columns from these too, just to keep things clean
 names(all_files) <- subdir_names
 
 # Take care of some quirks in taxonomy paths
@@ -35,7 +40,8 @@ all_files_for_heatmap <- lapply(all_files, function(each_db) lapply(each_db, fun
                `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"),          # It has to be done one at a time due to some
                `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"),          # wonkiness in how string replacements are done
                `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"),
-               `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"))))     
+               `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";NA;"),
+               `sum taxonomy` = ifelse(is.na(`sum taxonomy`), "empty;empty;empty;empty;empty;empty", `sum taxonomy`))))   
 
 
 
@@ -51,7 +57,7 @@ compare_mock_to_actual <- function(v1,v2) {
   # NOTE! Check with EC if this is the right way to think about this. The other way around
   # might be more appropriate.
   # Actually, this might just be the number correct, ambiguous is considered wrong
-  same <- (v1 == v2) | (is.na(v1) & is.na(v2))
+  same <- ((v1) == (v2)) | (is.na(v1) & is.na(v2))
   same[is.na(same)] <- TRUE
   return(same)
 }
@@ -59,7 +65,7 @@ compare_mock_to_actual <- function(v1,v2) {
 # Compare each taxonomic rank in each file to the mock community
 comparisons <- lapply(all_files_for_heatmap, function(each_db) lapply(each_db, function(which_cutoff) 
   cbind(seq_name = mock$seq_name, # The output should have the seq name
-        actual_taxonomy = mock$`actual taxonomy`,  # It should have the actual taxonomy in the mock df
+        actual_taxonomy = mock$`Actual Taxonomy`,  # It should have the actual taxonomy in the mock df
         assigned_taxonomy = which_cutoff$`sum taxonomy`,      # It should have the full assigned taxonomy
         sapply(c("phylum", "class", "order", "family", "genus", "species"),  # And it should have the output from the six comparison calls
                function(which_rank) compare_mock_to_actual(v1 = which_cutoff[,which_rank], v2 = mock[,which_rank])))))
@@ -68,11 +74,6 @@ comparisons <- lapply(all_files_for_heatmap, function(each_db) lapply(each_db, f
 comparisons <- lapply(comparisons, function(each_db) lapply(each_db, function(which_cutoff) 
   as.data.frame(cbind(which_cutoff, num_levels_correct = as.character(apply(which_cutoff, 1, function(which_row) 
     sum(as.logical(which_row[c("phylum", "class", "order", "family", "genus", "species")]))))))))
-
-# Let's do some spot checks...
-comparisons[[3]][[1]]$actual_taxonomy[9]
-comparisons[[3]][[1]]$assigned_taxonomy[9]
-comparisons[[3]][[1]]$num_levels_correct[9] == 6
 
 comparisons_for_graphs <- as.data.frame(sapply(1:length(comparisons), function(x) 
   as.numeric(as.character(comparisons[[x]]$num_levels_correct))))
@@ -86,16 +87,14 @@ rownames(comparisons_df) <- mock$seq_name
 colors <- colorRampPalette(c("white", "black"))
 colors(6)
 
-# 
-# group_names <- c("Blast BLCA\n80ID, 0 Over", "Blast BLCA\n90ID 10 Over", "CRUX-Blast-BLCA\n80ID 100 Returns\n0 Over",
-#                  "Filtered 16S", "Greengenes", "Silva", "Unfiltered 16S")
-group_names <- c("CRUX\nUnfiltered 16S",
-                 "CRUX\nFiltered 16S", "Greengenes", "Silva")
-
-
-pdf("figures/heatmap-16s_crux_v_greengenes_v_silva.pdf", height = 15, width = 22)
-superheat(comparisons_df, membership.cols = rep(group_names, each = 5), 
-          heat.pal = colors(7),
+group_names <- c("CRUX\nFiltered CO1", "Midori",
+                 "CRUX\nUnfiltered CO1")
+nrow(comparisons_df)
+comparisons_df[35,] = 7
+# colnames(comparisons_df) <-NULL
+pdf("figures/heatmap-co1.pdf", height = 15, width = 22)
+superheat(comparisons_df[1:34,], membership.cols = rep(group_names, each = 5), 
+          heat.pal = colors(6),
           grid.vline.col = "white", grid.vline.size = 2, 
           bottom.label.text.size = 7, bottom.label.size = .15, bottom.label.col = "white", 
           pretty.order.rows = F, pretty.order.cols = F,
@@ -114,7 +113,9 @@ all_files_for_barplot <- lapply(all_files, function(each_db) lapply(each_db, fun
                `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";empty;"),
                `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";empty;"),
                `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";empty;"),
-               `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";empty;"))))     
+               `sum taxonomy` = str_replace(`sum taxonomy`, ";;", ";empty;"),
+               `sum taxonomy` = ifelse(is.na(`sum taxonomy`), "empty;empty;empty;empty;empty;empty", `sum taxonomy`))))   
+
 all_files_for_barplot <- lapply(all_files_for_barplot, function(each_db) lapply(each_db, function(x)
   separate(x,"sum taxonomy", sep = ";", into = c("phylum", "class", "order", "family", "genus", "species"), remove = FALSE)))
 
@@ -152,12 +153,13 @@ colnames(barplot_of_empties) <- paste0(rep(names(comparisons_e), each = 5),
 
 
 barplot_of_empties <- barplot_of_empties/colSums(barplot_of_empties)
-barplot_of_empties <- barplot_of_empties %>% tbl_df %>% select(6:10, 1:5, 11:15, 16:20) %>% as.matrix
+barplot_of_empties <- barplot_of_empties %>% tbl_df %>% as.matrix
 rownames(barplot_of_empties) <- c("Correct", "Wrong", "Ambiguous")
-write.csv(barplot_of_empties, "figures/accuracy_percentages_per_barcode/accuracy_16s.csv")
+write.csv(barplot_of_empties, "figures/accuracy_percentages_per_barcode/accuracy_co1.csv")
 
 colnames(barplot_of_empties) <- NULL
-pdf("figures/16s_database_accuracy_comparisons_v1.pdf", height = 7, width = 22)
+barplot_of_empties <- barplot_of_empties[,c(1:5, 11:15, 6:10)]
+pdf("figures/Co1_database_accuracy_comparisons_v1.pdf", height = 7, width = 22)
 par(xpd = T, mar = c(5.1,7.1,4.1,2.1), oma = c(0,1,0,0))
 barplot(barplot_of_empties, 
         ylab = "Proportion of taxonomic calls\n(Assigned taxonomy compared to mock)",
