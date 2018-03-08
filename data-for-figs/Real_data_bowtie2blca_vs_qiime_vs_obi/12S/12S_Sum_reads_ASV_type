@@ -1,0 +1,158 @@
+	index	taxon	sum-reads_Hi_sk	sum-reads_Hi_sk	sum-reads_Hi_sk	sum-reads_Hi_sk	sum-reads_Mi_sk	sum-reads_Mi_sk	sum-reads_Mi_sk	sum-reads_Mi_sk	sum-reads	sum-reads	sum-reads	sum-reads
+ASV			forward	merged	reverse	All	forward	merged	reverse	All	forward	merged	reverse	All
+0	0.0	Chordata	734.0	90.0	81924.0	82748.0	4.0	17881.0	5646.0	23531.0	0.0	0.0	0.0	0.0
+1	1.0	Chordata;Actinopteri	188.0	63448.0	0.0	63636.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+2	2.0	Chordata;Actinopteri;;Embiotocidae;Brachyistius;Brachyistius frenatus	0.0	19.0	0.0	19.0	0.0	0.0	0.0	0.0	0.0	19.0	0.0	19.0
+3	3.0	Chordata;Actinopteri;;Embiotocidae;Embiotoca;Embiotoca jacksoni	8.0	2580.0	0.0	2588.0	0.0	0.0	0.0	0.0	8.0	2580.0	0.0	2588.0
+4	4.0	Chordata;Actinopteri;;Embiotocidae;Rhacochilus;Rhacochilus vacca	2.0	109.0	0.0	111.0	0.0	0.0	0.0	0.0	2.0	109.0	0.0	111.0
+5	5.0	Chordata;Actinopteri;;Pomacanthidae;Centropyge;Centropyge flavissima	0.0	18.0	0.0	18.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+6	6.0	Chordata;Actinopteri;;Pomacentridae	34.0	141.0	0.0	175.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+7	7.0	Chordata;Actinopteri;;Pomacentridae;Chromis;Chromis punctipinnis	0.0	13523.0	0.0	13523.0	0.0	0.0	0.0	0.0	34.0	13664.0	0.0	13698.0
+8	8.0	Chordata;Actinopteri;;Pomacentridae;Chrysiptera;Chrysiptera leucopoma	0.0	8.0	0.0	8.0	0.0	0.0	0.0	0.0	0.0	8.0	0.0	8.0
+9	9.0	Chordata;Actinopteri;;Pomacentridae;Hypsypops;Hypsypops rubicundus	0.0	463.0	0.0	463.0	0.0	0.0	0.0	0.0	0.0	463.0	0.0	463.0
+10	10.0	Chordata;Actinopteri;;Pomacentridae;Neopomacentrus	0.0	5.0	0.0	5.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+11	11.0	Chordata;Actinopteri;;Pomacentridae;Pomachromis;Pomachromis richardsoni	0.0	31.0	0.0	31.0	0.0	0.0	0.0	0.0	0.0	31.0	0.0	31.0
+12	12.0	Chordata;Actinopteri;;Sciaenidae;Argyrosomus;Argyrosomus japonicus	8.0	3125.0	0.0	3133.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+13	13.0	Chordata;Actinopteri;;Sphyraenidae;Sphyrae;Sphyraena helleri	0.0	864.0	0.0	864.0	0.0	0.0	0.0	0.0	5.0	864.0	0.0	869.0
+14	14.0	Chordata;Actinopteri;Acanthuriformes;Acanthuridae;Acanthurus	0.0	46.0	0.0	46.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+15	15.0	Chordata;Actinopteri;Acanthuriformes;Acanthuridae;Ctenochaetus;Ctenochaetus striatus	0.0	340.0	0.0	340.0	0.0	0.0	0.0	0.0	0.0	325.0	0.0	325.0
+16	16.0	Chordata;Actinopteri;Acanthuriformes;Acanthuridae;Naso;Naso lituratus	0.0	61.0	0.0	61.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+17	17.0	Chordata;Actinopteri;Acanthuriformes;Acanthuridae;Zebrasoma;Zebrasoma flavescens	0.0	42.0	0.0	42.0	0.0	0.0	0.0	0.0	0.0	42.0	0.0	42.0
+18	18.0	Chordata;Actinopteri;Anguilliformes	0.0	13.0	0.0	13.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+19	19.0	Chordata;Actinopteri;Anguilliformes;Muraenidae;Gymnothorax;Gymnothorax buroensis	0.0	5.0	0.0	5.0	0.0	0.0	0.0	0.0	0.0	5.0	0.0	5.0
+20	20.0	Chordata;Actinopteri;Anguilliformes;Muraenidae;Gymnothorax;Gymnothorax unicolor	0.0	39.0	0.0	39.0	0.0	0.0	0.0	0.0	0.0	39.0	0.0	39.0
+21	21.0	Chordata;Actinopteri;Atheriniformes;Atherinopsidae;Odontesthes	14.0	2096.0	0.0	2110.0	0.0	0.0	0.0	0.0	19.0	6631.0	0.0	6650.0
+22	22.0	Chordata;Actinopteri;Atheriniformes;Atherinopsidae;Odontesthes;Odontesthes incisa	0.0	4535.0	0.0	4535.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+23	23.0	Chordata;Actinopteri;Aulopiformes;Synodontidae;Synodus;Synodus lucioceps	0.0	312.0	0.0	312.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+24	24.0	Chordata;Actinopteri;Beloniformes;Exocoetidae;Cheilopogon;Cheilopogon doederleinii	0.0	24.0	0.0	24.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+25	25.0	Chordata;Actinopteri;Blenniiformes	0.0	639.0	0.0	639.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+26	26.0	Chordata;Actinopteri;Blenniiformes;Blenniidae;Cirripectes;Cirripectes imitator	0.0	32.0	0.0	32.0	0.0	0.0	0.0	0.0	0.0	32.0	0.0	32.0
+27	27.0	Chordata;Actinopteri;Blenniiformes;Clinidae;Gibbonsia	0.0	772.0	0.0	772.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+28	28.0	Chordata;Actinopteri;Blenniiformes;Clinidae;Gibbonsia;Gibbonsia metzi	0.0	24.0	0.0	24.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+29	29.0	Chordata;Actinopteri;Blenniiformes;Clinidae;Heterostichus;Heterostichus rostratus	0.0	91.0	0.0	91.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+30	30.0	Chordata;Actinopteri;Blenniiformes;Labrisomidae;Paraclinus;Paraclinus integripinnis	0.0	3454.0	0.0	3454.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+31	31.0	Chordata;Actinopteri;Carangiformes;Carangidae;Seriola;Seriola lalandi	8.0	1623.0	0.0	1631.0	0.0	0.0	0.0	0.0	8.0	0.0	0.0	8.0
+32	32.0	Chordata;Actinopteri;Carangiformes;Carangidae;Trachurus	15.0	5330.0	0.0	5345.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+33	33.0	Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Girella	49.0	473.0	0.0	522.0	0.0	0.0	0.0	0.0	51.0	0.0	0.0	51.0
+34	34.0	Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Girella;Girella leonina	2.0	16829.0	0.0	16831.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+35	35.0	Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Kyphosus	55.0	17532.0	0.0	17587.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+36	36.0	Chordata;Actinopteri;Chaetodontiformes;Chaetodontidae;Chaetodon	0.0	14.0	0.0	14.0	0.0	0.0	0.0	0.0	0.0	14.0	0.0	14.0
+37	37.0	Chordata;Actinopteri;Clupeiformes;Clupeidae;Sardinops;Sardinops melanostictus	8.0	1893.0	0.0	1901.0	0.0	0.0	0.0	0.0	8.0	1893.0	0.0	1901.0
+38	38.0	Chordata;Actinopteri;Clupeiformes;Engraulidae;Engraulis	15.0	0.0	0.0	15.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+39	39.0	Chordata;Actinopteri;Clupeiformes;Engraulidae;Engraulis;Engraulis mordax	37.0	25922.0	0.0	25959.0	0.0	0.0	0.0	0.0	52.0	25922.0	2.0	25976.0
+40	40.0	Chordata;Actinopteri;Ephippiformes;Ephippidae;Platax;Platax orbicularis	0.0	31.0	0.0	31.0	0.0	0.0	0.0	0.0	0.0	31.0	0.0	31.0
+41	41.0	Chordata;Actinopteri;Gobiiformes;Gobiidae	0.0	904.0	0.0	904.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+42	42.0	Chordata;Actinopteri;Gobiiformes;Gobiidae;Cabillus;Cabillus sp. CBM:ZF:12221	0.0	18.0	0.0	18.0	0.0	0.0	0.0	0.0	0.0	18.0	0.0	18.0
+43	43.0	Chordata;Actinopteri;Gobiiformes;Gobiidae;Luciogobius;Luciogobius guttatus	2.0	0.0	0.0	2.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+44	44.0	Chordata;Actinopteri;Labriformes;Labridae	434.0	113555.0	0.0	113989.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+45	45.0	Chordata;Actinopteri;Labriformes;Labridae;Anampses	0.0	20.0	0.0	20.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+46	46.0	Chordata;Actinopteri;Labriformes;Labridae;Chlorurus;Chlorurus sordidus	2.0	319.0	0.0	321.0	0.0	0.0	0.0	0.0	2.0	291.0	0.0	293.0
+47	47.0	Chordata;Actinopteri;Labriformes;Labridae;Coris;Coris gaimard	0.0	23.0	0.0	23.0	0.0	0.0	0.0	0.0	0.0	23.0	0.0	23.0
+48	48.0	Chordata;Actinopteri;Labriformes;Labridae;Halichoeres;Halichoeres hortulanus	0.0	5.0	0.0	5.0	0.0	0.0	0.0	0.0	0.0	5.0	0.0	5.0
+49	49.0	Chordata;Actinopteri;Labriformes;Labridae;Hemigymnus	5.0	2325.0	0.0	2330.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+50	50.0	Chordata;Actinopteri;Labriformes;Labridae;Hologymnosus;Hologymnosus doliatus	0.0	11.0	0.0	11.0	0.0	0.0	0.0	0.0	0.0	11.0	0.0	11.0
+51	51.0	Chordata;Actinopteri;Labriformes;Labridae;Leptoscarus;Leptoscarus vaigiensis	0.0	5.0	0.0	5.0	0.0	0.0	0.0	0.0	0.0	5.0	0.0	5.0
+52	52.0	Chordata;Actinopteri;Labriformes;Labridae;Oxyjulis;Oxyjulis californica	0.0	53606.0	0.0	53606.0	0.0	0.0	0.0	0.0	439.0	169486.0	4.0	169929.0
+53	53.0	Chordata;Actinopteri;Labriformes;Labridae;Pseudocheilinus;Pseudocheilinus hexataenia	0.0	9.0	0.0	9.0	0.0	0.0	0.0	0.0	0.0	9.0	0.0	9.0
+54	54.0	Chordata;Actinopteri;Labriformes;Labridae;Scarus	0.0	58.0	0.0	58.0	0.0	0.0	0.0	0.0	0.0	28.0	0.0	28.0
+55	55.0	Chordata;Actinopteri;Labriformes;Labridae;Scarus;Scarus psittacus	0.0	46.0	0.0	46.0	0.0	0.0	0.0	0.0	0.0	46.0	0.0	46.0
+56	56.0	Chordata;Actinopteri;Labriformes;Labridae;Semicossyphus;Semicossyphus pulcher	38.0	13037.0	0.0	13075.0	0.0	0.0	0.0	0.0	38.0	13037.0	2.0	13077.0
+57	57.0	Chordata;Actinopteri;Labriformes;Labridae;Thalassoma	0.0	34.0	0.0	34.0	0.0	0.0	0.0	0.0	11.0	57.0	0.0	68.0
+58	58.0	Chordata;Actinopteri;Labriformes;Labridae;Thalassoma;Thalassoma quinquevittatum	11.0	79.0	0.0	90.0	0.0	0.0	0.0	0.0	0.0	22.0	0.0	22.0
+59	59.0	Chordata;Actinopteri;Lutjaniformes;Lutjanidae;Pterocaesio;Pterocaesio tile	0.0	28.0	0.0	28.0	0.0	0.0	0.0	0.0	0.0	28.0	0.0	28.0
+60	60.0	Chordata;Actinopteri;Myctophiformes;Myctophidae;Stenobrachius;Stenobrachius leucopsarus	0.0	55.0	0.0	55.0	0.0	0.0	0.0	0.0	0.0	39.0	0.0	39.0
+61	61.0	Chordata;Actinopteri;Myctophiformes;Myctophidae;Triphoturus;Triphoturus mexicanus	0.0	24.0	0.0	24.0	0.0	0.0	0.0	0.0	0.0	24.0	0.0	24.0
+62	62.0	Chordata;Actinopteri;NA	5.0	0.0	0.0	5.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+63	63.0	Chordata;Actinopteri;Pempheriformes	2.0	277.0	0.0	279.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+64	64.0	Chordata;Actinopteri;Perciformes	7.0	3374.0	0.0	3381.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+65	65.0	Chordata;Actinopteri;Perciformes;Cottidae;Artedius;Artedius lateralis	0.0	4.0	0.0	4.0	0.0	0.0	0.0	0.0	0.0	4.0	0.0	4.0
+66	66.0	Chordata;Actinopteri;Perciformes;Hexagrammidae;Oxylebius;Oxylebius pictus	0.0	46.0	0.0	46.0	0.0	0.0	0.0	0.0	0.0	46.0	0.0	46.0
+67	67.0	Chordata;Actinopteri;Perciformes;Liparidae	0.0	15.0	0.0	15.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+68	68.0	Chordata;Actinopteri;Perciformes;Scorpaenidae;Scorpaenodes;Scorpaenodes evides	0.0	412.0	0.0	412.0	0.0	0.0	0.0	0.0	0.0	416.0	0.0	416.0
+69	69.0	Chordata;Actinopteri;Perciformes;Sebastidae;Sebastes	9.0	2533.0	0.0	2542.0	0.0	0.0	0.0	0.0	9.0	3221.0	0.0	3230.0
+70	70.0	Chordata;Actinopteri;Perciformes;Sebastidae;Sebastes;Sebastes auriculatus	0.0	58.0	0.0	58.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+71	71.0	Chordata;Actinopteri;Perciformes;Sebastidae;Sebastes;Sebastes saxicola	0.0	634.0	0.0	634.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+72	72.0	Chordata;Actinopteri;Pleuronectiformes;Paralichthyidae;Citharichthys;Citharichthys sordidus	0.0	269.0	0.0	269.0	0.0	0.0	0.0	0.0	0.0	269.0	0.0	269.0
+73	73.0	Chordata;Actinopteri;Pleuronectiformes;Paralichthyidae;Citharichthys;Citharichthys stigmaeus	14.0	6186.0	0.0	6200.0	0.0	0.0	0.0	0.0	14.0	6186.0	0.0	6200.0
+74	74.0	Chordata;Actinopteri;Pleuronectiformes;Paralichthyidae;Paralichthys	0.0	200.0	0.0	200.0	0.0	0.0	0.0	0.0	0.0	200.0	0.0	200.0
+75	75.0	Chordata;Actinopteri;Pleuronectiformes;Pleuronectidae;Pleuronichthys;Pleuronichthys coenosus	13.0	2258.0	0.0	2271.0	0.0	0.0	0.0	0.0	13.0	2258.0	0.0	2271.0
+76	76.0	Chordata;Actinopteri;Salmoniformes;Salmonidae;Oncorhynchus;Oncorhynchus mykiss	35.0	8928.0	0.0	8963.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+77	77.0	Chordata;Actinopteri;Salmoniformes;Salmonidae;Salmo;Salmo salar	0.0	293.0	0.0	293.0	0.0	0.0	0.0	0.0	0.0	293.0	0.0	293.0
+78	78.0	Chordata;Actinopteri;Scombriformes;Scombridae;Scomber	30.0	14004.0	0.0	14034.0	0.0	0.0	0.0	0.0	30.0	13990.0	0.0	14020.0
+79	79.0	Chordata;Actinopteri;Scombriformes;Scombridae;Thunnus;Thunnus alalunga	0.0	17.0	0.0	17.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+80	80.0	Chordata;Actinopteri;Spariformes;Lethrinidae;Lethrinus	0.0	15.0	0.0	15.0	0.0	0.0	0.0	0.0	0.0	15.0	0.0	15.0
+81	81.0	Chordata;Actinopteri;Syngnathiformes;Mullidae;Mulloidichthys;Mulloidichthys vanicolensis	0.0	8.0	0.0	8.0	0.0	0.0	0.0	0.0	0.0	8.0	0.0	8.0
+82	82.0	Chordata;Actinopteri;Syngnathiformes;Mullidae;Parupeneus;Parupeneus multifasciatus	0.0	4.0	0.0	4.0	0.0	0.0	0.0	0.0	0.0	4.0	0.0	4.0
+83	83.0	Chordata;Actinopteri;Tetraodontiformes;Balistidae;Balistapus;Balistapus undulatus	2.0	57.0	0.0	59.0	0.0	0.0	0.0	0.0	2.0	57.0	0.0	59.0
+84	84.0	Chordata;Actinopteri;Tetraodontiformes;Balistidae;Odonus;Odonus niger	0.0	45.0	0.0	45.0	0.0	0.0	0.0	0.0	0.0	45.0	0.0	45.0
+85	85.0	Chordata;Actinopteri;Tetraodontiformes;Balistidae;Rhinecanthus;Rhinecanthus lunula	0.0	9.0	0.0	9.0	0.0	0.0	0.0	0.0	0.0	9.0	0.0	9.0
+86	86.0	Chordata;Aves;Apodiformes;Apodidae;Collocalia	18.0	0.0	0.0	18.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+87	87.0	Chordata;Aves;Pelecaniformes;Phalacrocoracidae;Urile;Urile pelagicus	0.0	5.0	0.0	5.0	0.0	0.0	0.0	0.0	0.0	5.0	0.0	5.0
+88	88.0	Chordata;Aves;Pelecaniformes;Sulidae;Sula;Sula dactylatra	0.0	5482.0	0.0	5482.0	0.0	0.0	0.0	0.0	18.0	0.0	0.0	18.0
+89	89.0	Chordata;Chondrichthyes	16.0	0.0	0.0	16.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+90	90.0	Chordata;Chondrichthyes;Carcharhiniformes;Carcharhinidae;Carcharhinus	0.0	29.0	0.0	29.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+91	91.0	Chordata;Chondrichthyes;Heterodontiformes;Heterodontidae;Heterodontus;Heterodontus francisci	0.0	7.0	0.0	7.0	0.0	0.0	0.0	0.0	0.0	7.0	0.0	7.0
+92	92.0	Chordata;Chondrichthyes;Lamniformes;Alopiidae;Cetorhinus;Cetorhinus maximus	4.0	0.0	0.0	4.0	0.0	0.0	0.0	0.0	4.0	0.0	0.0	4.0
+93	93.0	Chordata;Chondrichthyes;Myliobatiformes;Myliobatidae;Myliobatis;Myliobatis californica	5.0	538.0	0.0	543.0	0.0	0.0	0.0	0.0	5.0	538.0	0.0	543.0
+94	94.0	Chordata;Chondrichthyes;Rajiformes;Rajidae;Raja;Raja pulchra	0.0	163.0	0.0	163.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+95	95.0	Chordata;Mammalia;Carnivora;Canidae;Canis;Canis lupus	0.0	8.0	0.0	8.0	0.0	0.0	0.0	0.0	0.0	8.0	0.0	8.0
+96	96.0	Chordata;Mammalia;Carnivora;Otariidae	16.0	0.0	0.0	16.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+97	97.0	Chordata;Mammalia;Carnivora;Otariidae;Zalophus;Zalophus californianus	0.0	8751.0	0.0	8751.0	0.0	0.0	0.0	0.0	16.0	8751.0	0.0	8767.0
+98	98.0	Chordata;Mammalia;Cetacea;Delphinidae;Stenella	0.0	8.0	0.0	8.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+99	99.0	Chordata;Mammalia;Cetacea;Delphinidae;Tursiops;Tursiops truncatus	2.0	523.0	0.0	525.0	0.0	0.0	0.0	0.0	2.0	0.0	0.0	2.0
+100	100.0	Chordata;Mammalia;Primates	0.0	2.0	0.0	2.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+101	101.0	Chordata;Mammalia;Primates;Hominidae;Homo;Homo sapiens	18.0	5531.0	0.0	5549.0	0.0	36.0	0.0	36.0	18.0	5531.0	2.0	5551.0
+102	102.0	Eukaryota	50.0	55.0	25.0	130.0	0.0	52.0	39.0	91.0	0.0	0.0	0.0	0.0
+103	103.0	All	1915.0	411505.0	81949.0	495369.0	4.0	19209.0	5685.0	24898.0	1129.0	410739.0	67.0	411935.0
+104	0.0	Chordata;Actinopteri;;Sciaenidae;Genyonemus;Genyonemus lineatus	0.0	0.0	0.0	0.0	0.0	1205.0	0.0	1205.0	0.0	0.0	0.0	0.0
+105	0.0	Chordata;Actinopteri;Pleuronectiformes;Pleuronectidae	0.0	0.0	0.0	0.0	0.0	35.0	0.0	35.0	0.0	0.0	0.0	0.0
+106	0.0	Chordata;Actinopteri;;;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	153.0	23971.0	6.0	24130.0
+107	0.0	Chordata;Actinopteri;;Malacanthidae;Malacanthus;Malacanthus brevirostris	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	35202.0	0.0	35202.0
+108	0.0	Chordata;Actinopteri;;Opistognathidae;Opistognathus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	219.0	0.0	219.0
+109	0.0	Chordata;Actinopteri;;Opistognathidae;Opistognathus;Opistognathus decorus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	3.0	0.0	0.0	3.0
+110	0.0	Chordata;Actinopteri;;Opistognathidae;Opistognathus;Opistognathus jacksoniensis	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	91.0	0.0	91.0
+111	0.0	Chordata;Actinopteri;;Pomacanthidae;Centropyge	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	18.0	0.0	18.0
+112	0.0	Chordata;Actinopteri;;Pomacentridae;Neopomacentrus;Neopomacentrus bankieri	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	5.0	0.0	5.0
+113	0.0	Chordata;Actinopteri;;Sciaenidae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	8.0	3125.0	0.0	3133.0
+114	0.0	Chordata;Actinopteri;Acanthuriformes;Acanthuridae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	15.0	0.0	15.0
+115	0.0	Chordata;Actinopteri;Acanthuriformes;Acanthuridae;Acanthurus;Acanthurus nigrofuscus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	46.0	0.0	46.0
+116	0.0	Chordata;Actinopteri;Acanthuriformes;Acanthuridae;Naso;Naso hexacanthus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	61.0	0.0	61.0
+117	0.0	Chordata;Actinopteri;Anguilliformes;Muraenidae;Anarchias;Anarchias sp. Ansp	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	6.0	0.0	6.0
+118	0.0	Chordata;Actinopteri;Anguilliformes;Ophichthidae;Neenchelys;Neenchelys buitendijki	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	7.0	0.0	7.0
+119	0.0	Chordata;Actinopteri;Aulopiformes;Synodontidae;Synodus;Synodus saurus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	126.0	0.0	126.0
+120	0.0	Chordata;Actinopteri;Beloniformes;Exocoetidae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	24.0	0.0	24.0
+121	0.0	Chordata;Actinopteri;Blenniiformes;;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	639.0	0.0	639.0
+122	0.0	Chordata;Actinopteri;Blenniiformes;Blenniidae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	6.0	0.0	6.0
+123	0.0	Chordata;Actinopteri;Blenniiformes;Blenniidae;Cirripectes	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	36.0	0.0	36.0
+124	0.0	Chordata;Actinopteri;Blenniiformes;Blenniidae;Entomacrodus;Entomacrodus striatus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	3.0	0.0	3.0
+125	0.0	Chordata;Actinopteri;Blenniiformes;Blenniidae;Parablennius;Parablennius yatabei	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	12.0	3614.0	0.0	3626.0
+126	0.0	Chordata;Actinopteri;Blenniiformes;Labrisomidae;Paraclinus;Paraclinus marmoratus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	10.0	3454.0	0.0	3464.0
+127	0.0	Chordata;Actinopteri;Carangiformes;Carangidae;Seriola	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	1623.0	0.0	1623.0
+128	0.0	Chordata;Actinopteri;Carangiformes;Carangidae;Trachurus;Trachurus symmetricus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	15.0	5330.0	0.0	5345.0
+129	0.0	Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Girella;Girella simplicidens	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	17296.0	0.0	17296.0
+130	0.0	Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Medialu;Medialuna californiensis	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	55.0	17532.0	2.0	17589.0
+131	0.0	Chordata;Actinopteri;Cichliformes;Cichlidae;Oreochromis	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	772.0	0.0	772.0
+132	0.0	Chordata;Actinopteri;Cyprinodontiformes;Fundulidae;Fundulus;Fundulus heteroclitus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	6.0	0.0	6.0
+133	0.0	Chordata;Actinopteri;Gobiiformes;Gobiidae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	904.0	0.0	904.0
+134	0.0	Chordata;Actinopteri;Gobiiformes;Gobiidae;Gillichthys	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	2.0	0.0	0.0	2.0
+135	0.0	Chordata;Actinopteri;Labriformes;Labridae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	25.0	12.0	37.0
+136	0.0	Chordata;Actinopteri;Labriformes;Labridae;Anampses;Anampses twistii	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	20.0	0.0	20.0
+137	0.0	Chordata;Actinopteri;Labriformes;Labridae;Scarus;Scarus frenatus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	33.0	0.0	33.0
+138	0.0	Chordata;Actinopteri;Labriformes;Labridae;Thalassoma;Thalassoma hardwicke	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	34.0	0.0	34.0
+139	0.0	Chordata;Actinopteri;Labriformes;Odacidae;Neoodax;Neoodax balteatus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	3.0	0.0	0.0	3.0
+140	0.0	Chordata;Actinopteri;Lutjaniformes;Lutjanidae;Dipterygonotus;Dipterygonotus balteatus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	2.0	2.0
+141	0.0	Chordata;Actinopteri;Myctophiformes;Myctophidae;Stenobrachius;Stenobrachius nannochir	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	16.0	0.0	16.0
+142	0.0	Chordata;Actinopteri;Ophidiiformes;Ophidiidae;Chilara;Chilara taylori	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	29.0	29.0
+143	0.0	Chordata;Actinopteri;Pempheriformes;Polyprionidae;Stereolepis;Stereolepis gigas	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	2.0	277.0	0.0	279.0
+144	0.0	Chordata;Actinopteri;Perciformes;Cottidae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	7.0	0.0	0.0	7.0
+145	0.0	Chordata;Actinopteri;Perciformes;Cottidae;Icelinus;Icelinus filamentosus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	3374.0	0.0	3374.0
+146	0.0	Chordata;Actinopteri;Perciformes;Liparidae;Liparis;Liparis mucosus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	15.0	0.0	15.0
+147	0.0	Chordata;Actinopteri;Salmoniformes;Salmonidae;Oncorhynchus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	35.0	8928.0	6.0	8969.0
+148	0.0	Chordata;Actinopteri;Scombriformes;Scombridae;Sarda;Sarda chiliensis	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	17.0	0.0	17.0
+149	0.0	Chordata;Aves;Pelecaniformes;Sulidae;Sula	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	5482.0	0.0	5482.0
+150	0.0	Chordata;Chondrichthyes;Carcharhiniformes;Carcharhinidae;Carcharhinus;Carcharhinus melanopterus	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	29.0	0.0	29.0
+151	0.0	Chordata;Chondrichthyes;Carcharhiniformes;Scyliorhinidae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	16.0	0.0	0.0	16.0
+152	0.0	Chordata;Chondrichthyes;Rajiformes;Rajidae;Raja;Raja binoculata	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	163.0	0.0	163.0
+153	0.0	Chordata;Mammalia;Cetacea;Delphinidae;	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	523.0	0.0	523.0
+154	0.0	Chordata;Mammalia;Cetacea;Delphinidae;Steno;Steno bredanensis	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	8.0	0.0	8.0
+155	0.0	Chordata;Mammalia;Primates;Cercopithecidae;Macaca;Macaca fascicularis	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	2.0	0.0	2.0

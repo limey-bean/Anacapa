@@ -3,11 +3,11 @@ Bacillariophyta;Coscinodiscophyceae;Thalassiosirales
 Chlorophyta;Trebouxiophyceae
 Chlorophyta;Trebouxiophyceae;Chlorellales;Chlorellaceae;Chlorella;Chlorella vulgaris
 Chlorophyta;Chlorophyceae;Sphaeropleales;Scenedesmaceae
-NA;Cryptophyta;Cryptomonadales;Cryptomonadaceae;Cryptomonas
-NA;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas
-NA;NA;Prymnesiales;Prymnesiaceae
-NA;NA;Isochrysidales;Isochrysidaceae
-NA;Dinophyceae;Suessiales;Symbiodiniaceae;Symbiodinium
-NA;Dinophyceae
-NA;Chrysophyceae;Chromulinales
-Eustigmatophyceae;NA;Eustigmatales;Monodopsidaceae;Nannochloropsis
+;Cryptophyta;Cryptomonadales;Cryptomonadaceae;Cryptomonas
+;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas
+;;Prymnesiales;Prymnesiaceae
+;;Isochrysidales;Isochrysidaceae
+;Dinophyceae;Suessiales;Symbiodiniaceae;Symbiodinium
+;Dinophyceae
+;Chrysophyceae;Chromulinales
+Eustigmatophyceae;;Eustigmatales;Monodopsidaceae;Nannochloropsis

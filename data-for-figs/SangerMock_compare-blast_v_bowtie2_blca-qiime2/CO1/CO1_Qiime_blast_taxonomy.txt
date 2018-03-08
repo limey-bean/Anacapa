@@ -3,7 +3,7 @@ Chordata;Actinopteri;Gobiiformes;Gobiidae;Coryphopterus
 Arthropoda;Malacostraca;Decapoda
 ;;;;;
 Echinodermata;Ophiuroidea;Ophiurida
-Mollusca;Gastropoda;NA
+Mollusca;Gastropoda;
 Chordata;Actinopteri
 Echinodermata;Ophiuroidea;Ophiurida
 Arthropoda;Malacostraca;Decapoda
@@ -24,7 +24,7 @@ Arthropoda;Insecta;Diptera
 Arthropoda;Malacostraca;Decapoda
 Arthropoda;Malacostraca;Decapoda;Aeglidae;Aegla
 Arthropoda;Malacostraca;Decapoda
-Mollusca;Gastropoda;NA;Placobranchidae;Elysia
+Mollusca;Gastropoda;;Placobranchidae;Elysia
 ;;;;;
 Arthropoda;Malacostraca;Decapoda
 Arthropoda;Malacostraca;Decapoda

@@ -40,7 +40,7 @@ Proteobacteria;Epsilonproteobacteria;Campylobacterales;Helicobacteraceae;Helicob
 Firmicutes;Bacilli;Lactobacillales;Streptococcaceae;Streptococcus;Streptococcus pneumoniae
 Firmicutes;Bacilli;Bacillales;Listeriaceae;Listeria;Listeria monocytogenes
 Bacteroidetes;Bacteroidia;Bacteroidales;Porphyromonadaceae;Porphyromonas;Porphyromonas gingivalis
-Firmicutes;Clostridia;Clostridiales;NA;Howardella;Howardella ureilytica
+Firmicutes;Clostridia;Clostridiales;;Howardella;Howardella ureilytica
 Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides fragilis
 Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides uniformis
 Bacteroidetes;Bacteroidia;Bacteroidales;Bacteroidaceae;Bacteroides;Bacteroides sp.
