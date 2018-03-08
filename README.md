@@ -147,7 +147,7 @@ sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_dir
 ## How to run the bowtie2 blca step:
 
 ```
-# sh ~/Anacapa_db/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
+# ~/Anacapa_db/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
 ```
 
 ! describe parameter b !
@@ -165,12 +165,6 @@ Once you download these folders, transfer the reference library folders to the A
 * FITS  
 * PITS  
 * scripts
-
-The script to run Anacapa is in the scripts directory.  It is called: anacapa_release_V1.sh
-
-To run the script you need to run the following command:
-
-sh ~/Anacapa_db/scripts/anacapa_release_V1.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type ("nextera" or "truseq")>  -t <illumina run type HiSeq or MiSeq>
 
 ### More to come, and it might be a bit buggy.
 * if you choose to take this on...  Good Luck!

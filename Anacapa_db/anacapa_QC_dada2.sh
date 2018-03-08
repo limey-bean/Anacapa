@@ -1,7 +1,7 @@
-#! /bin/bash
+#!/bin/bash
 
 ### this script is run as follows
-# sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq>
+# ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq>
 IN=""
 OUT=""
 DB=""
@@ -48,7 +48,7 @@ done
 # location of the config and var files
 source $DB/scripts/anacapa_vars_nextV.sh  # edit to change variables and parameters
 source $DB/scripts/anacapa_config.sh # edit for proper configuration
-
+source $DB/scripts/anacapa_qsub_templates.sh # edit to change qsub job file format
 
 ##load modules / software
 ${MODULE_SOURCE} # use if you need to load modules from an HPC
@@ -212,9 +212,9 @@ do
  	echo "${j}"
 	mkdir -p ${OUT}/${j}/${j}dada2_out
     # generate runlogs that you can submit at any time!
-    printf "#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N paired_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_paired_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_paired_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t paired\n\necho _END_ [run_dada2_paired.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
-    printf "#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N unpaired_F_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_F_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_F_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t forward\n\necho _END_ [run_dada2_unpaired_F.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
-    printf "#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N unpaired_R_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_R_$JOB_ID.out\n#$ -e ${OUT}/Run_info/hoffman2/run_logs/${j}_unpaired_R_$JOB_ID.err \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\nsh ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t reverse\n\necho _END_ [run_dada2_unpaired_R.sh]" >> ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
+    printf "$(DADA2_PAIRED_TEMPLATE)" > ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
+    printf "$(DADA2_PAIRED_F_TEMPLATE)" > ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_F_job.sh
+    printf "$(DADA2_PAIRED_R_TEMPLATE)" > ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_R_job.sh
     echo ''
     # submit jobs to run dada2 and bowtie2 (only works if you have an ATS-like module)
     qsub ${OUT}/Run_info/hoffman2/run_scripts/${j}_dada2_paired_job.sh
