@@ -59,15 +59,27 @@ colors(6)
 
 
 group_names <- file_names %>% str_replace(., "_taxonomy.txt","") %>% str_replace(., "16S_","") %>% str_replace(.,"_","\n")
-# pdf("figures/classifier-comparisons/compare_classifiers_16S.pdf", height = 12, width = 5)
+pdf("figures/classifier-comparisons/compare_classifiers_16S.pdf", height = 12, width = 5)
 superheat(comparisons_df, membership.cols = group_names, 
           heat.pal = colors(7),
           grid.vline.col = "white", grid.vline.size = 2, 
           bottom.label.text.size = 4, bottom.label.size = .15, bottom.label.col = "white", 
           pretty.order.rows = F, pretty.order.cols = F,
           left.label = "none", left.label.size = 0, legend.width = 1, legend.breaks = 0:6)
-# dev.off()
+dev.off()
 
+for_barplot <- do.call(cbind, lapply(comparisons, function(each_db) rbind(correct= sum(each_db[,3:8] == TRUE),
+                                                                          wrong = sum(each_db[,3:8] == FALSE),
+                                                                          ambig = sum(each_db[,3:8] == "ambiguous"))))
+for_barplot <- for_barplot/colSums(for_barplot)
+colnames(for_barplot) <- group_names
+pdf("figures/classifier-comparisons/16S_assigner_comparison_barplot.pdf", height = 15, width = 20)
+par(xpd = T, mar = c(5.1,7.1,4.1,2.1), oma = c(0,1,0,0))
+barplot(for_barplot, 
+        col = c("black", "grey", "white"), cex.axis = 2, cex.lab = 2, main = "16S")
+comparisons_df <- data.frame(lapply(comparisons, function(x) as.numeric(as.character(x$num_levels_correct))))
+dev.off()
+write.csv(for_barplot, "figures/classifier-comparisons/16S-accuracy.csv")
 
 #################################
 # 18S-V4
@@ -119,63 +131,6 @@ compare_mock_to_actual <- function(v1,v2) {
 comparisons <- lapply(all_files, function(each_db) 
   cbind(# seq_name = mock$seq_name, # The output should have the seq name
     actual_taxonomy = mock$`Actual Taxonomy`,  # It should have the actual taxonomy in the mock df
-    assigned_taxonomy = each_db$`assigned taxonomy`,      # It should have the full assigned taxonomy
-    sapply(c("phylum", "class", "order", "family", "genus", "species"),  # And it should have the output from the six comparison calls
-           function(which_rank) compare_mock_to_actual(v1 = each_db[,which_rank], v2 = mock[,which_rank]))))
-comparisons <- lapply(comparisons, function(each_db)
-  as.data.frame(cbind(each_db, num_levels_correct = as.character(apply(each_db, 1, function(which_row) 
-    sum(as.logical(which_row[c("phylum", "class", "order", "family", "genus", "species")]), na.rm = T))))))
-
-comparisons_df <- data.frame(lapply(comparisons, function(x) as.numeric(as.character(x$num_levels_correct))))
-
-comparisons_df <- rbind(comparisons_df, rep(0,5))
-colors <- colorRampPalette(c("white", "black"))
-colors(6)
-
-
-group_names <- file_names %>% str_replace(., "_taxonomy.txt","") %>% str_replace(., "18S_V4_","") %>% str_replace(.,"_","\n")
-# pdf("figures/classifier-comparisons/compare_classifiers_16S.pdf", height = 12, width = 5)
-superheat(comparisons_df, membership.cols = group_names, 
-          heat.pal = colors(7),
-          grid.vline.col = "white", grid.vline.size = 2, 
-          bottom.label.text.size = 4, bottom.label.size = .15, bottom.label.col = "white", 
-          pretty.order.rows = F, pretty.order.cols = F,
-          left.label = "none", left.label.size = 0, legend.width = 1, legend.breaks = 0:6)
-# dev.off()
-
-
-#################################
-# 18S-V4
-#################################
-
-mock <- read_delim("data-for-figs/SangerMock_compare-blast_v_bowtie2_blca-qiime2/18S_v4/18S_V4_actual_taxonomy.txt", delim ="\t")
-# Split the taxonomy by rank
-mock <- cbind(mock,colsplit(mock$`Actual Taxonomy`, ";", names = c("phylum", "class", "order", "family", "genus", "species")))
-
-file_names <- list.files("data-for-figs/SangerMock_compare-blast_v_bowtie2_blca-qiime2/18S_v4/")
-# Get rid of the mock...
-file_names <- file_names[!(str_detect(file_names, "actual"))]
-all_files <- lapply(file_names, function(file) read_delim(file.path("data-for-figs/SangerMock_compare-blast_v_bowtie2_blca-qiime2/18S_v4/", file), delim = "\t"))
-names(all_files) <- file_names
-
-all_files <- lapply(all_files, function(x) 
-  x %>% mutate(`assigned Taxonomy` = str_replace(`assigned Taxonomy`, "Not Available", "NA"), # Fix the Not Available issue, if it persists
-               `assigned Taxonomy` = str_replace_all(`assigned Taxonomy`, "[a-z]__", ""),     # Greengenes Taxonomy has p__/c__ for each level
-               `assigned Taxonomy` = str_replace_all(`assigned Taxonomy`, "D_[1-9]__", ""),   # Silva has D_1__ etc.
-               `assigned Taxonomy` = str_replace_all(`assigned Taxonomy`, "^;", "NA;"),       # Replace first empty with NA
-               `assigned Taxonomy` = str_replace_all(`assigned Taxonomy`, ";$", ";NA"),       # The next few lines add NAs between ;;
-               `assigned Taxonomy` = str_replace(`assigned Taxonomy`, ";;", ";NA;"),          # It has to be done one at a time due to some
-               `assigned Taxonomy` = str_replace(`assigned Taxonomy`, ";;", ";NA;"),          # wonkiness in how string replacements are done
-               `assigned Taxonomy` = str_replace(`assigned Taxonomy`, ";;", ";NA;"),
-               `assigned Taxonomy` = str_replace(`assigned Taxonomy`, ";;", ";NA;"),
-               `assigned Taxonomy` = str_replace(`assigned Taxonomy`, "^Bacteria;", "")))
-all_files <- lapply(all_files, function(x)
-  separate(x,"assigned Taxonomy", sep = ";", into = c("phylum", "class", "order", "family", "genus", "species"), remove = FALSE))
-
-
-comparisons <- lapply(all_files, function(each_db) 
-  cbind(# seq_name = mock$seq_name, # The output should have the seq name
-    actual_taxonomy = mock$`Actual Taxonomy`,  # It should have the actual taxonomy in the mock df
     assigned_taxonomy = each_db$`assigned Taxonomy`,      # It should have the full assigned taxonomy
     sapply(c("phylum", "class", "order", "family", "genus", "species"),  # And it should have the output from the six comparison calls
            function(which_rank) compare_mock_to_actual(v1 = each_db[,which_rank], v2 = mock[,which_rank]))))
@@ -189,15 +144,29 @@ comparisons_df <- rbind(comparisons_df, rep(0,5))
 colors <- colorRampPalette(c("white", "black"))
 colors(6)
 
+
 group_names <- file_names %>% str_replace(., "_taxonomy.txt","") %>% str_replace(., "18S_V4_","") %>% str_replace(.,"_","\n")
-pdf("figures/classifier-comparisons/compare_classifiers_18SV4.pdf", height = 12, width = 5)
+pdf("figures/classifier-comparisons/compare_classifiers_18S_v4.pdf", height = 12, width = 5)
 superheat(comparisons_df, membership.cols = group_names, 
-          heat.pal = colors(6), grid.hline = F,
+          heat.pal = colors(7),
           grid.vline.col = "white", grid.vline.size = 2, 
           bottom.label.text.size = 4, bottom.label.size = .15, bottom.label.col = "white", 
           pretty.order.rows = F, pretty.order.cols = F,
           left.label = "none", left.label.size = 0, legend.width = 1, legend.breaks = 0:6)
 dev.off()
+
+for_barplot <- do.call(cbind, lapply(comparisons, function(each_db) rbind(correct= sum(each_db[,3:8] == TRUE),
+                                                                          wrong = sum(each_db[,3:8] == FALSE),
+                                                                          ambig = sum(each_db[,3:8] == "ambiguous"))))
+for_barplot <- for_barplot/colSums(for_barplot)
+colnames(for_barplot) <- group_names
+pdf("figures/classifier-comparisons/18SV4_assigner_comparison_barplot.pdf", height = 15, width = 20)
+par(xpd = T, mar = c(5.1,7.1,4.1,2.1), oma = c(0,1,0,0))
+barplot(for_barplot, 
+        col = c("black", "grey", "white"), cex.axis = 2, cex.lab = 2, main = "18S_V4")
+comparisons_df <- data.frame(lapply(comparisons, function(x) as.numeric(as.character(x$num_levels_correct))))
+dev.off()
+write.csv(for_barplot, "figures/classifier-comparisons/18S_v4-accuracy.csv")
 
 #################################
 # 18S-V8-9
@@ -228,7 +197,6 @@ all_files <- lapply(all_files, function(x)
   separate(x,"assigned Taxonomy", sep = ";", into = c("phylum", "class", "order", "family", "genus", "species"), remove = FALSE))
 
 
-
 comparisons <- lapply(all_files, function(each_db) 
   cbind(# seq_name = mock$seq_name, # The output should have the seq name
     actual_taxonomy = mock$`Actual Taxonomy`,  # It should have the actual taxonomy in the mock df
@@ -239,6 +207,7 @@ comparisons <- lapply(comparisons, function(each_db)
   as.data.frame(cbind(each_db, num_levels_correct = as.character(apply(each_db, 1, function(which_row) 
     sum(as.logical(which_row[c("phylum", "class", "order", "family", "genus", "species")]), na.rm = T))))))
 
+
 comparisons_df <- data.frame(lapply(comparisons, function(x) as.numeric(as.character(x$num_levels_correct))))
 
 comparisons_df <- rbind(comparisons_df, rep(0,5))
@@ -246,15 +215,27 @@ colors <- colorRampPalette(c("white", "black"))
 colors(6)
 
 group_names <- file_names %>% str_replace(., "_taxonomy.txt","") %>% str_replace(., "18S_V8-9_","") %>% str_replace(.,"_","\n")
-pdf("figures/classifier-comparisons/compare_classifiers_18SV8-9.pdf", height = 12, width = 5)
+# pdf("figures/classifier-comparisons/compare_classifiers_18SV8-9.pdf", height = 12, width = 5)
 superheat(comparisons_df, membership.cols = group_names, 
           heat.pal = colors(6), grid.hline = F,
           grid.vline.col = "white", grid.vline.size = 2, 
           bottom.label.text.size = 4, bottom.label.size = .15, bottom.label.col = "white", 
           pretty.order.rows = F, pretty.order.cols = F,
           left.label = "none", left.label.size = 0, legend.width = 1, legend.breaks = 0:6)
+# dev.off()
+for_barplot <- do.call(cbind, lapply(comparisons, function(each_db) rbind(correct= sum(each_db[,3:8] == TRUE),
+                                                                          wrong = sum(each_db[,3:8] == FALSE),
+                                                                          ambig = sum(each_db[,3:8] == "ambiguous"))))
+for_barplot <- for_barplot/colSums(for_barplot)
+colnames(for_barplot) <- group_names
+pdf("figures/classifier-comparisons/18SV8-9_assigner_comparison_barplot.pdf", height = 15, width = 20)
+par(xpd = T, mar = c(5.1,7.1,4.1,2.1), oma = c(0,1,0,0))
+barplot(for_barplot, 
+        col = c("black", "grey", "white"), cex.axis = 2, cex.lab = 2, main = "18S_V8-9")
+comparisons_df <- data.frame(lapply(comparisons, function(x) as.numeric(as.character(x$num_levels_correct))))
 dev.off()
 
+write.csv(for_barplot, "figures/classifier-comparisons/18S_v8-9-accuracy.csv")
 #################################
 # CO1
 #################################
@@ -309,3 +290,17 @@ superheat(comparisons_df, membership.cols = group_names,
           pretty.order.rows = F, pretty.order.cols = F,
           left.label = "none", left.label.size = 0, legend.width = 1, legend.breaks = 0:6)
 dev.off()
+
+for_barplot <- do.call(cbind, lapply(comparisons, function(each_db) rbind(correct= sum(each_db[,3:8] == TRUE),
+                                                                          wrong = sum(each_db[,3:8] == FALSE),
+                                                                          ambig = sum(each_db[,3:8] == "ambiguous"))))
+for_barplot <- for_barplot/colSums(for_barplot)
+colnames(for_barplot) <- group_names
+pdf("figures/classifier-comparisons/CO1_assigner_comparison_barplot.pdf", height = 15, width = 20)
+par(xpd = T, mar = c(5.1,7.1,4.1,2.1), oma = c(0,1,0,0))
+barplot(for_barplot, 
+        col = c("black", "grey", "white"), cex.axis = 2, cex.lab = 2, main = "CO1")
+comparisons_df <- data.frame(lapply(comparisons, function(x) as.numeric(as.character(x$num_levels_correct))))
+dev.off()
+
+write.csv(for_barplot, "figures/classifier-comparisons/CO1-accuracy.csv")
