@@ -1,7 +1,7 @@
 assigned Taxonomy
 Chordata;Actinopteri;Gobiiformes;Gobiidae;Coryphopterus
 Arthropoda;Malacostraca;Decapoda
-;;;;;
+NA;NA;NA;NA;NA;
 Echinodermata;Ophiuroidea;Ophiurida
 Mollusca;Gastropoda;
 Chordata;Actinopteri
@@ -14,8 +14,8 @@ Arthropoda;Malacostraca;Decapoda;Panopeidae;Panopeus
 Arthropoda;Malacostraca;Decapoda
 Arthropoda;Insecta;Diptera;Calliphoridae;Pollenia;Pollenia pediculata
 Arthropoda;Malacostraca;Decapoda
-;;;;;
-;;;;;
+NA;NA;NA;NA;NA;
+NA;NA;NA;NA;NA;
 Arthropoda;Malacostraca;Decapoda
 Arthropoda;Malacostraca;Decapoda;Panopeidae;Dyspanopeus;Dyspanopeus sayi
 Arthropoda;Malacostraca;Decapoda
@@ -24,8 +24,8 @@ Arthropoda;Insecta;Diptera
 Arthropoda;Malacostraca;Decapoda
 Arthropoda;Malacostraca;Decapoda;Aeglidae;Aegla
 Arthropoda;Malacostraca;Decapoda
-Mollusca;Gastropoda;;Placobranchidae;Elysia
-;;;;;
+Mollusca;Gastropoda;NA;Placobranchidae;Elysia
+NA;NA;NA;NA;NA;
 Arthropoda;Malacostraca;Decapoda
 Arthropoda;Malacostraca;Decapoda
 Arthropoda
