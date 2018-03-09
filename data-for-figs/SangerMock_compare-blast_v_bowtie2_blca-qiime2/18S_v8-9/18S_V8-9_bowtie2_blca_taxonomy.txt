@@ -1,8 +1,8 @@
 assigned Taxonomy
 Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Thalassiosiraceae;Thalassiosira;Thalassiosira pseudonana
-Chlorophyta;Trebouxiophyceae;Microthamniales;;Asterochloris;
+Chlorophyta;Trebouxiophyceae;Microthamniales;NA;Asterochloris;
 Chlorophyta;Trebouxiophyceae;Chlorellales;Chlorellaceae;Chlorella;Chlorella vulgaris
-Chlorophyta;Chlorophyceae;Sphaeropleales;Scenedesmaceae;;
+Chlorophyta;Chlorophyceae;Sphaeropleales;Scenedesmaceae;NA;
 NA;Cryptophyta;Cryptomonadales;Cryptomonadaceae;Cryptomonas;
 NA;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas;
 NA;NA;Prymnesiales;Prymnesiaceae;Prymnesium;Prymnesium parvum
@@ -10,4 +10,4 @@ NA;NA;Isochrysidales;Isochrysidaceae;Isochrysis;Isochrysis galbana
 NA;Dinophyceae;Suessiales;Symbiodiniaceae;Symbiodinium;
 NA;Dinophyceae;Peridiniales;Heterocapsaceae;Heterocapsa;
 NA;Synurophyceae;Ochromonadales;Ochromonadaceae;Poterioochromonas;
-Eustigmatophyceae;;Eustigmatales;Monodopsidaceae;Nannochloropsi;
+Eustigmatophyceae;NA;Eustigmatales;Monodopsidaceae;Nannochloropsi;

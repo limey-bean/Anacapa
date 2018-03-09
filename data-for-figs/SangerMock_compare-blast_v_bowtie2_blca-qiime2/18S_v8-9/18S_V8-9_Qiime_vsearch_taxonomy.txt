@@ -10,4 +10,4 @@ NA;NA;Isochrysidales;Isochrysidaceae
 NA;Dinophyceae;Suessiales;Symbiodiniaceae;Symbiodinium
 NA;Dinophyceae
 NA;Chrysophyceae;Chromulinales;Dinobryaceae;Dinobryon
-Eustigmatophyceae;;Eustigmatales;Monodopsidaceae;Nannochloropsis
+Eustigmatophyceae;NA;Eustigmatales;Monodopsidaceae;Nannochloropsis
