@@ -3,11 +3,11 @@ Bacillariophyta;Coscinodiscophyceae;Thalassiosirales;Thalassiosiraceae;Thalassio
 Chlorophyta;Trebouxiophyceae;Microthamniales;;Trebouxia;Trebouxia sp. CCAP 213/3 ^
 Chlorophyta;Trebouxiophyceae;Chlorellales;Chlorellaceae;Chlorella;Chlorella vulgaris
 Chlorophyta;Chlorophyceae;Sphaeropleales;Scenedesmaceae;Tetradesmus;Tetradesmus obliquus
-;Cryptophyta;Cryptomonadales;Cryptomonadaceae;Cryptomonas;Cryptomonas pyrenoidifera
-;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas;Rhodomonas sp. CCAP 995/5
-;;Prymnesiales;Prymnesiaceae;Prymnesium;Prymnesium parvum
-;;Isochrysidales;Isochrysidaceae;Isochrysis;Isochrysis galbana
-;Dinophyceae;Suessiales;Symbiodiniaceae;Symbiodinium;Symbiodinium microadriaticum
-;Dinophyceae;Peridiniales;Heterocapsaceae;Heterocapsa;Heterocapsa niei
-;Chrysophyceae;Chromulinales;Chromulinaceae;Ochromonas;Ochromonas sp. UTEX LB 2575 *
+NA;Cryptophyta;Cryptomonadales;Cryptomonadaceae;Cryptomonas;Cryptomonas pyrenoidifera
+NA;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas;Rhodomonas sp. CCAP 995/5
+NA;NA;Prymnesiales;Prymnesiaceae;Prymnesium;Prymnesium parvum
+NA;NA;Isochrysidales;Isochrysidaceae;Isochrysis;Isochrysis galbana
+NA;Dinophyceae;Suessiales;Symbiodiniaceae;Symbiodinium;Symbiodinium microadriaticum
+NA;Dinophyceae;Peridiniales;Heterocapsaceae;Heterocapsa;Heterocapsa niei
+NA;Chrysophyceae;Chromulinales;Chromulinaceae;Ochromonas;Ochromonas sp. UTEX LB 2575 *
 Eustigmatophyceae;;Eustigmatales;Monodopsidaceae;Nannochloropsis;Nannochloropsis oculata
