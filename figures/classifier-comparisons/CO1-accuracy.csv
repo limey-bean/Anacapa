@@ -1,9 +1,15 @@
-"","blast
-blca","bowtie2
-blca","Qiime
-blast","Qiime
-sklearn","Qiime
-vsearch"
-"correct",0.955882352941177,0.96078431372549,0.504901960784314,0.941176470588235,0.627450980392157
-"wrong",0.0147058823529412,0.0147058823529412,0.0784313725490196,0.0196078431372549,0.0637254901960784
-"ambig",0.0294117647058824,0.0245098039215686,0.416666666666667,0.0392156862745098,0.308823529411765
+,"blastblca","bowtie2blca","Qiimeblast","Qiimesklearn","Qiimevsearch",,
+correct,0.955882353,0.960784314,0.504901961,0.941176471,0.62745098,,204
+wrong,0.014705882,0.014705882,0.078431373,0.019607843,0.06372549,,
+ambig,0.029411765,0.024509804,0.416666667,0.039215686,0.308823529,,
+,,,,,,,
+,,,,,,,
+,195,196,103,192,128,,
+,,,,,,,
+,,,,,,,
+,,,,,,,
+bowtie2 vs,,,,,,,
+blast blca,The Z-Score is 0.2478. The p-value is 0.80258. The result isænotæsignificant at p <0.05. The proportion ofæ,,,,,,
+q blast,The Z-Score is 10.4055. The p-value is 0. The result is significant at p <0.05. The proportion of Yes or Noæ,,,,,,
+sklearn,The Z-Score is 0.9172. The p-value is 0.35758. The result isænotæsignificant at p <0.05. The proportion ofæ,,,,,,
+vsearch,The Z-Score is 8.3258. The p-value is 0. The result is significant at p <0.05. The proportion of Yes or Noæ,,,,,,

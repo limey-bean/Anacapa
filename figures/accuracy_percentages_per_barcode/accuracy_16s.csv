@@ -1,4 +1,21 @@
-"","filtered-16s-taxonomy-tables60","filtered-16s-taxonomy-tables70","filtered-16s-taxonomy-tables80","filtered-16s-taxonomy-tables90","filtered-16s-taxonomy-tables95","CRUX_unfiltered-16s-taxonomy-tables60","CRUX_unfiltered-16s-taxonomy-tables70","CRUX_unfiltered-16s-taxonomy-tables80","CRUX_unfiltered-16s-taxonomy-tables90","CRUX_unfiltered-16s-taxonomy-tables95","greengenes-taxonomy-tables60","greengenes-taxonomy-tables70","greengenes-taxonomy-tables80","greengenes-taxonomy-tables90","greengenes-taxonomy-tables95","silva-taxonomy-tables60","silva-taxonomy-tables70","silva-taxonomy-tables80","silva-taxonomy-tables90","silva-taxonomy-tables95"
-"Correct",0.908888888888889,0.895555555555556,0.873333333333333,0.833333333333333,0.815555555555556,0.228888888888889,0.157777777777778,0.111111111111111,0.0822222222222222,0.0155555555555556,0.488888888888889,0.402222222222222,0.226666666666667,0.157777777777778,0.124444444444444,0.768888888888889,0.764444444444444,0.76,0.757777777777778,0.731111111111111
-"Wrong",0.00666666666666667,0.00444444444444444,0.00444444444444444,0.00444444444444444,0,0.0733333333333333,0.0333333333333333,0.0244444444444444,0.00222222222222222,0,0.0911111111111111,0.08,0.0644444444444444,0.0466666666666667,0.0466666666666667,0.12,0.0933333333333333,0.0933333333333333,0.0755555555555556,0.0666666666666667
-"Ambiguous",0.0844444444444444,0.1,0.122222222222222,0.162222222222222,0.184444444444444,0.697777777777778,0.808888888888889,0.864444444444444,0.915555555555556,0.984444444444444,0.42,0.517777777777778,0.708888888888889,0.795555555555556,0.828888888888889,0.111111111111111,0.142222222222222,0.146666666666667,0.166666666666667,0.202222222222222
+,filtered-16s-taxonomy-tables60,filtered-16s-taxonomy-tables70,filtered-16s-taxonomy-tables80,filtered-16s-taxonomy-tables90,filtered-16s-taxonomy-tables95,CRUX_unfiltered-16s-taxonomy-tables60,CRUX_unfiltered-16s-taxonomy-tables70,CRUX_unfiltered-16s-taxonomy-tables80,CRUX_unfiltered-16s-taxonomy-tables90,CRUX_unfiltered-16s-taxonomy-tables95,greengenes-taxonomy-tables60,greengenes-taxonomy-tables70,greengenes-taxonomy-tables80,greengenes-taxonomy-tables90,greengenes-taxonomy-tables95,silva-taxonomy-tables60,silva-taxonomy-tables70,silva-taxonomy-tables80,silva-taxonomy-tables90,silva-taxonomy-tables95
+Correct,0.908888889,0.895555556,0.873333333,0.833333333,0.815555556,0.228888889,0.157777778,0.111111111,0.082222222,0.015555556,0.488888889,0.402222222,0.226666667,0.157777778,0.124444444,0.768888889,0.764444444,0.76,0.757777778,0.731111111
+Wrong,0.006666667,0.004444444,0.004444444,0.004444444,0,0.073333333,0.033333333,0.024444444,0.002222222,0,0.091111111,0.08,0.064444444,0.046666667,0.046666667,0.12,0.093333333,0.093333333,0.075555556,0.066666667
+Ambiguous,0.084444444,0.1,0.122222222,0.162222222,0.184444444,0.697777778,0.808888889,0.864444444,0.915555556,0.984444444,0.42,0.517777778,0.708888889,0.795555556,0.828888889,0.111111111,0.142222222,0.146666667,0.166666667,0.202222222
+,,,,,,,,,,,,,,,,,,,,
+,409,,,,,103,,,,,220,,,,,346,,,,
+,3,450,,,,33,,,,,41,,,,,54,,,,
+,,,,,,,,,,,,,,,,,,,,
+filtered 60 vs,correct,,,,,,,,,,,,,,,,,,,
+unfiltered 60,The Z-Score is 20.5964. The p-value is 0. The result is significant at p <0.05. The proportion of Yes or NoÊ,,,,,,,,,,,,,,,,,,,
+greengenes 60,The Z-Score is 13.7332. The p-value is 0. The result is significant at p <0.05. The proportion of Yes or NoÊ,,,,,,,,,,,,,,,,,,,
+silva 60,The Z-Score is 5.7122. The p-value is 0. The result is significant at p <0.05. The proportion of Yes or NoÊ,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,0.016666667,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,
