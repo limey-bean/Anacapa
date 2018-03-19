@@ -13,7 +13,11 @@ Anacapa is an automated metabarcoding read processing toolkit. This modular tool
 #### Step 1: CRUX: Creating Reference libraries Using eXisting tools
 For full details on building reference libraries using CRUX, please refer to the following: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools.
 
-This first part of the toolkit generates reference libraries needed for taxonomic assignment using CRUX.  The output of CRUX consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt CRUX reference libraries (CO1-Leray, 12S-MiFish, 16S-V4, 18S-EMP, Fungal ITS (FITS), Plant ITS2 (PITS), and PPM cytochrome Oxidase [add refs and primer sequence] can be found at [link to dryad]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta,  taxonomy files, and a bowtie2 index library.
+This first part of the toolkit generates reference libraries needed for taxonomic assignment using CRUX.  The output of CRUX consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt CRUX reference libraries (12S-MiFish, CO1, 16S-EMP, 18S V4, 18S V8-9, 18S-EMP, Fungal ITS (FITS), Plant ITS2 (PITS), and PPM cytochrome Oxidase [see Table 1] can be found at [link to dryad]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta,  taxonomy files, and a bowtie2 index library.
+
+<p align="center">
+<img src="/figures-and-tables-for-the-Github/Table_1.png">
+</p>
 
 We acknowledge that users may wish to substitute their own reference libraries or add additional samples to a CRUX generated reference library to improve taxonomic assignments. Please refer to the CRUX page above for instructions to create a CRUX formatted reference library for use in this toolkit.
 
@@ -22,7 +26,7 @@ This next step of the toolkit aims to conduct standard sequence QC and then gene
 
 An strong advantage of the Ancapa toolkit is that is can simultaneously processes raw fastq reads for samples with single or multiple metabarcode targets generated on Illumina HiSeq and MiSeq machines. It is also not required that all samples contain reads for each metabarcode, thus allowing users to combine multiple projects or targets on the same sequencing run while only running the pipeline once.
 
-Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (**md5sum**) and uncompresses (**gunzip**) and then renames the files for readability  readable. The QC portion of this script trims nextera and truseq adapters (**cutadapt**; Martin 2011), removes low quality reads **Fastx-toolkit**, and sorts reads by metabarcode primer sequence (**cutadapt**). Reads are trimmed using **cutadapt** (Martin 2011) to remove sequencing adapters from the 5' ends and sequencing adapters and primers from the 3' end of reads.  **Fastx-toolkit** (Gordon and Hannon, 2010) is then used to processed for quality control. Read are retained if they have a Q ≥ 35 and are at lease 100bp after adapter and 3' primer trimming. **Cutadapt** is next used to sort reads by primer, and to trim additional basepairs from the end of read to increase quality going into **dada2**. Prior to running **dada2** paired end reads are checked using **PEAR**. Reads that passed QC are divided into merged pairs, unmerged pairs, unpaired F, and unpaired R reads which are then run separately.  **dada2** is then used to denoise, dereplicate, merge (where possible), and remove chimeric sequences from the data set.  
+Anacapa takes raw Illumina fastq format reads and preprocesses them to assess file corruption (**md5sum**) and uncompresses (**gunzip**) and then renames the files for readability  readable. The QC portion of this script trims nextera and truseq adapters (**cutadapt**; Martin 2011), removes low quality reads **Fastx-toolkit**, and sorts reads by metabarcode primer sequence (**cutadapt**). Reads are trimmed using **cutadapt** (Martin 2011) to remove sequencing adapters from the 5' ends and sequencing adapters and primers from the 3' end of reads.  **Fastx-toolkit** (Gordon and Hannon, 2010) is then used to processed for quality control. Read are retained if they have a Q ≥ 35 and are at lease 100bp after adapter and 3' primer trimming. **cutadapt** is next used to sort reads by primer, and to trim additional basepairs from the end of read to increase quality going into **dada2**. Prior to running **dada2** a custom python script sorts reads into unpaired F, unpaired R and unmerged read files.  The files are passed separately into **dada2*** where they are denoised, dereplicated, merged (where possible), and  chimeric sequences removed from the data set.  
 
 
 The input is raw Illumina metabarcode sequence data [\*.fastq.gz] reads and outputs are site frequency tables of ASVs and species count data for multiple samples and metabarcodes (ASV table). Successful implementation of this step requires: 1) raw illumina sequencing data and 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data.
@@ -55,7 +59,6 @@ The last step of the Anacapa Pipeline conducts exploratory data analysis to prov
 	* the forward and reverse nextera adapters
 	* the forward and reverse trueseq adapters.
 
-
 * scripts folder contains:
 	* anacapa_bowtie2_blca.sh
 	* anacapa_config.sh
@@ -78,7 +81,6 @@ The last step of the Anacapa Pipeline conducts exploratory data analysis to prov
 	* summarize_bowtie2_hits_full_taxonomy.py
 	* summarize_bowtie2_hits.py
 	* and a directory for downstream-analyses
-
 
 
 **__Programs__** [Jesse can I get you to verify these?]
@@ -137,7 +139,7 @@ also make sure that biopython is installed.
 module load anconda
 pip install biopython --user
 ```
-"user" not your user name 
+"user" not your user name
 
 ## How to run the QC / dada2 step:
 ```
