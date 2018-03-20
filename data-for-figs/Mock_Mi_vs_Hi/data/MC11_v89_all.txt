@@ -1,17 +1,6 @@
-exp	hi	mi
-0.00	0.00	0.00
-0.00	0.00	0.00
-0.00	0.00	0.00
-16.67	19.19	20.40
-16.67	0.00	0.00
-0.00	14.19	9.74
-16.67	18.73	19.03
-16.67	15.29	17.80
-16.67	22.68	22.56
-0.00	0.00	0.00
-0.00	0.00	0.00
-0.00	0.00	0.00
-0.00	0.00	0.00
-0.00	0.00	0.00
-16.67	0.00	0.00
-0.00	0.00	0.00
+taxon	hi	mi
+Chlorophyta;Trebouxiophyceae;Microthamniales;;Asterochloris;	19.19	20.40
+Chlorophyta;Trebouxiophyceae;Chlorellales;Chlorellaceae;Chlorella d	14.19	9.74
+Chlorophyta;Chlorophyceae;Sphaeropleales;Scenedesmaceae;;	18.73	19.03
+;Cryptophyta;Cryptomonadales;Cryptomonadaceae;Cryptomonas;	15.29	17.80
+;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas;	22.68	22.56
