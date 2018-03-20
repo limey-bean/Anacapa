@@ -13,16 +13,16 @@ Anacapa is an automated metabarcoding read processing toolkit. This modular tool
 #### Step 1: CRUX: Creating Reference libraries Using eXisting tools
 For full details on building reference libraries using CRUX, please refer to the following: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools.
 
-This first part of the toolkit generates reference libraries needed for taxonomic assignment using CRUX.  The output of CRUX consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt CRUX reference libraries (12S-MiFish, CO1, 16S-EMP, 18S V4, 18S V8-9, 18S-EMP, Fungal ITS (FITS), Plant ITS2 (PITS), and PPM cytochrome Oxidase [see Table 1] can be found at [link to dryad]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta,  taxonomy files, and a bowtie2 index library.
+This first part of the toolkit generates reference libraries needed for taxonomic assignment using CRUX.  The output of CRUX consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt CRUX reference libraries (12S - MiFish, 16S - EMP, 18S V4, 18S V8-9, 18S - EMP, PITS - Plant ITS2, CO1 and FITS - Fungal ITS [see Table 1] can be found at [link to dryad]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta files, taxonomy files, and a bowtie2 index library.
 
 <p align="center">
 <img src="/figures-and-tables-for-the-Github/Table_1.png">
 </p>
 
-We acknowledge that users may wish to substitute their own reference libraries or add additional samples to a CRUX generated reference library to improve taxonomic assignments. Please refer to the CRUX page above for instructions to create a CRUX formatted reference library for use in this toolkit.
+We acknowledge that users may wish to use their own custom sequences libraries to run Anacapa or add additional custom sequences to a pre-made CRUX reference library. Please refer to the CRUX page (link to page)for instructions to create a library from a custom set of fasta formatted reads or add reads to a CRUX formatted reference library.
 
 #### Step 2: Running QC and assigning Amplicon Sequence Variants (ASV) using dada2
-This next step of the toolkit aims to conduct standard sequence QC and then generate amplicon sequence variants (ASV) from Ilumina data using dada2. ASVs are a novel solution to identifying biologically informative unique sequences in metabarcoding samples that replaces the operational taxonomic unit (OTU) framework. Unlike OTUs which cluster sequences using an arbitrary sequence similarity (ex 97%), ASVs are unique sequence reads determined using Bayesian probabilities of known sequencing error. These unique sequences can be as little as 2 bp different, providing improved taxonomic resolution and an increase in observed diversity. Please see [insert citation to Dada2 and deblur] for further discussion.
+This next step of the toolkit aims to conduct standard sequence QC and then generate amplicon sequence variants (ASV) from Illumina data using **dada2** (Callahan et al. 2016). ASVs are a novel solution to identifying biologically informative unique sequences in metabarcoding samples that replaces the operational taxonomic unit (OTU) framework. Unlike OTUs which cluster sequences using an arbitrary sequence similarity (ex 97%), ASVs are unique sequence reads determined using Bayesian probabilities of known sequencing error. These unique sequences can be as little as 2 bp different, providing improved taxonomic resolution and an increase in observed diversity. Please see (Callahan et al. 2016, Amir et al. 2017) for further discussion.
 
 An strong advantage of the Ancapa toolkit is that is can simultaneously processes raw fastq reads for samples with single or multiple metabarcode targets generated on Illumina HiSeq and MiSeq machines. It is also not required that all samples contain reads for each metabarcode, thus allowing users to combine multiple projects or targets on the same sequencing run while only running the pipeline once.
 
@@ -174,6 +174,11 @@ Once you download these folders, transfer the reference library folders to the A
 
 
 ## References
+Amir, A., McDonald, D., Navas-Molina, J.A., Kopylova, E., Morton, J.T., Xu, Z.Z., Kightley, E.P., Thompson, L.R., Hyde, E.R., Gonzalez, A. and Knight, R., 2017. Deblur rapidly resolves single-nucleotide community sequence patterns. MSystems, 2(2), pp.e00191-16.
+
+Callahan, B. J., McMurdie, P. J., Rosen, M. J., Han, A. W., Johnson, A. J. A., & Holmes, S. P. (2016). DADA2: High-resolution sample inference from Illumina amplicon data. Nature Methods, 13(7), 581–583. doi:10.1038/nmeth.3869
+
+
 Caporaso, J.G., Kuczynski, J., Stombaugh, J., Bittinger, K., Bushman, F.D., Costello, E.K., Fierer, N., Peña, A.G., Goodrich, J.K., Gordon, J.I. and Huttley, G.A., 2010. QIIME allows analysis of high-throughput community sequencing data. Nature methods, 7(5), pp.335-336.
 
 Edgar, R.C., 2010. Search and clustering orders of magnitude faster than BLAST. Bioinformatics, 26(19), pp.2460-2461.
