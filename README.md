@@ -48,13 +48,13 @@ The last step of the **Anacapa** Pipeline conducts exploratory data analysis to 
 ## Required Programs and Dependencies
 ### Anacapa_db folder
 * Four files:
- * **anacapa_QC_dada2.sh**
-	 * _This script runs  QC and ASV generation to generate ASV tables_
- * **anacapa_bowtie2_blca.sh**
-	 * _This script runs bowtie2 and BLCA to assign taxonomy_
- * **forward_primers.txt**
- * **reverse_primers.txt**
-	 * _The two primer files are examples of how to format the primer forward and reverse input files.  It is_ **VERY IMPORTANT** _that you modify these files or make new files to reflect your data set!_
+  * **anacapa_QC_dada2.sh**
+	  * _This script runs  QC and ASV generation to generate ASV tables_
+  * **anacapa_bowtie2_blca.sh**
+	  * _This script runs bowtie2 and BLCA to assign taxonomy_
+  * **forward_primers.txt**
+  * **reverse_primers.txt**
+	  * _The two primer files are examples of how to format the primer forward and reverse input files.  It is_ **VERY IMPORTANT** _that you modify these files or make new files to reflect your data set!_
 * Two folders
 	* **adapters_and_PrimAdapt_rc/**
 		* _The forward and reverse nextera adapters_
