@@ -19,7 +19,7 @@ This first part of the toolkit generates reference libraries needed for taxonomi
 <img src="/figures-and-tables-for-the-Github/Table_1.png">
 </p>
 
-We acknowledge that users may wish to use their own custom sequences libraries to run Anacapa or add additional custom sequences to a pre-made CRUX reference library. Please refer to the CRUX page (link to page)for instructions to create a library from a custom set of fasta formatted reads or add reads to a CRUX formatted reference library.
+We acknowledge that users may wish to use their own custom sequences libraries to run Anacapa or add additional custom sequences to a pre-made CRUX reference library. Please refer to the CRUX page (link to page) for instructions to create a library from a custom set of fasta formatted reads or add reads to a CRUX formatted reference library.
 
 #### Step 2: Running QC and assigning Amplicon Sequence Variants (ASV) using dada2
 This next step of the toolkit aims to conduct standard sequence QC and then generate amplicon sequence variants (ASV) from Illumina data using **dada2** (Callahan et al. 2016). ASVs are a novel solution to identifying biologically informative unique sequences in metabarcoding samples that replaces the operational taxonomic unit (OTU) framework. Unlike OTUs which cluster sequences using an arbitrary sequence similarity (ex 97%), ASVs are unique sequence reads determined using Bayesian probabilities of known sequencing error. These unique sequences can be as little as 2 bp different, providing improved taxonomic resolution and an increase in observed diversity. Please see (Callahan et al. 2016, Amir et al. 2017) for further discussion.
