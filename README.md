@@ -95,7 +95,7 @@ To run __Anacapa__, you need verify that the full path to each of the following 
 	* make sure biopython is installed http://biopython.org/wiki/Packages
 	* We recommend downloading using conda from conda
 
-4. R 3.4.2
+4. R (Version 3.4.2)
    * Cran Packages
 	 * __ggplot2__
 	 * __plyr__
@@ -119,6 +119,7 @@ To run __Anacapa__, you need verify that the full path to each of the following 
 	* __impute__
 	* __Biostrings__
  * __dada2__ https://github.com/benjjneb/dada2
+
 
 5. __Bowtie2__: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
 	* We recommend downloading using conda
@@ -191,13 +192,10 @@ pip install biopython --user
 "user" not your user name
 
 
-This is a preliminary attempt a documentation...  To run the latest version of Anacapa using the 6 primer sets that are commonly used for CALeDNA projects, you will need to download the following:
-* Download the Anacapa_db folder
-* Download taxonomy reference libraries (updated 10-16-2017) from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
-
-
 ### More to come, and it might be a bit buggy.
 * if you choose to take this on...  Good Luck!
+* This is a preliminary attempt a documentation and we apologize in advance. Please feel free to contact any of the developers with questions.
+
 
 
 
