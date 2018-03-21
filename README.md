@@ -45,7 +45,7 @@ This portion generates ecological diversity summary statistics for a set of samp
 The last step of the **Anacapa** Pipeline conducts exploratory data analysis to provide a first pass look at sequencing depth, taxonomic assignments, and generated data tables. This analysis is not meant for publication, but solely as a first stab at visualization of your data. This is helpful in identifying potential glaring errors or contamination, and identifying patterns worth investigating further through more robust analysis. We highly encourage data exploration before further analysis as different parameters within the **Anacapa** pipeline may produce differences in downstream results and these parameters will vary by project, stringency of taxonomic assignment, and users opinions. The exploratory_analysis.R script uses a variety of **R** packages, relying heavily on __phyloseq__, __vegan__, and __ggplot2__. See below for full list of R package dependencies and scripts. The output from reformat_summary_for_R.py is an ASV site frequency table with assigned taxonomy and is the input used for the exploratory_analysis.R script. In addition, the user supplies an input metadata table that only requires the first column be sample names. Users can include any type of metadata including categorical, continuous, and discete variables. The first step of the R script is to convert the input files into a **Phyloseq** class object. We then generate bar plots looking at total number of observed classes and relative abundance of each class. We then generate rarefaction curves, alpha diversity boxplots to observe total number of taxa and Shannon diversity, and alpha diversity statistics. In addition, we calculate jaccard and bray-curtis distance matrices and conduct NMDS ordination plots, network map, heat maps, and ward-linkage maps. Each of the above analyses are repeated with different grouping for each metadata column. In addition we conduct two betadiversity statistical tests, pairwise adonis and betadisp from the vegan package. Again each analyses is repeated across groupings of each metadata column.
 
 
-## Anacapa relies on many programs and databases to run properly.
+## Required Programs and Dependencies
 ### Anacapa_db folder
 * Four files:
  * **anacapa_QC_dada2.sh**
@@ -81,6 +81,7 @@ The last step of the **Anacapa** Pipeline conducts exploratory data analysis to 
 		* summarize_bowtie2_hits_full_taxonomy.py
 		* summarize_bowtie2_hits.py
 		* and a directory for downstream-analyses
+       * _These scripts have documentation in their headers. Please see each script to understand functionality._
 
 ### Dependencies
 
@@ -134,9 +135,13 @@ Users can also make their own libraries using CRUX scripts. For example, Silva a
 
 Reference library folders must be transfered to the Anacapa_db folder.
 
+
+
 ## Running Anacapa
 
-__Anacapa__ must be run in either local or default mode. Local mode is for personal computers and servers that are not Hoffman2 at UCLA. Default mode is for running on Hoffman2 at UCLA
+__Anacapa__ must be run in either local or default mode. Local mode is for personal computers and servers that are not Hoffman2 at UCLA. Default mode is for running on Hoffman2 at UCLA.
+
+
 
 #### Preparing to Run Anacapa
 
