@@ -2,18 +2,19 @@
 
 ### Anacapa last updated 3-21-2018
 
-#### Written by Emily Curd (eecurd@g.ucla.edu), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Jesse Gomer (jessegomer@gmail.com), , Baochen Shi (biosbc@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
+#### Written by Emily Curd (eecurd@g.ucla.edu), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), and Rachel Meyer (rsmeyer@ucla.edu).
+
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
 
 ## Introduction
 The toolkit is named for the iconic southern California island, Anacapa, that has significant cultural and biodiversity importance. The name derived from the Chumash word _Ennepah_ or _Anyapakh_ which translates to  "mirage island" (Bright, 2004; Gudde, 2010). Much like the name, using eDNA to monitor biodiversity seems like an illusion on the horizon, but like the real island, the __Anacapa__ toolkit can obtain true and quality results with full transparency of the caveats of eDNA. Here, we present __Anacapa__, an automated method to create custom reference databases and simultaneously analyze multiple metabarcoding reads produced by HiSeq and MiSeq Illumina sequence platforms, with a built-in exploration tool of the raw results output.
 
-__Anacapa__ toolkit processes eDNA reads and assigns taxonomy using existing software or modifications to existing software. This modular toolkit is designed to analyze multiple samples and metabarcodes simultaneously from any Ilumina sequencing platform. __Anacapa__ accomplishes this in four steps: 1) building reference libraries using __CRUX__: Creating Reference libraries Using eXisting tools, 2) running quality control (QC) and assigning Amplicon Sequence Variants (ASV) using Dada2 (__Sequence QC and ASV Parsing__), 3) assigning taxonomy using bowtie2 and a bowtie2 specific Bayesian Least Common Ancestor (BLCA) (__Assignment__) and 4) Running exploratory data analysis and generating ecological diversity summary statistics for a set of samples (__ranacapa__). A significant advantage of the __Anacapa__ toolkit is that it does not require that paired reads overlap, or that both reads in a pair pass QC.  Taxonomy results are generated for all read types and the user can decide which read types they wish to retain for downstream analysis.
+__Anacapa__ toolkit processes eDNA reads and assigns taxonomy using existing software or modifications to existing software. This modular toolkit is designed to analyze multiple samples and metabarcodes simultaneously from any Ilumina sequencing platform. __Anacapa__ accomplishes this in four steps: 1) building reference libraries using __CRUX__: Creating Reference libraries Using eXisting tools, 2) running quality control (QC) and assigning Amplicon Sequence Variants (ASV) using Dada2 (__Sequence QC and ASV Parsing__), 3) assigning taxonomy using Bowtie 2 and a Bowtie 2 specific Bayesian Least Common Ancestor (BLCA) (__Assignment__) and 4) Running exploratory data analysis and generating ecological diversity summary statistics for a set of samples (__ranacapa__). A significant advantage of the __Anacapa__ toolkit is that it does not require that paired reads overlap, or that both reads in a pair pass QC.  Taxonomy results are generated for all read types and the user can decide which read types they wish to retain for downstream analysis.
 
 #### Step 1: CRUX: Creating Reference libraries Using eXisting tools
 For full details on building reference libraries using CRUX, please refer to the following: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools.
 
-This first part of the toolkit generates reference libraries needed for taxonomic assignment using __CRUX__.  The output of __CRUX__ consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt __CRUX__ reference libraries (12S - MiFish, 16S - EMP, 18S V4, 18S V8-9, 18S - EMP, PITS - Plant ITS2, CO1 and FITS - Fungal ITS [see Table 1] can be found at [link to dryad]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta files, taxonomy files, and a bowtie2 index library.
+This first part of the toolkit generates reference libraries needed for taxonomic assignment using __CRUX__.  The output of __CRUX__ consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt __CRUX__ reference libraries (12S - MiFish, 16S - EMP, 18S V4, 18S V8-9, 18S - EMP, PITS - Plant ITS2, CO1 and FITS - Fungal ITS [see Table 1] can be found at [link to dryad]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta files, taxonomy files, and a Bowtie 2 index library.
 
 <p align="center">
 <img src="/figures-and-tables-for-the-Github/Table_1.png">
@@ -31,10 +32,10 @@ __Anacapa__ takes raw Illumina fastq format reads and preprocesses them to asses
 
 The input is raw Illumina metabarcode sequence data [\*.fastq.gz] reads and outputs are site frequency tables of ASVs and species count data for multiple samples and metabarcodes (ASV table). Successful implementation of this step requires: 1) raw illumina sequencing data and 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data.
 
-#### Step 3: Taxonomic Assignment using bowtie2 and BLCA
-This next module of the pipeline assigns taxonomy to ASVs using **bowtie2** and a bowtie2 specific **Bayesian Least Common Ancestor** (**BLCA**) algorithm.
+#### Step 3: Taxonomic Assignment using Bowtie 2 and BLCA
+This next module of the pipeline assigns taxonomy to ASVs using **Bowtie 2** and a Bowtie 2 specific **Bayesian Least Common Ancestor** (**BLCA**) algorithm.
 
-The **Anacapa** toolkit determines the best taxonomic hits for an ASV using **bowtie2** (Langmead and Salzberg, 2012). **Anacapa** considers paired merged, paired unmerged, and unpaired sequencing reads, and thus a fast and flexible read aligner, such as bowtie2, is required to handle all four read types. This script uses bowtie2, **CRUX** reference libraries, and **BLCA** to then assign taxonomy. All reads are first globally aligned against the **CRUX** database using **bowtie2**. Any reads that fail to align are then aligned locally. The best hits (the top 100 **bowtie2** returns) are then processed with **BLCA** script to assign taxonomy. The **bowtie2 BLCA** algorithm was adapted from https://github.com/qunfengdong/BLCA. **BLCA** uses pairwise sequence alignment to calculate sequence similarity between query sequences and reference library hits. Taxonomy is assigned based on the lowest common ancestor of multiple reference library hits for each query sequence. The reliability of each taxonomic assignment is then evaluated through bootstrap confidence scores [Gao et al. 2017].
+The **Anacapa** toolkit determines the best taxonomic hits for an ASV using **Bowtie 2** (Langmead and Salzberg, 2012). **Anacapa** considers paired merged, paired unmerged, and unpaired sequencing reads, and thus a fast and flexible read aligner, such as Bowtie 2, is required to handle all four read types. This script uses Bowtie 2, **CRUX** reference libraries, and **BLCA** to then assign taxonomy. All reads are first globally aligned against the **CRUX** database using **Bowtie 2**. Any reads that fail to align are then aligned locally. The best hits (the top 100 **Bowtie 2** returns) are then processed with **BLCA** script to assign taxonomy. The **Bowtie 2 BLCA** algorithm was adapted from https://github.com/qunfengdong/BLCA. **BLCA** uses pairwise sequence alignment to calculate sequence similarity between query sequences and reference library hits. Taxonomy is assigned based on the lowest common ancestor of multiple reference library hits for each query sequence. The reliability of each taxonomic assignment is then evaluated through bootstrap confidence scores [Gao et al. 2017].
 
 Successful implementation of this script requires an ASV table (site frequency table) with the following columns (ASV number, Sequence, Samples). The output is multiple ASV tables for each metabarcode and both global and local alignments.
 
@@ -42,7 +43,7 @@ Successful implementation of this script requires an ASV table (site frequency t
 #### Step 4: ranacapa: Data exploration
 This portion generates ecological diversity summary statistics for a set of samples.
 
-The last step of the **Anacapa** Pipeline conducts exploratory data analysis to provide a first pass look at sequencing depth, taxonomic assignments, and generated data tables. This analysis is not meant for publication, but solely as a first stab at visualization of your data. This is helpful in identifying potential glaring errors or contamination, and identifying patterns worth investigating further through more robust analysis. We highly encourage data exploration before further analysis as different parameters within the **Anacapa** pipeline may produce differences in downstream results and these parameters will vary by project, stringency of taxonomic assignment, and users opinions. The exploratory_analysis.R script uses a variety of **R** packages, relying heavily on __phyloseq__, __vegan__, and __ggplot2__. See below for full list of R package dependencies and scripts. The output from reformat_summary_for_R.py is an ASV site frequency table with assigned taxonomy and is the input used for the exploratory_analysis.R script. In addition, the user supplies an input metadata table that only requires the first column be sample names. Users can include any type of metadata including categorical, continuous, and discete variables. The first step of the R script is to convert the input files into a **Phyloseq** class object. We then generate bar plots looking at total number of observed classes and relative abundance of each class. We then generate rarefaction curves, alpha diversity boxplots to observe total number of taxa and Shannon diversity, and alpha diversity statistics. In addition, we calculate jaccard and bray-curtis distance matrices and conduct NMDS ordination plots, network map, heat maps, and ward-linkage maps. Each of the above analyses are repeated with different grouping for each metadata column. In addition we conduct two betadiversity statistical tests, pairwise adonis and betadisp from the vegan package. Again each analyses is repeated across groupings of each metadata column.
+The last step of the **Anacapa** Pipeline conducts exploratory data analysis to provide a first pass look at sequencing depth, taxonomic assignments, and generated data tables. This analysis is not meant for publication, but solely as a first stab at visualization of your data. This is helpful in identifying potential glaring errors or contamination, and identifying patterns worth investigating further through more robust analysis. We highly encourage data exploration before further analysis as different parameters within the **Anacapa** pipeline may produce differences in downstream results and these parameters will vary by project, stringency of taxonomic assignment, and users opinions. The exploratory_analysis.R script uses a variety of **R** packages, relying heavily on __phyloseq__, __vegan__, and __ggplot2__. See below for full list of R package dependencies and scripts. The output from reformat_summary_for_R.py is an ASV site frequency table with assigned taxonomy and is the input used for the exploratory_analysis.R script. In addition, the user supplies an input metadata table that only requires the first column be sample names. Users can include any type of metadata including categorical, continuous, and discete variables. The first step of the R script is to convert the input files into a **Phyloseq** class object. We then generate bar plots looking at total number of observed classes and relative abundance of each class. We then generate rarefaction curves, alpha diversity boxplots to observe total number of taxa and Shannon diversity, and alpha diversity statistics. In addition, we calculate Jaccard and Bray-Curtis distance matrices and conduct NMDS ordination plots, network map, heat maps, and ward-linkage maps. Each of the above analyses are repeated with different grouping for each metadata column. In addition we conduct two betadiversity statistical tests, pairwise adonis and betadisp from the vegan package. Again each analyses is repeated across groupings of each metadata column.
 
 
 ## Required Programs and Dependencies
@@ -50,8 +51,8 @@ The last step of the **Anacapa** Pipeline conducts exploratory data analysis to 
 * Four files:
   * **anacapa_QC_dada2.sh**
 	  * _This script runs  QC and ASV generation to generate ASV tables_
-  * **anacapa_bowtie2_blca.sh**
-	  * _This script runs bowtie2 and BLCA to assign taxonomy_
+  * **anacapa_Bowtie 2_blca.sh**
+	  * _This script runs Bowtie 2 and BLCA to assign taxonomy_
   * **forward_primers.txt**
   * **reverse_primers.txt**
 	  * _The two primer files are examples of how to format the primer forward and reverse input files.  It is_ **VERY IMPORTANT** _that you modify these files or make new files to reflect your data set!_
@@ -60,7 +61,7 @@ The last step of the **Anacapa** Pipeline conducts exploratory data analysis to 
 		* _The forward and reverse nextera adapters_
 		* _The forward and reverse trueseq adapters_
 	* **scripts/**
-		* anacapa_bowtie2_blca.sh
+		* anacapa_Bowtie 2_blca.sh
 		* anacapa_config.sh
 		* anacapa_format_primers_cutadapt.py
 		* anacapa_QC_dada2.sh
@@ -75,19 +76,17 @@ The last step of the **Anacapa** Pipeline conducts exploratory data analysis to 
 		* group_alignments_to_files.py
 		* merge_asv.py
 		* reformat_summary_for_r.py
-		* run_bowtie2_blca.sh
+		* run_Bowtie 2_blca.sh
 		* run_dada2.sh
 		* sqlite_storage.py
-		* summarize_bowtie2_hits_full_taxonomy.py
-		* summarize_bowtie2_hits.py
-		* and a directory for downstream-analyses
-       * _These scripts have documentation in their headers. Please see each script to understand functionality._
+		* summarize_Bowtie 2_hits_full_taxonomy.py
+		* summarize_Bowtie 2_hits.py
 
 ### Dependencies
 
 To run __Anacapa__, you need verify that the full path to each of the following programs is correctly indicated in the anacapa_config.sh file.  
 
-1. __cutadapt__: http://cutadapt.readthedocs.io/en/stable/index.html
+1. __cutadapt__ (Version: 1.16): http://cutadapt.readthedocs.io/en/stable/index.html
 
 2. __fastxtoolkit__ (Version: 0.0.13) http://hannonlab.cshl.edu/fastx_toolkit/
 
@@ -118,10 +117,10 @@ To run __Anacapa__, you need verify that the full path to each of the following 
 	* __genefilter__
 	* __impute__
 	* __Biostrings__
- * __dada2__ https://github.com/benjjneb/dada2
+ * __dada2__ (Version 1.6) https://github.com/benjjneb/dada2
 
 
-5. __Bowtie2__: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+5. __Bowtie 2__: http://bowtie-bio.sourceforge.net/Bowtie 2/index.shtml
 	* We recommend downloading using conda
 
 6. muscle: https://www.drive5.com/muscle/downloads.htm
@@ -140,7 +139,7 @@ Reference library folders must be transfered to the Anacapa_db folder.
 
 ## Running Anacapa
 
-__Anacapa__ must be run in either local or default mode. Local mode is for personal computers and servers that are not Hoffman2 at UCLA. Default mode is for running on Hoffman2 at UCLA.
+__Anacapa__ must be run in either local or default mode. Local mode is for personal computers and servers.  Default mode is for High Performance Computing environments with Univa Grid Engine (e.g. Hoffman2 at UCLA).
 
 
 
@@ -152,12 +151,15 @@ Before running the __Anacapa__ toolkit you need to double check the anacapa_conf
 ```
 sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq>
 ```
+If you are running in local mode, -u can be replaced with any text string
 
-#### How to run the bowtie2 blca step:
+#### How to run the Bowtie 2 blca step:
 
 ```
-# ~/Anacapa_db/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
+# ~/Anacapa_db/anacapa_Bowtie 2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
 ```
+If you are running in local mode, -u can be replaced with any text string
+
 #### Hoffman Cluster UCLA
 **_Hoffman users running the QC dada2 need to do the following before dada2 will run_**
 ```
@@ -192,30 +194,43 @@ pip install biopython --user
 "user" not your user name
 
 
-### More to come, and it might be a bit buggy.
-* if you choose to take this on...  Good Luck!
-* This is a preliminary attempt a documentation and we apologize in advance. Please feel free to contact any of the developers with questions.
-
-
-
-
 ## References
+Amaral-Zettler, L.A., McCliment, E.A., Ducklow, H.W. and Huse, S.M., 2009. A method for studying protistan diversity using massively parallel sequencing of V9 hypervariable regions of small-subunit ribosomal RNA genes. PloS one, 4: p.e6372.
+
 Amir, A., McDonald, D., Navas-Molina, J.A., Kopylova, E., Morton, J.T., Xu, Z.Z., Kightley, E.P., Thompson, L.R., Hyde, E.R., Gonzalez, A. and Knight, R., 2017. Deblur rapidly resolves single-nucleotide community sequence patterns. MSystems, 2(2), pp.e00191-16.
+
+Bradley, I.M., Pinto, A.J. and Guest, J.S., 2016. Design and evaluation of Illumina MiSeq-compatible, 18S rRNA gene-specific primers for improved characterization of mixed phototrophic communities. Applied and environmental microbiology, 82(19), pp.5878-5891.
 
 Callahan, B. J., McMurdie, P. J., Rosen, M. J., Han, A. W., Johnson, A. J. A., & Holmes, S. P. (2016). DADA2: High-resolution sample inference from Illumina amplicon data. Nature Methods, 13(7), 581–583. doi:10.1038/nmeth.3869
 
+Caporaso J. G., Lauber C. L., Walters W. A., Berg-Lyons D., Huntley J., et al. - Ultrahigh-
+throughput microbial community analysis on the Illumina HiSeq and MiSeq
+platforms. The ISME Journal 6 (2012) 1621–1624. doi: 10.1038/ismej.2012.8 PMID:
+22402401.
 
 Caporaso, J.G., Kuczynski, J., Stombaugh, J., Bittinger, K., Bushman, F.D., Costello, E.K., Fierer, N., Peña, A.G., Goodrich, J.K., Gordon, J.I. and Huttley, G.A., 2010. QIIME allows analysis of high-throughput community sequencing data. Nature methods, 7(5), pp.335-336.
 
 Edgar, R.C., 2010. Search and clustering orders of magnitude faster than BLAST. Bioinformatics, 26(19), pp.2460-2461.
 
+Epp, L.S., Boessenkool, S., Bellemain, E.P., Haile, J., Esposito, A., Riaz, T., Erseus, C., Gusarov, V.I., Edwards, M.E., Johnsen, A. and Stenøien, H.K., 2012. New environmental metabarcodes for analysing soil DNA: potential for studying past and present ecosystems. Molecular Ecology, 21: pp.1821-1833.
+
+Geller, J., Meyer, C., Parker, M. and Hawk, H., 2013. Redesign of PCR primers for mitochondrial cytochrome c oxidase subunit I for marine invertebrates and application in all‐taxa biotic surveys. Molecular ecology resources, 13(5), pp.851-861.
+
 Gordon, A. and Hannon, G.J., 2010. Fastx-toolkit. FASTQ/A short-reads preprocessing tools (unpublished) http://hannonlab. cshl. edu/fastx_toolkit, 5.
 
 Gudde, Erwin; William Bright (2004). California Place Names (Fourth ed.). University of California Press. p. 12. ISBN 0-520-24217-3.
 
+Gu, W., Song, J., Cao, Y., Sun, Q., Yao, H., Wu, Q., Chao, J., Zhou, J., Xue, W. and Duan, J., 2013. Application of the ITS2 region for barcoding medicinal plants of Selaginellaceae in Pteridophyta. PloS one, 8: p.e67818.
+
 Langmead, B. and Salzberg, S.L., 2012. Fast gapped-read alignment with Bowtie 2. Nature methods, 9(4), pp.357-359.
 
+Leray, M., Yang, J.Y., Meyer, C.P., Mills, S.C., Agudelo, N., Ranwez, V., Boehm, J.T. and Machida, R.J., 2013. A new versatile primer set targeting a short fragment of the mitochondrial COI region for metabarcoding metazoan diversity: application for characterizing coral reef fish gut contents. Frontiers in Zoology, 10 p.34.
+
 Martin, M., 2011. Cutadapt removes adapter sequences from high-throughput sequencing reads. EMBnet. journal, 17(1), pp.pp-10.
+
+Miya, M., Sato, Y., Fukunaga, T., Sado, T., Poulsen, J.Y., Sato, K., Minamoto, T., Yamamoto, S., Yamanaka, H., Araki, H. and Kondoh, M., 2015. MiFish, a set of universal PCR primers for metabarcoding environmental DNA from fishes: detection of more than 230 subtropical marine species. Royal Society open science, 2, p.150088.
+
+Stoeck, T., Bass, D., Nebel, M., Christen, R., Jones, M.D., Breiner, H.W. and Richards, T.A., 2010. Multiple marker parallel tag environmental DNA sequencing reveals a highly complex eukaryotic community in marine anoxic water. Molecular Ecology, 19, pp.21-31.
 
 Team, R.C., 2000. R language definition. Vienna, Austria: R foundation for statistical computing.
 
