@@ -143,9 +143,13 @@ __Anacapa__ must be run in either local or default mode. Local mode is for perso
 
 
 
-#### Preparing to Run Anacapa
+#### Preparing the anacapa_config.sh file
 
 Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For local mode set LOCALMODE=TRUE, CUTADAPT ="cutadapt",and  MUSCLE="muscle" ; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
+
+#### Preparing the anacapa_vars.sh file
+
+Most of the run parameters for the __Anacapa__ toolkit are adjustable. If you want to modify any parameters, please do so in the anacapa_vars.sh file.  
 
 #### How to run the QC / dada2 step:
 ```
