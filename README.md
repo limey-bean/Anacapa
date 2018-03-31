@@ -1,8 +1,8 @@
 # Anacapa Toolkit
 
-### Anacapa last updated 3-21-2018
+### Anacapa last updated 3-31-2018
 
-#### Written by Emily Curd (eecurd@g.ucla.edu), Zack Gold (zjgold@ucla.edu), Gaurav Kandlikar (gkandlikar@ucla.edu), Jesse Gomer (jessegomer@gmail.com), Baochen Shi (biosbc@gmail.com), and Rachel Meyer (rsmeyer@ucla.edu).
+#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zjgold@ucla.edu), Max Ogden (max@maxogden.com), and Baochen Shi (biosbc@gmail.com). Assistance was provided by Rachel Meyer (rsmeyer@ucla.edu).
 
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
 
