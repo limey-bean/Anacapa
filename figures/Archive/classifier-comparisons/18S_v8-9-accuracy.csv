@@ -1,17 +1,0 @@
-,"blastblca","bowtie2blca","Qiimeblast","Qiimesklearn","Qiimevsearch"
-correct,0.805555556,0.791666667,0.611111111,0.833333333,0.638888889
-wrong,0.069444444,0.083333333,0,0.111111111,0.041666667
-ambig,0.125,0.125,0.388888889,0.055555556,0.319444444
-,,,,,
-,,,,,
-,58,57,44,60,46
-,,,,,
-,,,,,
-bowtie2 vs,,,,,
-blast blca,The Z-Score is -0.2078. The p-value is 0.83366. The result is¾not¾significant at p <0.05. The proportion of¾,,,,
-q blast,The Z-Score is 2.3672. The p-value is 0.01778. The result is significant at p <0.05. The proportion of Yes¾,,,,
-sklearn,The Z-Score is -0.6405. The p-value is 0.52218. The result is¾not¾significant at p <0.05. The proportion of¾,,,,
-vsearch,The Z-Score is 2.0313. The p-value is 0.04236. The result is significant at p <0.05. The proportion of Yes¾,,,,
-,,,,,
-,,,,,
-,,0.0125,,,

@@ -1,6 +1,0 @@
-taxon	hi	mi
-Chlorophyta;Trebouxiophyceae;Microthamniales;;Asterochloris;	20.78	18.46
-Chlorophyta;Trebouxiophyceae;Chlorellales;Chlorellaceae;Chlorella d	13.35	12.98
-Chlorophyta;Chlorophyceae;Sphaeropleales;Scenedesmaceae;;	17.91	20.67
-;Cryptophyta;Cryptomonadales;Cryptomonadaceae;Cryptomonas;	16.95	15.14
-;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas;	22.13	23.08

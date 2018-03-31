@@ -1,13 +1,17 @@
 #!/bin/bash
 
 ### this script is run as follows
-# ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -m <metabarcode> -f <sam file name>
+# ~/Anacapa_db/scripts/anacapa_bowtie2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -m <metabarcode> -s <sam file name> -n <BLCA number of times to bootstrap> -x <Muscle alignment match score> -f <Muscle alignment mismatch score> -g <Muscle alignment gap penalty>
 OUT=""
 DB=""
 MB=""
 FN=""
+BOOT=""
+MATCH=""
+MISMATCH=""
+GAPP=""
 
-while getopts "o:d:m:f:" opt; do
+while getopts "o:d:m:s:n:x:f:g:" opt; do
     case $opt in
         o) OUT="$OPTARG" # path to desired Anacapa output
         ;;
@@ -15,7 +19,15 @@ while getopts "o:d:m:f:" opt; do
         ;;
         m) MB="$OPTARG"  # metabarcode name
         ;;
-        f) FN="$OPTARG"  # input filename
+        s) FN="$OPTARG"  # input filename
+        ;;
+        n) BOOT="$OPTARG" # number of times to bootstrap for taxonomy assignment
+        ;;
+        x) MATCH="$OPTARG" # score for muscle alignment matches
+        ;;
+        f) MISMATCH="$OPTARG" # penalty for muscle alignment mismathes
+        ;;
+        g) GAPP="$OPTARG" # penalty for muscle alignment gaps
         ;;
     esac
 done
@@ -33,7 +45,7 @@ done
 ######################################
 
 # location of the config and var files
-source $DB/scripts/anacapa_vars_nextV.sh  # edit to change variables and parameters
+source $DB/scripts/anacapa_vars.sh  # edit to change variables and parameters
 source $DB/scripts/anacapa_config.sh # edit for proper configuration
 
 
@@ -47,14 +59,11 @@ ${PYTHONWNUMPY}
 date
 ###
 
-
 ### blca
 
 echo "Run blca on sam output"
-python ${DB}/scripts/blca_from_bowtie.py -i ${FN} -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${BLCAB} -p ${MUSCLE}
-
-######################################
-# Add blca taxonomy to the asv table
-######################################
+python ${DB}/scripts/blca_from_bowtie.py -i ${FN} -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${BLCAB} -p ${MUSCLE} -n ${BOOT} -m ${MATCH} -f ${MISMATCH} -g ${GAPP}
 
 cat > ${FN}.blca.complete
+echo "wrote ${FN}.blca.complete file"
+exit

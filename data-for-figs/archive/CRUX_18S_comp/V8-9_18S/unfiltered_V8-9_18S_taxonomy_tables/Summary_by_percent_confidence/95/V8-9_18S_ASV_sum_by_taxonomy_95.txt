@@ -1,8 +1,0 @@
-sum taxonomy	mock_sanger
-;;;;;	5
-Chlorophyta;;;;;	2
-Chlorophyta;Trebouxiophyceae;Microthamniales;;;	1
-;Cryptophyta;Pyrenomonadales;Pyrenomonadaceae;Rhodomonas;	1
-;Dinophyceae;;;;	1
-Eustigmatophyceae;;Eustigmatales;Monodopsidaceae;Nannochloropsis;	1
-;;Isochrysidales;Isochrysidaceae;Isochrysis;Isochrysis galbana	1

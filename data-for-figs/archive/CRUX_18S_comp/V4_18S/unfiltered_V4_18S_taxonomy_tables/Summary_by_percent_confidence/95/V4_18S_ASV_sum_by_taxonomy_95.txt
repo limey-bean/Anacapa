@@ -1,9 +1,0 @@
-sum taxonomy	mock_sanger
-;;;;;	4
-Chlorophyta;;;;;	2
-Chlorophyta;Chlorophyceae;;;;	1
-;Cryptophyta;;;;	1
-;Dinophyceae;;;;	1
-;Dinophyceae;Suessiales;Symbiodiniaceae;Symbiodinium;	1
-Eustigmatophyceae;;Eustigmatales;Monodopsidaceae;Nannochloropsis;Nannochloropsis oculata	1
-;;Isochrysidales;;;	1

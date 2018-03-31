@@ -46,45 +46,30 @@ This portion generates ecological diversity summary statistics for a set of samp
 The last step of the **Anacapa** Pipeline conducts exploratory data analysis to provide a first pass look at sequencing depth, taxonomic assignments, and generated data tables. This analysis is not meant for publication, but solely as a first stab at visualization of your data. This is helpful in identifying potential glaring errors or contamination, and identifying patterns worth investigating further through more robust analysis. We highly encourage data exploration before further analysis as different parameters within the **Anacapa** pipeline may produce differences in downstream results and these parameters will vary by project, stringency of taxonomic assignment, and users opinions. The exploratory_analysis.R script uses a variety of **R** packages, relying heavily on __phyloseq__, __vegan__, and __ggplot2__. See below for full list of R package dependencies and scripts. The output from reformat_summary_for_R.py is an ASV site frequency table with assigned taxonomy and is the input used for the exploratory_analysis.R script. In addition, the user supplies an input metadata table that only requires the first column be sample names. Users can include any type of metadata including categorical, continuous, and discete variables. The first step of the R script is to convert the input files into a **Phyloseq** class object. We then generate bar plots looking at total number of observed classes and relative abundance of each class. We then generate rarefaction curves, alpha diversity boxplots to observe total number of taxa and Shannon diversity, and alpha diversity statistics. In addition, we calculate Jaccard and Bray-Curtis distance matrices and conduct NMDS ordination plots, network map, heat maps, and ward-linkage maps. Each of the above analyses are repeated with different grouping for each metadata column. In addition we conduct two betadiversity statistical tests, pairwise adonis and betadisp from the vegan package. Again each analyses is repeated across groupings of each metadata column.
 
 
+#Running Anacapa Sequence QC and ASV Parsing using dada2 and Taxonomic Assignment using Bowtie 2 and BLCA scripts
+Anacapa scripts can be run locally on a personal computer (-l see optional arguments below), or in a High Performance Computing Environment (HPC). (add info about singularity, virtual box, cluster etc.)
+
 ## Required Programs and Dependencies
 ### Anacapa_db folder
-* Four files:
   * **anacapa_QC_dada2.sh**
 	  * _This script runs  QC and ASV generation to generate ASV tables_
-  * **anacapa_Bowtie 2_blca.sh**
+  * **anacapa_classifier.sh**
 	  * _This script runs Bowtie 2 and BLCA to assign taxonomy_
   * **forward_primers.txt**
   * **reverse_primers.txt**
-	  * _The two primer files are examples of how to format the primer forward and reverse input files.  It is_ **VERY IMPORTANT** _that you modify these files or make new files to reflect your data set!_
-* Two folders
-	* **adapters_and_PrimAdapt_rc/**
-		* _The forward and reverse nextera adapters_
-		* _The forward and reverse trueseq adapters_
-	* **scripts/**
-		* anacapa_Bowtie 2_blca.sh
-		* anacapa_config.sh
-		* anacapa_format_primers_cutadapt.py
-		* anacapa_QC_dada2.sh
-		* anacapa_vars_nextV.sh
-		* append_blca_to_summary.py
-		* append_bowtie_to_summary.py
-		* blca_from_bowtie.py
-		* check_paired.py
-		* dada2_unified_script.R
-		* group_alignments_to_db.py
-		* group_alignments_to_files_p_mod.py
-		* group_alignments_to_files.py
-		* merge_asv.py
-		* reformat_summary_for_r.py
-		* run_Bowtie 2_blca.sh
-		* run_dada2.sh
-		* sqlite_storage.py
-		* summarize_Bowtie 2_hits_full_taxonomy.py
-		* summarize_Bowtie 2_hits.py
+  * **metabarcode_loci_min_merge_length.txt**
+	  * Forward and reverse primer and metabarcode loci length files required to run the anacapa_QC_dada2.sh script.  
+
+    * The files in the Anacapa_db folder will be run with the anacapa_QC_dada2.sh script unless the user over rides this by submitting alternative files (see optional arguments below).  
+    * Default primers: 12S (MiFish-U: F and R), 16S (V4: 515F and 806R), 18S (V9: Euk_1391f EukBr), PITS (Plant ITS2: ITS-S2F and ITS-S3R), CO1 (mlCOIintF and jgHCO2198), and FITS (Fungal ITS: ITS5 and 5.8S).  See Table 1 for details.
+    * It is **VERY IMPORTANT** that these files reflect your data set!
+
+* **scripts/**
+    * Contains the scripts required to run anacapa_QC_dada2.sh and anacapa_classifier.sh
 
 ### Dependencies
 
-To run __Anacapa__, you need verify that the full path to each of the following programs is correctly indicated in the anacapa_config.sh file.  
+To run __Anacapa__, you need to install or be able to load (in the case of an HPC) the following programs.
 
 1. __cutadapt__ (Version: 1.16): http://cutadapt.readthedocs.io/en/stable/index.html
 
@@ -94,7 +79,7 @@ To run __Anacapa__, you need verify that the full path to each of the following 
 	* make sure biopython is installed http://biopython.org/wiki/Packages
 	* We recommend downloading using conda from conda
 
-4. R (Version 3.4.2)
+4. __R (Version 3.4.2)__
    * Cran Packages
 	 * __ggplot2__
 	 * __plyr__
@@ -123,79 +108,175 @@ To run __Anacapa__, you need verify that the full path to each of the following 
 5. __Bowtie 2__: http://bowtie-bio.sourceforge.net/Bowtie 2/index.shtml
 	* We recommend downloading using conda
 
-6. muscle: https://www.drive5.com/muscle/downloads.htm
+6. __muscle__: https://www.drive5.com/muscle/downloads.htm
 	* version muscle3.8.31
 	* **__muscle must be installed within the anacapa_db folder__**
 
+#### Special note for UCLA Hoffman2 Cluster users
+  _Hoffman users running the QC dada2 need to do the following before dada2 will run_
+  ```
+  qrsh
+  module load R/3.4.2
+  module load gcc/6.3.0
+  R
+  source("https://bioconductor.org/biocLite.R")
+  biocLite(suppressUpdates = FALSE)
+  ```
+  When given this option "would you like to use a personal library" say "y"
+  This is the reason that it is not possible to install this in the R script.
+  ```
+  biocLite("ShortRead", suppressUpdates = FALSE)
+  biocLite("devtools")
+  ```
+  You may need to install MASS, mgcv, and rpart.
+  ```
+  install.packages("MASS")
+  install.packages("mgcv")
+  install.packages("rpart")
+  ```
+
+  Installing these dependencies may take a very long time so no worries...
+
+  Biopython must also be installed.
+
+  ```
+  module load anconda
+  pip install biopython --user
+  ```
+  "user" not your user name
+
+### Preparing the anacapa_config.sh file
+
+Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For local mode set LOCALMODE=TRUE, CUTADAPT ="cutadapt",and  MUSCLE="muscle" ; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
 
 ### CRUX Databases
 Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
 
 Users can also make their own libraries using CRUX scripts. For example, Silva and greengeens libraries can easily be converted to __Anacapa__ compatible libraries. See https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools/tree/master/crux_release_V1_db/scripts for documentation.
 
-Reference library folders must be transfered to the Anacapa_db folder.
-
+To run anacapa_classifier.sh, the CRUX formatted reference library folders must be located to the Anacapa_db folder.
 
 
 ## Running Anacapa
 
-__Anacapa__ must be run in either local or default mode. Local mode is for personal computers and servers.  Default mode is for High Performance Computing environments with Univa Grid Engine (e.g. Hoffman2 at UCLA).
+__Anacapa__ must be run in either local (-l) or HPC default mode (requires -u argument). Local mode is for personal computers and servers.  Default mode is for High Performance Computing environments with Univa Grid Engine or similar scheduler (e.g. Hoffman2 at UCLA).
 
-
-
-#### Preparing the anacapa_config.sh file
-
-Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For local mode set LOCALMODE=TRUE, CUTADAPT ="cutadapt",and  MUSCLE="muscle" ; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
-
-#### Preparing the anacapa_vars.sh file
-
-Most of the run parameters for the __Anacapa__ toolkit are adjustable. If you want to modify any parameters, please do so in the anacapa_vars.sh file.  
-
-#### How to run the QC / dada2 step:
+### Running _anacapa_QC_dada2.sh_
 ```
-sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -u <hoffman_account_user_name> -f <fasta file of forward primers> -r <fasta file of reverse primers> -a <adapter type (nextera or truseq)>  -t <illumina run type HiSeq or MiSeq>
-```
-If you are running in local mode, -u can be replaced with any text string
+sh ~/Anacapa_db/anacapa_QC_dada2.sh -h
 
-#### How to run the Bowtie 2 blca step:
+<<< Anacapa: Sequence QC and ASV Parsing >>>
+
+The purpose of these script is to process raw fastq or fastq.gz files from an Illumina HiSeq or MiSeq.  It removes 3' and 5' sequencing artifacts and 5' metabarcode primers (cutadapt), removes low quality base pairs and short reads (fastX-toolkit), sorts reads by 3' metabarcode primers prior to trimming (cutadapt), and uses dada2 to denoise, dereplicate, merge and remove chimeric reads
+
+	For successful implementation
+		1. Make sure you have all of the dependencies and correct paths in the anacapa_config.sh file
+		2. Add the Metabarcode locus specific CRUX reference libraries to the Anacapa_db folder
+		3. All parameters can be modified using the arguments below.  Alternatively, all parameters can be altered in the anacapa_vars_nextV.sh folder
+
+Arguments:
+- Required:
+	-i	path to .fastq.gz files, if files are already compressed use flag -g (see below)
+	-o	path to output directory
+	-d	path to Anacapa_db
+	-a	Illumina adapter type: nextera or truseq
+	-t	Illumina Platform: HiSeq (2 x 150) or MiSeq ( >= 2 x 250)
+
+ - Optional:
+ 	-u	If running on HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
+	 -l	If running locally: -l  (no argument need)
+ 	-f	path to file with forward primers in fasta format
+    		e.g.	 >16s
+    			     GTGYCAGCMGCCGCGGTAA
+			         >18S
+			         GTACACACCGCCCGTC
+	-r	path to file with forward primers in fasta format
+    		e.g. 	 >16s
+    			     GGACTACNVGGGTWTCTAAT
+    			     >18S
+			         TGATCCTTCTGCAGGTTCACCTAC
+	-g	If .fastq read are not compressed: -g (no argument need)
+	-c	To modify the allowed cutadapt error for 3' adapter and 5' primer adapter trimming: 0.0 to 1.0 (default 0.3)
+	-p	To modify the allowed cutadapt error 3' primer sorting and trimming: 0.0 to 1.0 (default 0.3)
+	-q	To modify the minimum quality score allowed: 0 - 40 (default 35)
+	-m	To modify the minimum length after quality trimming: 0 - 300 (default 100)
+	-x	To modify the additional 5' trimming of forward reads: 0 - 300 (default HiSeq 10, default MiSeq 20)
+	-y	To modify the additional 5' trimming of reverse reads: 0 - 300 (default HiSeq 25, default MiSeq 50)
+	-b	To modify the number of occurances required to keep an ASV: 0 - any integer (default 1)
+	-e	File path to a list of minimum length(s) required for paired F and R reads to overlap
+		  (length of the locus - primer length + 20 bp). The user should take into account variability in amplicon
+		  region (e.g.The amplicon size for 18S 1389f-1510r is ~260 +/- 50 bp) and make appropriate allowances.
+		  e.g.	 LENGTH_16S="235"
+			       LENGTH_18S="200"
+
+ - Other:
+	-h	Shows program usage then quits
+
 
 ```
-# ~/Anacapa_db/anacapa_Bowtie 2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
-```
-If you are running in local mode, -u can be replaced with any text string
+__NOTE__: Script does not check that the user provided optional argument are within the correct values range. __Please use care when entering arguments.__
 
-#### Hoffman Cluster UCLA
-**_Hoffman users running the QC dada2 need to do the following before dada2 will run_**
+#### An example local mode script with the required arguments:
 ```
-qrsh
-module load R/3.4.2
-module load gcc/6.3.0
-R
-source("https://bioconductor.org/biocLite.R")
-biocLite(suppressUpdates = FALSE)
-```
-When given this option "would you like to use a personal library" say "y"
-This is the reason that it is not possible to install this in the R script.
-```
-biocLite("ShortRead", suppressUpdates = FALSE)
-biocLite("devtools")
-```
-You may need to install MASS, mgcv, and rpart.
-```
-install.packages("MASS")
-install.packages("mgcv")
-install.packages("rpart")
+sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -a <adapter type (nextera or truseq)> -t <illumina run type HiSeq or MiSeq> -l
 ```
 
-Installing these dependencies may take a very long time so no worries...
+#### An example HPC mode script with the required arguments:
+```
+sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -a <adapter type (nextera or truseq)> -t <illumina run type HiSeq or MiSeq> -u eecurd
+```
 
-Biopython must also be installed.
+### Running _anacapa_classifier.sh_
+```
+<<< Anacapa: Taxonomic Assignment using Bowtie 2 and BLCA >>>
+
+The purpose of this script is assign taxonomy to ASVs generated in the Sequence QC and ASV Parsing script. ASV files are mapped to CRUX reference libraries using Bowtie 2, taxonomy is assigned using BLCA, and summary tables are given.
+
+	For successful implementation
+		1. Make sure you have all of the dependencies and correct paths in the anacapa_config.sh file
+		2. Add the Metabarcode locus specific CRUX reference libraries to the Anacapa_db folder
+		3. All parameters can be modified using the arguments below.  Alternatively, all parameters
+       can be altered in the anacapa_vars.sh folder
+
+Arguments:
+- Required:
+	-o	path to output directory generated in the Sequence QC and ASV Parsing script
+	-d	path to Anacapa_db
+
+- Optional:
+ 	-u	If running on HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
+	-l	If running locally: -l  (no argument need)
+	-b	Percent of missmatch allowed between the qury and subject, for BLCA: 0.0 to 1.0 (default 0.8)
+	-c	A list of BCC cut-off values to report taxonomy: "0 to 100" quotes required
+      (default "40 50 60 70 80 90 95")
+		  The file must contain the following format: PERCENT="40 50 60 70 80 90 95 100"
+		  Where the value may differ but the PERCENT="values" is required
+	  	see ~/Anacapa_db/scripts/BCC_default_cut_off.sh as an example
+	-n	BLCA number of times to bootstrap: integer value (default 100)
+	-m	Muscle alignment match score: default 1
+	-f	Muscle alignment mismatch score: default 2.5
+	-g	Muscle alignment gap penalty: default -2
+	-k	Path to file with alternate HPC job submission parameters:  
+		  default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh
+		  modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh
+
+- Other:
+	-h	Shows program usage then quits
 
 ```
-module load anconda
-pip install biopython --user
+
+__NOTE__: Script does not check that the user provided optional argument are within the correct values range. __Please use care when entering arguments.__
+
+#### An example local mode script with the required arguments:
 ```
-"user" not your user name
+sh ~/Anacapa_db/anacapa_Bowtie 2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l
+```
+
+#### An example HPC mode script with the required arguments:
+```
+sh ~/Anacapa_db/anacapa_Bowtie 2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
+```
+
 
 
 ## References

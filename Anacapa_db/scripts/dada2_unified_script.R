@@ -33,14 +33,14 @@ if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
 
 if (paired_or_not == "paired") {
   path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/paired",  sep='')
-  mergedoutpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
-  unmergedoutpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
+  mergedoutpath=paste(odirpath,"/", barC, "/", barC, "dada2_out", sep='')
+  unmergedoutpath=paste(odirpath,"/", barC, "/", barC, "dada2_out", sep='')
 } else if(paired_or_not == "forward") {
   path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/unpaired_F", sep='')
-  outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
+  outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out", sep='')
 } else {
   path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/unpaired_R", sep='')
-  outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out/individual_out", sep='')
+  outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out", sep='')
 
 }
 
