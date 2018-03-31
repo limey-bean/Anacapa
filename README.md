@@ -58,9 +58,9 @@ Anacapa scripts can be run locally on a personal computer (-l see optional argum
   * **forward_primers.txt**
   * **reverse_primers.txt**
   * **metabarcode_loci_min_merge_length.txt**
+  **NOTE**
 	  * Forward and reverse primer and metabarcode loci length files required to run the anacapa_QC_dada2.sh script.  
-
-    * The files in the Anacapa_db folder will be run with the anacapa_QC_dada2.sh script unless the user over rides this by submitting alternative files (see optional arguments below).  
+    * The Forward and reverse primer and metabarcode loci length files in the Anacapa_db folder will be run with the anacapa_QC_dada2.sh script unless the user over rides these by specifying alternative files as arguments (see optional arguments below).  
     * Default primers: 12S (MiFish-U: F and R), 16S (V4: 515F and 806R), 18S (V9: Euk_1391f EukBr), PITS (Plant ITS2: ITS-S2F and ITS-S3R), CO1 (mlCOIintF and jgHCO2198), and FITS (Fungal ITS: ITS5 and 5.8S).  See Table 1 for details.
     * It is **VERY IMPORTANT** that these files reflect your data set!
 
@@ -147,7 +147,7 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
 
 ### Preparing the anacapa_config.sh file
 
-Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For local mode set LOCALMODE=TRUE, CUTADAPT ="cutadapt",and  MUSCLE="muscle" ; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
+Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For local mode set CUTADAPT ="cutadapt",and  MUSCLE="muscle"; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
 
 ### CRUX Databases
 Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
@@ -175,7 +175,7 @@ The purpose of these script is to process raw fastq or fastq.gz files from an Il
 		3. All parameters can be modified using the arguments below.  Alternatively, all parameters can be altered in the anacapa_vars_nextV.sh folder
 
 Arguments:
-- Required:
+- Required for either mode:
 	-i	path to .fastq.gz files, if files are already compressed use flag -g (see below)
 	-o	path to output directory
 	-d	path to Anacapa_db
@@ -184,7 +184,7 @@ Arguments:
 
  - Optional:
  	-u	If running on HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
-	 -l	If running locally: -l  (no argument need)
+	-l	If running locally: -l  (no argument need)
  	-f	path to file with forward primers in fasta format
     		e.g.	 >16s
     			     GTGYCAGCMGCCGCGGTAA
@@ -239,7 +239,7 @@ The purpose of this script is assign taxonomy to ASVs generated in the Sequence 
        can be altered in the anacapa_vars.sh folder
 
 Arguments:
-- Required:
+- Required for either mode:
 	-o	path to output directory generated in the Sequence QC and ASV Parsing script
 	-d	path to Anacapa_db
 
