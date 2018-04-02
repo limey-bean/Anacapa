@@ -177,7 +177,7 @@ else
     if [ -s "${str}" ]
     then
      # generate runlogs that you can submit at any time!
-     printf "${BLCA_HEADER} \n sh ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -m ${MB} -s ${str} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} \n\n" > ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
+     printf "${BLCA_HEADER} \n/bin/bash/ ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -m ${MB} -s ${str} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} \n\n" > ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
      echo ''
      qsub ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
      echo "if a blca job(s) fails you can find the job submission file in ${OUT}/Run_info/run_scripts"

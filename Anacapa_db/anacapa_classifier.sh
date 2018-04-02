@@ -154,11 +154,11 @@ do
     if [ "${LOCALMODE}" = "TRUE"  ]  # if you are running locally (no hoffman2) you can run these jobs one after the other.
     then
         echo "Running Bowtie 2 inline"
-        printf "#!/bin/bash\n\nsh ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -l -b ${B_VALUE:=$BLCAB} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
+        printf "#!/bin/bash\n\n ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -l -b ${B_VALUE:=$BLCAB} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         bash ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         date
     else
-        printf "${B2_HEADER} \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\nsh ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -u ${UN} -b ${B_VALUE:=$BLCAB} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
+        printf "${B2_HEADER} \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\n/bin/bash/ ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -u ${UN} -b ${B_VALUE:=$BLCAB} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         qsub ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         date
     fi

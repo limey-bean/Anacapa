@@ -173,7 +173,7 @@ The purpose of these script is to process raw fastq or fastq.gz files from an Il
 	For successful implementation
 		1. Make sure you have all of the dependencies and correct paths in the anacapa_config.sh file
 		2. Add the Metabarcode locus specific CRUX reference libraries to the Anacapa_db folder
-		3. All parameters can be modified using the arguments below.  Alternatively, all parameters can be altered in the anacapa_vars_nextV.sh folder
+		3. All parameters can be modified using the arguments below.  Alternatively, all parameters can be altered in the anacapa_vars.sh folder
 
 Arguments:
 - Required for either mode:
