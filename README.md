@@ -145,10 +145,6 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
   ```
   "user" not your user name
 
-### Preparing the anacapa_config.sh file
-
-Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For local mode set CUTADAPT ="cutadapt",and  MUSCLE="muscle"; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
-
 ### CRUX Databases
 Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
 
@@ -160,6 +156,11 @@ To run anacapa_classifier.sh, the CRUX formatted reference library folders must 
 ## Running Anacapa
 
 __Anacapa__ must be run in either local (-l) or HPC default mode (requires -u argument). Local mode is for personal computers and servers.  Default mode is for High Performance Computing environments with Univa Grid Engine or similar scheduler (e.g. Hoffman2 at UCLA).
+
+### Preparing the anacapa_config.sh file
+
+Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For local mode set CUTADAPT ="cutadapt",and  MUSCLE="muscle"; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
+
 
 ### Running _anacapa_QC_dada2.sh_
 ```
