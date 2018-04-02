@@ -185,7 +185,7 @@ Arguments:
 
  - Optional:
  	-u	If running on HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
-	-l	If running locally: -l  (no argument need)
+	-l	If running locally: -l  (no argument needed)
  	-f	path to file with forward primers in fasta format
     		e.g.	 >16s
     			     GTGYCAGCMGCCGCGGTAA
@@ -246,7 +246,7 @@ Arguments:
 
 - Optional:
  	-u	If running on HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
-	-l	If running locally: -l  (no argument need)
+	-l	If running locally: -l  (no argument needed)
 	-b	Percent of missmatch allowed between the qury and subject, for BLCA: 0.0 to 1.0 (default 0.8)
 	-c	A list of BCC cut-off values to report taxonomy: "0 to 100" quotes required
       (default "40 50 60 70 80 90 95")
