@@ -45,12 +45,6 @@ HS_R_TRIM="25"	# amount to trim from the 3' end of the HiSeq R read
 MIN_LEN="100"   # minimum read length to pass filter
 MIN_QUAL="35"   # minimum read quality to pass filter
 
-PAIRED_HEADER="#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N paired_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/run_logs/${j}_paired_$JOB_ID.out\n#$ -e ${OUT}/Run_info/run_logs/${j}_paired_$JOB_ID.err"
-UNPAIRED_F_HEADER="#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N unpaired_F_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/run_logs/${j}_unpaired_F_$JOB_ID.out\n#$ -e ${OUT}/Run_info/run_logs/${j}_unpaired_F_$JOB_ID.err"
-UNPAIRED_R_HEADER="#!/bin/bash\n#$ -l highp,h_rt=10:00:00,h_data=48G\n#$ -N unpaired_R_${j}_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/run_logs/${j}_unpaired_R_$JOB_ID.out\n#$ -e ${OUT}/Run_info/run_logs/${j}_unpaired_R_$JOB_ID.err"
-B2_HEADER="#!/bin/bash\n#$ -l highp,h_rt=210:00:00,h_data=20G\n#$ -N bowtie2_${j}_blca\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/run_logs/${j}_bowtie2_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/run_logs/${j}_bowtie2_blca_$JOB_ID.err"
-BLCA_HEADER="#!/bin/bash\n#$ -l highp,h_rt=210:00:00,h_data=48G\n#$ -N BLCA_${j}_${str}\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -N bowtie2_${j}_blca\n#$ -o ${OUT}/Run_info/run_logs/${j}_${str}_blca_$JOB_ID.out\n#$ -e ${OUT}/Run_info/run_logs/${j}_${str}_blca_$JOB_ID.err"
-
 ######
 # BLCA Parameters
 ######
