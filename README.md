@@ -184,7 +184,7 @@ Arguments:
 	-t	Illumina Platform: HiSeq (2 x 150) or MiSeq ( >= 2 x 250)
 
  - Optional:
- 	-u	If running on HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
+ 	-u	If running on an HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
 	-l	If running locally: -l  (no argument needed)
  	-f	path to file with forward primers in fasta format
     		e.g.	 >16s
@@ -245,7 +245,7 @@ Arguments:
 	-d	path to Anacapa_db
 
 - Optional:
- 	-u	If running on HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
+ 	-u	If running on an HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
 	-l	If running locally: -l  (no argument needed)
 	-b	Percent of missmatch allowed between the qury and subject, for BLCA: 0.0 to 1.0 (default 0.8)
 	-c	A list of BCC cut-off values to report taxonomy: "0 to 100" quotes required
