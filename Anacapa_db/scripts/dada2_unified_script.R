@@ -7,21 +7,16 @@
 
 args = commandArgs(trailingOnly=TRUE)
 # check that there's four arguments
-if (length(args) != 4) {
-  stop("please make sure there are 4 arguments: the barcode name, the path to fastq files, the expected seq length of the barcode, and the type of reads being processed")
+if (length(args) != 5) {
+  stop("please make sure there are 5 arguments: the barcode name, the path to fastq files, the expected seq length of the barcode, and the type of reads being processed, minimum ASV abundance")
 }
 
-# FOR TESTING
-# barC = "BAT16S"
-# odirpath = "/u/home/g/gaurav/bat_test"
-# barC_length = 200
-# paired_or_not = "forward"
 
 barC = args[1]  #barcode target
 odirpath = args[2]  #path to the fastq files
 barC_length = args[3] # expected seq length of the barcode.
 paired_or_not = args[4] # type of reads- should be "paired", "forward", or "reverse
-
+min_asv_abundance = args[5] # minimum number of times an ASV needs to appear to be kept in output files
 
 # confirm that the user has specified paired_or_not properly
 if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
@@ -272,6 +267,10 @@ nochim_merged <- seqtab_nochim %>% data.frame %>%
   mutate(!!working_barcode_seqnum := paste0(working_barcode_name,"_",row_number())) %>% # Make a new column w seq number
   select(!!working_barcode_seqnum,everything()) # reorder the columns
 
+# Filter out ASVs with fewer occurrences than the threshold
+nochim_merged$total <- rowSums(nochim_merged[,3:ncol(nochim_merged)])
+nochim_merged <- nochim_merged %>% filter(total > min_asv_abundance) %>% select(-total)
+
 # Save this table
 if(paired_or_not == "paired") {
   dir.create(mergedoutpath, recursive = T)
@@ -298,9 +297,8 @@ try <- ldply(mergers)  #merge all dataframes resulting from merger
 pairedsum_unmerged_table <- try %>% select(id = .id, forward, reverse, abundance, accept) %>% data.frame %>%
   filter(accept == FALSE) %>% select(-accept) # remove the ones that worked well during merge
 
-##############################################################
-## grab the correct F and R reads from the dadaF and dadR files
-##############################################################
+# grab the correct F and R reads from the dadaF and dadaR files ------
+
 
 mine_unmerged <- function(df, seqs_list, forward_or_reverse) {
   seq_obj <- seqs_list[[(df[1])]]
@@ -326,9 +324,9 @@ pairedsum_unmerged_table$sequenceR <- apply(pairedsum_unmerged_table, 1, functio
   mine_unmerged(x, seqs_list = dada_output_R, forward_or_reverse = "reverse"))
 
 
-##############################################################
-# add seqeunce length for forwards and reversed to unmerged dereplicated data
-##############################################################
+
+# add seqeunce length for forwards and reversed to unmerged dereplicated data ------
+
 
 
 pairedsum_unmerged_table$lengthF <- nchar(gsub("[a-z]","",pairedsum_unmerged_table$sequenceF))
@@ -360,15 +358,15 @@ unmerged_seqtab <- dcast(pairedsum_unmerged_dada2, sequenceF_N_Rrc ~ id, fun.agg
   data.frame %>% column_to_rownames( "sequenceF_N_Rrc") %>% t()
 
 
-##########################################
-# Run bimera detection on unmerged reads -> discard bimeras
-##########################################
+
+# Run bimera detection on unmerged reads and discard bimeras -----
+
 unmerged_seqtab_nochim <- removeBimeraDenovo(unmerged_seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
 
 
-##########################################
-# Reformat data for Bowtie2
-##########################################
+
+# Reformat data for Bowtie2 ---------
+
 
 # get barcode name info for numbering / nameing sequences in final fasta files / tables
 unmergedbarC =  paste("unmerged_", barC , sep='')
@@ -392,6 +390,10 @@ unmerged_seqtab_nochim$sequencesRrc <- NULL
 
 unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% select(sequencesF, sequencesR, everything()) %>%
   mutate(!!unmergedbarCseqnum := paste0(unmergedbarC, "_", row_number())) %>% select(!!unmergedbarCseqnum, everything())
+
+# filter out ASVs with fewer occurrences than the total
+unmerged_seqtab_nochim$total <- rowSums(unmerged_seqtab_nochim[,4:ncol(unmerged_seqtab_nochim)])
+unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% filter(total > min_asv_abundance) %>% select(-total)
 
 
 # ########################################
