@@ -45,6 +45,12 @@ HS_R_TRIM="25"	# amount to trim from the 3' end of the HiSeq R read
 MIN_LEN="100"   # minimum read length to pass filter
 MIN_QUAL="35"   # minimum read quality to pass filter
 
+#####
+# Dada2
+#####
+
+MIN_ASV_ABUNDANCE="0" # Keep ASV's with minimum sequence counts above 0
+
 ######
 # BLCA Parameters
 ######

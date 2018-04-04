@@ -1,14 +1,15 @@
 #!/bin/bash
 
 ### this script is run as follows
-# ~/Anacapa_db/scripts/run_bowtie2_make_3_Sfolders.sh -o <out_dir> -d <database_directory> -m <metabarcode name> -e Minimum length for paired F and R reads to merge
+# ~/Anacapa_db/scripts/run_bowtie2_make_3_Sfolders.sh -o <out_dir> -d <database_directory> -m <metabarcode name> -e <Minimum length for paired F and R reads to merge> -b <min ASV read count acceptable>
 OUT=""
 DB=""
 MB=""
 TYP=""
 MIN_MERGE_LENGTH=""
+MIN_ASV_ABUNDANCE=""
 
-while getopts "o:d:m:t:e:" opt; do
+while getopts "o:d:m:t:e:b:" opt; do
     case $opt in
         o) OUT="$OPTARG" # path to desired Anacapa output
         ;;
@@ -19,6 +20,8 @@ while getopts "o:d:m:t:e:" opt; do
         t) TYP="$OPTARG"  # type of reads
         ;;
         e) MIN_MERGE_LENGTH="$OPTARG"  # File path to the minimum length reqired for paired F and R reads to overlap (length of the locus - primer size + 20 bp)
+        ;;
+        b) MIN_ASV_ABUNDANCE="$OPTARG"
         ;;
     esac
 done
@@ -51,6 +54,6 @@ ${PYTHON} # load python
 ${R} &> ${OUT}/Run_info/dada2_out/dada2_out_${TYP}
 ${GCC} &>> ${OUT}/Run_info/dada2_out/dada2_out_${TYP}
 
-Rscript  --vanilla ${DB}/scripts/dada2_unified_script.R ${MB} ${OUT} ${length} ${TYP} &>> ${OUT}/Run_info/dada2_out/dada2_out_${TYP}
+Rscript  --vanilla ${DB}/scripts/dada2_unified_script.R ${MB} ${OUT} ${length} ${TYP} ${MIN_ASV_ABUNDANCE} &>> ${OUT}/Run_info/dada2_out/dada2_out_${TYP}
 
 echo "moving on"

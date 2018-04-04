@@ -351,9 +351,9 @@ do
     if [ "${LOCALMODE}" = "TRUE"  ]  # if you are running loally (no hoffman2) you can run these jobs one after the other.
     then
         echo "Running Dada2 inline"
-        printf "#!/bin/bash\n/bin/bash ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t paired -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} \n" > ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
-        printf "#!/bin/bash\n/bin/bash ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t forward -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} \n" > ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
-        printf "#!/bin/bash\n/bin/bash ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t reverse -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} \n" > ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
+        printf "#!/bin/bash\n/bin/bash ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t paired -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE}\n" > ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
+        printf "#!/bin/bash\n/bin/bash ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t forward -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE}\n" > ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
+        printf "#!/bin/bash\n/bin/bash ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t reverse -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE}\n" > ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
         /bin/bash ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
         date
         /bin/bash ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
@@ -364,9 +364,9 @@ do
         # generate runlogs that you can submit at any time!
         mkdir -p ${OUT}/Run_info/run_logs
         echo "Submitting Dada2 jobs"
-        printf "${DADA2_PAIRED_HEADER} -M ${UN} \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\n/bin/bash ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t paired -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} \n\necho _END_ [run_dada2_paired.sh]" > ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
+        printf "${DADA2_PAIRED_HEADER} -M ${UN} \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\n/bin/bash ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t paired -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE}\n\necho _END_ [run_dada2_paired.sh]"  > ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
         printf "${DADA2_UNPAIRED_F_HEADER} -M ${UN} \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\n/bin/bash ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t forward -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} \n\necho _END_ [run_dada2_unpaired_F.sh]" > ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
-        printf "${DADA2_UNPAIRED_R_HEADER} -M ${UN} \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\n/bin/bash ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t reverse -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} \n\necho _END_ [run_dada2_unpaired_R.sh]" > ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
+        printf "${DADA2_UNPAIRED_R_HEADER} -M ${UN} \n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\n/bin/bash ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t reverse -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE}\n\necho _END_ [run_dada2_unpaired_R.sh]" > ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
         # submit jobs to run dada2 and bowtie2 (only works if you have an ATS like module)
         qsub ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
         qsub ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
