@@ -16,7 +16,7 @@ barC = args[1]  #barcode target
 odirpath = args[2]  #path to the fastq files
 barC_length = args[3] # expected seq length of the barcode.
 paired_or_not = args[4] # type of reads- should be "paired", "forward", or "reverse
-min_asv_abundance = args[5] # minimum number of times an ASV needs to appear to be kept in output files
+min_asv_abundance = as.numeric(args[5]) # minimum number of times an ASV needs to appear to be kept in output files
 
 # confirm that the user has specified paired_or_not properly
 if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
