@@ -7,7 +7,7 @@ DB=""
 MB=""
 TYP=""
 MIN_MERGE_LENGTH=""
-MIN_ASV_ABUNDANCE=""
+MIN_ASV=""
 
 while getopts "o:d:m:t:e:b:" opt; do
     case $opt in
@@ -21,7 +21,7 @@ while getopts "o:d:m:t:e:b:" opt; do
         ;;
         e) MIN_MERGE_LENGTH="$OPTARG"  # File path to the minimum length reqired for paired F and R reads to overlap (length of the locus - primer size + 20 bp)
         ;;
-        b) MIN_ASV_ABUNDANCE="$OPTARG"
+        b) MIN_ASV="$OPTARG"
         ;;
     esac
 done
@@ -41,6 +41,7 @@ mkdir -p ${OUT}/Run_info/dada2_out
 mkdir -p ${OUT}/${MB}/${MB}dada2_out
 echo ""
 echo "Running dada2 on ${TYP} reads"
+echo "${MIN_ASV}"
 
 ##load module
 ${MODULE_SOURCE} # use if you need to load modules from an HPC
@@ -54,6 +55,6 @@ ${PYTHON} # load python
 ${R} &> ${OUT}/Run_info/dada2_out/dada2_out_${TYP}
 ${GCC} &>> ${OUT}/Run_info/dada2_out/dada2_out_${TYP}
 
-Rscript  --vanilla ${DB}/scripts/dada2_unified_script.R ${MB} ${OUT} ${length} ${TYP} ${MIN_ASV_ABUNDANCE} &>> ${OUT}/Run_info/dada2_out/dada2_out_${TYP}
+Rscript --vanilla ${DB}/scripts/dada2_unified_script.R ${MB} ${OUT} ${length} ${TYP} ${MIN_ASV} &>> ${OUT}/Run_info/dada2_out/dada2_out_${TYP}
 
 echo "moving on"
