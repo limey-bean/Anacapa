@@ -203,7 +203,7 @@ Arguments:
 	-m	To modify the minimum length after quality trimming: 0 - 300 (default 100)
 	-x	To modify the additional 5' trimming of forward reads: 0 - 300 (default HiSeq 10, default MiSeq 20)
 	-y	To modify the additional 5' trimming of reverse reads: 0 - 300 (default HiSeq 25, default MiSeq 50)
-	-b	To modify the number of occurances required to keep an ASV: 0 - any integer (default 1)
+	-b	To modify the number of occurrences required to keep an ASV: 0 - any integer (default 0)
 	-e	File path to a list of minimum length(s) required for paired F and R reads to overlap
 		  (length of the locus - primer length + 20 bp). The user should take into account variability in amplicon
 		  region (e.g.The amplicon size for 18S 1389f-1510r is ~260 +/- 50 bp) and make appropriate allowances.
