@@ -1,0 +1,5 @@
+DADA2_PAIRED_HEADER="#!/bin/bash\n#$ -l highmem,highp,h_rt=10:00:00,h_data=248G\n#$ -N paired_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/run_logs/paired.out\n#$ -e ${OUT}/Run_info/run_logs/paired.err"
+DADA2_UNPAIRED_F_HEADER="#!/bin/bash\n#$ -l highmem,highp,h_rt=10:00:00,h_data=248G\n#$ -N unpaired_F_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/run_logs/unpaired_F.out\n#$ -e ${OUT}/Run_info/run_logs/unpaired_F.err"
+DADA2_UNPAIRED_R_HEADER="#!/bin/bash\n#$ -l highmem,highp,h_rt=10:00:00,h_data=248G\n#$ -N unpaired_R_dada2\n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/run_logs/unpaired_R.out\n#$ -e ${OUT}/Run_info/run_logs/unpaired_R.err"
+B2_HEADER="#!/bin/bash\n#$ -l highmem,highp,h_rt=210:00:00,h_data=250G\n#$ -N bowtie2_blca \n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ -o ${OUT}/Run_info/run_logs/bowtie2_blca${MB}.out \n#$ -e ${OUT}/Run_info/run_logs/bowtie2_blca${MB}.alignment_stats"
+BLCA_HEADER="#!/bin/bash\n#$ -l highmem,highp,h_rt=210:00:00,h_data=248G\n#$ -N BLCA_${MB} \n#$ -cwd\n#$ -m bea\n#$ -M ${UN}\n#$ \n#$ -o ${OUT}/Run_info/run_logs/blca${MB}.out\n#$ -e ${OUT}/Run_info/run_logs/blca${MB}.err"
