@@ -1,7 +1,7 @@
-# Variables file for anacapa_release_V1		09-15-2017
-# Developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), with contributions from Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
+# Variables file for anacapa
+# Developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), with contributions from Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
 # Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
-# Last Updated 9-15-2017
+# Last Updated 04-10-2018
 
 ###########################
 # Parameters
