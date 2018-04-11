@@ -28,6 +28,11 @@ This first part of the toolkit generates reference libraries needed for taxonomi
 We acknowledge that users may wish to use their own custom sequences libraries to run __Anacapa__ or add additional custom sequences to a pre-made __CRUX__ reference library. Please refer to the __CRUX__ page (https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools) for instructions to create a library from a custom set of fasta formatted reads or add reads to a CRUX formatted reference library.
 
 #### Step 2: Sequence QC and ASV Parsing using dada2
+
+<p align="center">
+<img src="dada2_QC_flow.png" height="600" width="400">
+</p>
+
 This next step of the toolkit aims to conduct standard sequence QC and then generate amplicon sequence variants (ASV) from Illumina data using **dada2** (Callahan et al. 2016). ASVs are a novel solution to identifying biologically informative unique sequences in metabarcoding samples that replaces the operational taxonomic unit (OTU) framework. Unlike OTUs which cluster sequences using an arbitrary sequence similarity (ex 97%), ASVs are unique sequence reads determined using Bayesian probabilities of known sequencing error. These unique sequences can be as little as 2 bp different, providing improved taxonomic resolution and an increase in observed diversity. Please see (Callahan et al. 2016, Amir et al. 2017) for further discussion.
 
 An strong advantage of the __Anacapa__ toolkit is that is can simultaneously processes raw fastq reads for samples with single or multiple metabarcode targets generated on Illumina HiSeq and MiSeq machines. It is also not required that all samples contain reads for each metabarcode, thus allowing users to combine multiple projects or targets on the same sequencing run while only running the pipeline once.
@@ -38,6 +43,11 @@ __Anacapa__ takes raw Illumina fastq format reads and preprocesses them to asses
 The input is raw Illumina metabarcode sequence data [\*.fastq.gz] reads and outputs are site frequency tables of ASVs and species count data for multiple samples and metabarcodes (ASV table). Successful implementation of this step requires: 1) raw illumina sequencing data and 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data.
 
 #### Step 3: Taxonomic Assignment using Bowtie 2 and BLCA
+
+<p align="center">
+<img src="Anacapa_class_flow.png" height="400" width="400">
+</p>
+
 This next module of the pipeline assigns taxonomy to ASVs using **Bowtie 2** and a Bowtie 2 specific **Bayesian Least Common Ancestor** (**BLCA**) algorithm.
 
 The **Anacapa** toolkit determines the best taxonomic hits for an ASV using **Bowtie 2** (Langmead and Salzberg, 2012). **Anacapa** considers paired merged, paired unmerged, and unpaired sequencing reads, and thus a fast and flexible read aligner, such as Bowtie 2, is required to handle all four read types. This script uses Bowtie 2, **CRUX** reference libraries, and **BLCA** to then assign taxonomy. All reads are first globally aligned against the **CRUX** database using **Bowtie 2**. Any reads that fail to align are then aligned locally. The best hits (the top 100 **Bowtie 2** returns) are then processed with **BLCA** script to assign taxonomy. The **Bowtie 2 BLCA** algorithm was adapted from https://github.com/qunfengdong/BLCA. **BLCA** uses pairwise sequence alignment to calculate sequence similarity between query sequences and reference library hits. Taxonomy is assigned based on the lowest common ancestor of multiple reference library hits for each query sequence. The reliability of each taxonomic assignment is then evaluated through bootstrap confidence scores [Gao et al. 2017].
@@ -63,7 +73,7 @@ Anacapa scripts can be run locally on a personal computer (-l see optional argum
   * **forward_primers.txt**
   * **reverse_primers.txt**
   * **metabarcode_loci_min_merge_length.txt**
-  
+
   **NOTE**
 	  * Forward and reverse primer and metabarcode loci length files required to run the anacapa_QC_dada2.sh script.  
     * The Forward and reverse primer and metabarcode loci length files in the Anacapa_db folder will be run with the anacapa_QC_dada2.sh script unless the user over rides these by specifying alternative files as arguments (see optional arguments below).  
