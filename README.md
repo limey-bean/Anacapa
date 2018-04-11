@@ -1,6 +1,10 @@
+
+<p align="center">
+<img src="Anacapa_logo.png" height="250" width="500">
+</p>
 # Anacapa Toolkit
 
-### Anacapa last updated 3-31-2018
+### Anacapa last updated 4-11-2018
 
 #### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zjgold@ucla.edu), Max Ogden (max@maxogden.com), and Baochen Shi (biosbc@gmail.com). Assistance was provided by Rachel Meyer (rsmeyer@ucla.edu).
 
