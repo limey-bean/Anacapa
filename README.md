@@ -63,6 +63,7 @@ Anacapa scripts can be run locally on a personal computer (-l see optional argum
   * **forward_primers.txt**
   * **reverse_primers.txt**
   * **metabarcode_loci_min_merge_length.txt**
+  
   **NOTE**
 	  * Forward and reverse primer and metabarcode loci length files required to run the anacapa_QC_dada2.sh script.  
     * The Forward and reverse primer and metabarcode loci length files in the Anacapa_db folder will be run with the anacapa_QC_dada2.sh script unless the user over rides these by specifying alternative files as arguments (see optional arguments below).  
