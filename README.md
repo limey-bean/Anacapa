@@ -30,7 +30,7 @@ We acknowledge that users may wish to use their own custom sequences libraries t
 #### Step 2: Sequence QC and ASV Parsing using dada2
 
 <p align="center">
-<img src="dada2_QC_flow.png" height="600" width="400">
+<img src="dada2_QC_flow.png" height="600" width="300">
 </p>
 
 This next step of the toolkit aims to conduct standard sequence QC and then generate amplicon sequence variants (ASV) from Illumina data using **dada2** (Callahan et al. 2016). ASVs are a novel solution to identifying biologically informative unique sequences in metabarcoding samples that replaces the operational taxonomic unit (OTU) framework. Unlike OTUs which cluster sequences using an arbitrary sequence similarity (ex 97%), ASVs are unique sequence reads determined using Bayesian probabilities of known sequencing error. These unique sequences can be as little as 2 bp different, providing improved taxonomic resolution and an increase in observed diversity. Please see (Callahan et al. 2016, Amir et al. 2017) for further discussion.
