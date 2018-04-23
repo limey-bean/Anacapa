@@ -286,12 +286,12 @@ __NOTE__: Script does not check that the user provided optional argument are wit
 
 #### An example local mode script with the required arguments:
 ```
-sh ~/Anacapa_db/anacapa_Bowtie 2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l
+sh ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l
 ```
 
 #### An example HPC mode script with the required arguments:
 ```
-sh ~/Anacapa_db/anacapa_Bowtie 2_blca.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
+sh ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
 ```
 
 
