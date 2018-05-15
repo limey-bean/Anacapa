@@ -110,7 +110,7 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
 	 * __stringr__
 	 * __vegan__
 	 * __plotly__
-	 * __otparse__
+	 * __optparse__
 	 * __ggrepel__
 	 * __cluster__
  * __BIOCLITE__ Packages http://bioconductor.org/biocLite.R
