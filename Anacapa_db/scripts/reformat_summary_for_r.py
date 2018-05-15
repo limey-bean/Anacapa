@@ -20,7 +20,7 @@ def truncate_taxonomy(full_taxonomy, confidences, cutoff):
 
 
 def reformat_summary(summary_file_name, output_file_name, cutoff):
-    output_levels = ["phylum", "class", "order", "family", "genus", "species"]
+    output_levels = ["superkindgom","phylum", "class", "order", "family", "genus", "species"]
 
     summary = open(summary_file_name).readlines()
     previous_header = summary[0].strip().split('\t')
