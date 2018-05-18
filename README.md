@@ -63,8 +63,8 @@ The last step of the **Anacapa** Pipeline conducts exploratory data analysis to 
 __ranacapa__ instructions and scripts can be accessed at https://github.com/gauravsk/ranacapa.
 
 
-#Running Anacapa Sequence QC and ASV Parsing using dada2 and Taxonomic Assignment using Bowtie 2 and BLCA scripts
-Anacapa scripts can be run locally on a personal computer (-l see optional arguments below), or in a High Performance Computing Environment (HPC). (add info about singularity, virtual box, cluster etc.)
+# Running Anacapa Sequence QC and ASV Parsing using dada2 and Taxonomic Assignment using Bowtie 2 and BLCA scripts
+Anacapa scripts can be run locally on a personal computer (-l see optional arguments below), or in a High Performance Computing Environment (HPC). (For insrtuction on how to run Anacapa in a container see https://github.com/datproject/anacapa-container and  http://www.ucedna.com/software/ for more info)
 
 ## Required Programs and Dependencies
 ### Anacapa_db folder
