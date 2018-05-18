@@ -77,6 +77,7 @@ Anacapa scripts can be run locally on a personal computer (-l see optional argum
   * **metabarcode_loci_min_merge_length.txt**
 
   **NOTE**
+
     * The Forward and reverse primer and metabarcode loci length files in the Anacapa_db folder will be run with the anacapa_QC_dada2.sh script unless the user over rides these by specifying alternative files as arguments (see optional arguments below).  
     * Default primers: 12S (MiFish-U: F and R), 16S (V4: 515F and 806R), 18S (V9: Euk_1391f EukBr), PITS (Plant ITS2: ITS-S2F and ITS-S3R), CO1 (mlCOIintF and jgHCO2198), and FITS (Fungal ITS: ITS5 and 5.8S).  See Table 1 for details.
     * It is **VERY IMPORTANT** that these files reflect your data set!
