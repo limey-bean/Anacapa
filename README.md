@@ -179,7 +179,7 @@ __Anacapa__ must be run in either local (-l) or HPC default mode (requires -u ar
 
 ### Preparing the anacapa_config.sh file
 
-Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For local mode set CUTADAPT ="cutadapt",and  MUSCLE="muscle"; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
+Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For running local mode on a personal machine or virutual box set CUTADAPT ="cutadapt",and  MUSCLE="muscle"; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
 
 
 ### Running _anacapa_QC_dada2.sh_
