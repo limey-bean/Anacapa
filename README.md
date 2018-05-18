@@ -60,6 +60,8 @@ This portion generates ecological diversity summary statistics for a set of samp
 
 The last step of the **Anacapa** Pipeline conducts exploratory data analysis to provide a first pass look at sequencing depth, taxonomic assignments, and generated data tables. This analysis is not meant for publication, but solely as a first stab at visualization of your data. This is helpful in identifying potential glaring errors or contamination, and identifying patterns worth investigating further through more robust analysis. We highly encourage data exploration before further analysis as different parameters within the **Anacapa** pipeline may produce differences in downstream results and these parameters will vary by project, stringency of taxonomic assignment, and users opinions. The exploratory_analysis.R script uses a variety of **R** packages, relying heavily on __phyloseq__, __vegan__, and __ggplot2__. See below for full list of R package dependencies and scripts. The output from reformat_summary_for_R.py is an ASV table with assigned taxonomy, or a summary table with taxonomy reported and is the input used for the exploratory_analysis.R script. In addition, the user supplies an input metadata table that only requires the first column be sample names. Users can include any type of metadata including categorical, continuous, and discete variables. The first step of the R script is to convert the input files into a **Phyloseq** class object. We then generate bar plots looking at total number of observed classes and relative abundance of each class. We then generate rarefaction curves, alpha diversity boxplots to observe total number of taxa and Shannon diversity, and alpha diversity statistics. In addition, we calculate Jaccard and Bray-Curtis distance matrices and conduct NMDS ordination plots, network map, heat maps, and ward-linkage maps. Each of the above analyses are repeated with different grouping for each metadata column. In addition we conduct two betadiversity statistical tests, pairwise adonis and betadisp from the vegan package. Again each analyses is repeated across groupings of each metadata column.
 
+__ranacapa__ instructions and scripts can be accessed at https://github.com/gauravsk/ranacapa.
+
 
 #Running Anacapa Sequence QC and ASV Parsing using dada2 and Taxonomic Assignment using Bowtie 2 and BLCA scripts
 Anacapa scripts can be run locally on a personal computer (-l see optional arguments below), or in a High Performance Computing Environment (HPC). (add info about singularity, virtual box, cluster etc.)
@@ -162,7 +164,8 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
   "user" not your user name
 
 ### CRUX Databases
-Download taxonomy reference libraries from this google drive folder: https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
+Download taxonomy reference libraries from this google drive folder:
+https://drive.google.com/drive/folders/0BycoA83WF7aNOEFFV2Z6bC1GM1E?usp=sharing
 
 Users can also make their own libraries using CRUX scripts. For example, Silva and greengeens libraries can easily be converted to __Anacapa__ compatible libraries. See https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools/tree/master/crux_release_V1_db/scripts for documentation.
 
@@ -243,6 +246,19 @@ sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_dir
 sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -a <adapter type (nextera or truseq)> -t <illumina run type HiSeq or MiSeq> -u eecurd
 ```
 
+#### The output of the anacapa_QC_dada2.sh is as follows:
+  * **Output directory based on user designated name**
+    * **Subdirectories for each metabarcode target**
+	   * **Subdirectory for clean sorted data called "<metabarcode>_sort_by_read_type"**
+     * **Subdirectory for dada2 processed data called "<metabarcode>dada2_out"**
+    * **Subdirectory for run information called "Run_info"**
+      * **Subdirectory for cutadapt logs called "cutadapt_out"**
+      * **Subdirectory for cutadapt primers and adapters called "cutadapt_primers_and_adapters"**
+      * **Subdirectory for dada2 logs called "dada2_out"**
+      * **the .md5sum file for the raw sequences**
+      * **Subdirectory for general Anacapa run logs called  "run_logs"**
+      * **Subdirectory Anacapa run scripts called "runscripts"**
+
 ### Running _anacapa_classifier.sh_
 ```
 <<< Anacapa: Taxonomic Assignment using Bowtie 2 and BLCA >>>
@@ -294,6 +310,19 @@ sh ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <databa
 sh ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
 ```
 
+#### The output of the anacapa_classifier.sh is as follows:
+  * **In the output directory based on user designated name**
+    * **In the subdirectories for each metabarcode target**
+      * **Subdirectory containing the the taxonomy output files called "<metabrcode>_taxonomy_tables"**
+        * **Two files that summaries of the taxonomic classification**
+          * **The Brief file contains for each ASV: ASV number, the counts per read, full taxonomic path, the bootstrap confidence for each taxonomic rank, and the NCBI accession numbers for all reads included generating the taxonomic classification**
+          * **The Detailed file contains for each ASV: ASV number, ASV sequence(s),  the counts per read, whether the Bowtie 2 found a single or multiple hits, the type of Bowtie 2 alignment (global/end-to-end or local), the best percent id for a Bowtie 2 hit, the length of the input seqeunce, full taxonomic path, the bootstrap confidence for each taxonomic rank, and the NCBI accession numbers for all reads included generating the taxonomic classification**
+      * **Subdirectories where the taxonomy tables are summarized by the bootstrap confidence (100-40).***
+        * **Within each subdirectory there are two files**
+          * **A raw taxonomy file that gives the ASV number, the count per sample and the taxonomic path to the bootstrap confidence indicated**
+          * **A summary taxonomy file that gives the taxonomic path to the bootstrap confidence indicated and the count of that taxonomic path per sample**
+
+       "<metabrcode>bowtie2_out"**
 
 
 ## References
