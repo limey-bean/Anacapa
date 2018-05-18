@@ -129,7 +129,7 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
 
 6. __muscle__: https://www.drive5.com/muscle/downloads.htm
 	* version muscle3.8.31
-	* **__muscle must be installed within the anacapa_db folder__**
+	* **!!!!!__muscle must be installed within the anacapa_db folder__!!!!!**
 
 #### Special note for UCLA Hoffman2 Cluster users
   _Hoffman users running the QC dada2 need to do the following before dada2 will run_
