@@ -248,17 +248,17 @@ sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_dir
 ```
 
 #### The output of the anacapa_QC_dada2.sh is as follows:
-  * **Output directory based on user designated name**
-    * **Subdirectories for each metabarcode target**
-	   * **Subdirectory for clean sorted data called "<metabarcode>_sort_by_read_type"**
-     * **Subdirectory for dada2 processed data called "<metabarcode>dada2_out"**
-    * **Subdirectory for run information called "Run_info"**
-      * **Subdirectory for cutadapt logs called "cutadapt_out"**
-      * **Subdirectory for cutadapt primers and adapters called "cutadapt_primers_and_adapters"**
-      * **Subdirectory for dada2 logs called "dada2_out"**
-      * **the .md5sum file for the raw sequences**
-      * **Subdirectory for general Anacapa run logs called  "run_logs"**
-      * **Subdirectory Anacapa run scripts called "runscripts"**
+  * Output directory based on user designated name
+    * Subdirectories for each metabarcode target
+	   * Subdirectory for clean sorted data called "<metabarcode>\_sort_by_read_type"
+     * Subdirectory for dada2 processed data called "<metabarcode>dada2_out"
+    * Subdirectory for run information called "Run_info"
+      * Subdirectory for cutadapt logs called "cutadapt_out"
+      * Subdirectory for cutadapt primers and adapters called "cutadapt_primers_and_adapters"
+      * Subdirectory for dada2 logs called "dada2_out"
+      * the .md5sum file for the raw sequences
+      * Subdirectory for general Anacapa run logs called  "run_logs"
+      * Subdirectory Anacapa run scripts called "runscripts"
 
 ### Running _anacapa_classifier.sh_
 ```
@@ -312,18 +312,17 @@ sh ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <databa
 ```
 
 #### The output of the anacapa_classifier.sh is as follows:
-  * **In the output directory based on user designated name**
-    * **In the subdirectories for each metabarcode target**
-      * **Subdirectory containing the the taxonomy output files called "<metabrcode>_taxonomy_tables"**
-        * **Two files that summaries of the taxonomic classification**
-          * **The Brief file contains for each ASV: ASV number, the counts per read, full taxonomic path, the bootstrap confidence for each taxonomic rank, and the NCBI accession numbers for all reads included generating the taxonomic classification**
-          * **The Detailed file contains for each ASV: ASV number, ASV sequence(s),  the counts per read, whether the Bowtie 2 found a single or multiple hits, the type of Bowtie 2 alignment (global/end-to-end or local), the best percent id for a Bowtie 2 hit, the length of the input seqeunce, full taxonomic path, the bootstrap confidence for each taxonomic rank, and the NCBI accession numbers for all reads included generating the taxonomic classification**
-      * **Subdirectories where the taxonomy tables are summarized by the bootstrap confidence (100-40).***
-        * **Within each subdirectory there are two files**
-          * **A raw taxonomy file that gives the ASV number, the count per sample and the taxonomic path to the bootstrap confidence indicated**
-          * **A summary taxonomy file that gives the taxonomic path to the bootstrap confidence indicated and the count of that taxonomic path per sample**
+  * In the output directory based on user designated name
+    * In the subdirectories for each metabarcode target
+      * Subdirectory containing the the taxonomy output files called <metabarcode>\_taxonomy_tables
+        * Two files that summaries of the taxonomic classification
+          * The Brief file contains for each ASV: ASV number, the counts per read, full taxonomic path, the bootstrap confidence for each taxonomic rank, and the NCBI accession numbers for all reads included generating the taxonomic classification
+          * The Detailed file contains for each ASV: ASV number, ASV sequence(s),  the counts per read, whether the Bowtie 2 found a single or multiple hits, the type of Bowtie 2 alignment (global/end-to-end or local), the best percent id for a Bowtie 2 hit, the length of the input sequence, full taxonomic path, the bootstrap confidence for each taxonomic rank, and the NCBI accession numbers for all reads included generating the taxonomic classification
+      * Subdirectories where the taxonomy tables are summarized by the bootstrap confidence (100-40).
+        * Within each subdirectory there are two files
+          * A raw taxonomy file that gives the ASV number, the count per sample and the taxonomic path to the bootstrap confidence indicated
+          * A summary taxonomy file that gives the taxonomic path to the bootstrap confidence indicated and the count of that taxonomic path per sample
 
-       "<metabrcode>bowtie2_out"**
 
 
 ## References
