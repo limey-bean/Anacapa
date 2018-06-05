@@ -159,7 +159,7 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
   Biopython must also be installed.
 
   ```
-  module load anconda
+  module load anaconda
   pip install biopython --user
   ```
   "user" not your user name
