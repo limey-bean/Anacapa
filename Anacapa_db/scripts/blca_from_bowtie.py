@@ -261,6 +261,15 @@ def read_tax_acc(taxfile, not_available_handler):
 na_handler = NotAvailableHandler()
 acc2tax = read_tax_acc(tax, na_handler)
 print "> 1 > Read in taxonomy information!"
+
+reference_sequences = {}
+with open(reference_fasta) as f:
+    for r in SeqIO.parse(f, "fasta"):
+        reference_sequences[r.id] = str(r.seq)
+
+print "> 2 > Read in reference db"
+
+
 SequenceInfo = namedtuple('SequenceInfo', ['seq', 'hits'])
 ### read in input fasta file ###
 input_sequences = {}
@@ -269,24 +278,21 @@ with open(sam_file_name) as sam_file:
     for line in sam_file:
         pieces = line.strip().split('\t')
         entry = SamEntry(pieces)
-        if entry.qname not in input_sequences:
+
+        if entry.identity_ratio < iset:
+            possible_rejects.add(entry.qname)
+        elif entry.rname not in reference_sequences:
+            possible_rejects.add(entry.qname)
+        elif len(reference_sequences[entry.rname])/float(len(input_sequences[entry.qname].seq)) < min_length:
+            possible_rejects.add(entry.qname)
+        elif entry.qname not in input_sequences:
             input_sequences[entry.qname] = SequenceInfo(seq=entry.seq, hits=[entry.rname])
-        elif entry.identity_ratio < iset:
-            possible_rejects.add(entry.qname)
-        elif entry.seq/float(len(input_sequences[entry.qname].seq)) < min_length:
-            possible_rejects.add(entry.qname)
         else:
             input_sequences[entry.qname].hits.append(entry.rname)
 
 rejects = possible_rejects.difference(set(input_sequences))
-print "> 2 > Read in bowtie2 output!"
+print "> 3 > Read in bowtie2 output!"
 
-reference_sequences = {}
-with open(reference_fasta) as f:
-    for r in SeqIO.parse(f, "fasta"):
-        reference_sequences[r.id] = str(r.seq)
-
-print "> 3 > Read in reference db"
 
 outfile = open(outfile_name, 'w')
 for seqn, info in input_sequences.items():
