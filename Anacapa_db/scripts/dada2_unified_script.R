@@ -7,17 +7,21 @@
 
 args = commandArgs(trailingOnly=TRUE)
 # check that there's four arguments
-if (length(args) != 5) {
-  stop("please make sure there are 5 arguments: the barcode name, the path to fastq files, the expected seq length of the barcode, and the type of reads being processed, minimum ASV abundance")
+if (length(args) != 6) {
+  stop("please make sure there are 6 arguments: the barcode name, the path to fastq files, the expected seq length of the barcode, the type of reads being processed, minimum ASV abundance, and T/F to turn on multithreading")
 }
-multithreadFlag <- F
 
 barC = args[1]  #barcode target
 odirpath = args[2]  #path to the fastq files
 barC_length = args[3] # expected seq length of the barcode.
 paired_or_not = args[4] # type of reads- should be "paired", "forward", or "reverse
 min_asv_abundance = as.numeric(args[5]) # minimum number of times an ASV needs to appear to be kept in output files
-
+multit = args[6] #turn on multithread (should be "T" or "F"), if T then this script uses all available cores
+if (multit == "TRUE" || multit == "T"){
+	multithreadFlag<-T;
+}else{
+	multithreadFlag<-F;
+}
 # confirm that the user has specified paired_or_not properly
 if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
   cat("Please specify sequence type as 'paired', 'forward', or 'reverse'")
@@ -468,7 +472,6 @@ nochim_unmerged_seq_R.fasta = dataframe2fas(nochim_unmerged_seq_R, file= nochim_
 
 # write summary table
 unmerged_ASVs <- data.frame(unmerged_seqtab_nochim[[unmergedbarCseqnum]],pairedsum_unmerged_table$abundance)
-#write.table(unmerged_seqtab_nochim, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
 ifelse(length(all_sample_names) == 1,write.table(unmerged_ASVs, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE),write.table(unmerged_seqtab_nochim, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE))
 cat("Done with analzing your paired reads!\n\n")
 quit()
