@@ -161,7 +161,7 @@ do
         /bin/bash ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         date
     else
-        printf "${B2_HEADER} \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\n /bin/bash ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -u ${UN} -b ${B_VALUE:=$BLCAB} -p ${PER_MIN_LEN:=$BLCAperMINlen} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
+        printf "${B2_HEADER} \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\n/bin/bash ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -u ${UN} -b ${B_VALUE:=$BLCAB} -p ${PER_MIN_LEN:=$BLCAperMINlen} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         qsub ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         date
     fi

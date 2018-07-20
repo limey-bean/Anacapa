@@ -10,8 +10,10 @@ BOOT=""
 MATCH=""
 MISMATCH=""
 GAPP=""
+B_VALUE=""
+PER_MIN_LEN=""
 
-while getopts "o:d:m:s:n:x:f:g:" opt; do
+while getopts "o:d:m:s:n:x:f:g:b:l:" opt; do
     case $opt in
         o) OUT="$OPTARG" # path to desired Anacapa output
         ;;
@@ -28,6 +30,10 @@ while getopts "o:d:m:s:n:x:f:g:" opt; do
         f) MISMATCH="$OPTARG" # penalty for muscle alignment mismathes
         ;;
         g) GAPP="$OPTARG" # penalty for muscle alignment gaps
+        ;;
+        b) B_VALUE="$OPTARG"  # percent sim req for match
+        ;;
+        l) PER_MIN_LEN="$OPTARG" # min percent length of subject relative to query
         ;;
     esac
 done
@@ -62,7 +68,8 @@ date
 ### blca
 
 echo "Run blca on sam output"
-python ${DB}/scripts/blca_from_bowtie.py -i ${FN} -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${BLCAB} -p ${MUSCLE} -n ${BOOT} -m ${MATCH} -f ${MISMATCH} -g ${GAPP}
+python ${DB}/scripts/blca_from_bowtie.py -i ${FN} -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${B_VALUE} -l ${PER_MIN_LEN} -p ${DB}/muscle -n ${BOOT:=$BOOTSTRAP} -m ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP}
+
 
 cat > ${FN}.blca.complete
 echo "wrote ${FN}.blca.complete file"

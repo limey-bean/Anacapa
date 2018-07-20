@@ -184,7 +184,7 @@ Before running the __Anacapa__ toolkit you need to double check the anacapa_conf
 
 ### Running _anacapa_QC_dada2.sh_
 ```
-sh ~/Anacapa_db/anacapa_QC_dada2.sh -h
+/bin/bash ~/Anacapa_db/anacapa_QC_dada2.sh -h
 
 <<< Anacapa: Sequence QC and ASV Parsing >>>
 
@@ -239,12 +239,12 @@ __NOTE__: Script does not check that the user provided optional argument are wit
 
 #### An example local mode script with the required arguments:
 ```
-sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -a <adapter type (nextera or truseq)> -t <illumina run type HiSeq or MiSeq> -l
+/bin/bash ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -a <adapter type (nextera or truseq)> -t <illumina run type HiSeq or MiSeq> -l
 ```
 
 #### An example HPC mode script with the required arguments:
 ```
-sh ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -a <adapter type (nextera or truseq)> -t <illumina run type HiSeq or MiSeq> -u eecurd
+/bin/bash ~/Anacapa_db/anacapa_QC_dada2.sh -i <input_dir> -o <out_dir> -d <database_directory> -a <adapter type (nextera or truseq)> -t <illumina run type HiSeq or MiSeq> -u eecurd
 ```
 
 #### The output of the anacapa_QC_dada2.sh is as follows:
@@ -280,7 +280,8 @@ Arguments:
 - Optional:
  	-u	If running on an HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd
 	-l	If running locally: -l  (no argument needed)
-	-b	Percent of missmatch allowed between the qury and subject, for BLCA: 0.0 to 1.0 (default 0.8)
+  -b	Percent of mismatch allowed between the query and subject for BLCA: 0.0 to 1.0 (default 0.8)
+  -p	Minimum percent of length of the subject relative to the query for BLCA: 0.0 to 1.0 (default 0.8)
 	-c	A list of BCC cut-off values to report taxonomy: "0 to 100" quotes required
       (default "40 50 60 70 80 90 95")
 		  The file must contain the following format: PERCENT="40 50 60 70 80 90 95 100"
@@ -303,12 +304,12 @@ __NOTE__: Script does not check that the user provided optional argument are wit
 
 #### An example local mode script with the required arguments:
 ```
-sh ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l
+/bin/bash ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name> -l
 ```
 
 #### An example HPC mode script with the required arguments:
 ```
-sh ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
+/bin/bash ~/Anacapa_db/anacapa_classifier.sh -o <out_dir_for_anacapa_QC_run> -d <database_directory> -u <hoffman_account_user_name>
 ```
 
 #### The output of the anacapa_classifier.sh is as follows:
