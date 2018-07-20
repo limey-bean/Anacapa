@@ -180,9 +180,9 @@ else
     if [ -s "${str}" ]
     then
      # generate runlogs that you can submit at any time!
-     printf "${BLCA_HEADER} \n/bin/bash ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -b ${B_VALUE:=$BLCAB} -l ${PER_MIN_LEN:=$BLCAperMINlen} -m ${MB} -s ${str} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} \n\n" > ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
+     printf "${BLCA_HEADER} \n/${RUNNER} ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -b ${B_VALUE:=$BLCAB} -l ${PER_MIN_LEN:=$BLCAperMINlen} -m ${MB} -s ${str} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} \n\n" > ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
      echo ''
-     qsub ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
+     ${QUEUESUBMIT} ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
      echo "if a blca job(s) fails you can find the job submission file in ${OUT}/Run_info/run_scripts"
      echo "${str}.blca.complete" >> ${OUT}/${MB}/${MB}bowtie2_out/${MB}_complete_outfiles.txt
     else

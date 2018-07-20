@@ -44,3 +44,8 @@ MUSCLE="${DB}/muscle"
 
 #load GCC
 GCC="module load gcc/6.3.0"
+
+# modify job run / submit Parameters
+RUNNER="/bin/bash"
+
+QUEUESUBMIT="qsub"

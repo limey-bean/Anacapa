@@ -262,6 +262,8 @@ __NOTE__: Script does not check that the user provided optional argument are wit
 
 ### Running _anacapa_classifier.sh_
 ```
+/bin/bash ~/Anacapa_db/anacapa_classifier.sh -h
+
 <<< Anacapa: Taxonomic Assignment using Bowtie 2 and BLCA >>>
 
 The purpose of this script is assign taxonomy to ASVs generated in the Sequence QC and ASV Parsing script. ASV files are mapped to CRUX reference libraries using Bowtie 2, taxonomy is assigned using BLCA, and summary tables are given.
