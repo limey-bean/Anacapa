@@ -50,9 +50,9 @@ echo "${MIN_ASV}"
 ${MODULE_SOURCE} # use if you need to load modules from an HPC
 
 #### critical or the dependency 'RcppParallel' will not install
-${R} &> ${OUT}/Run_info/dada2_out/${MB}_dada2_out_${TYP}
-${GCC} &>> ${OUT}/Run_info/dada2_out/${MB}_dada2_out_${TYP}
+${R} &> ${OUT}/Run_info/dada2_out/${MB}dada2_out_${TYP}
+${GCC} &>> ${OUT}/Run_info/dada2_out/${MB}dada2_out_${TYP}
 
-Rscript --vanilla ${DB}/scripts/dada2_unified_script.R ${MB} ${OUT} ${length} ${TYP} ${MIN_ASV} ${MULTITHREAD} &>> ${OUT}/Run_info/dada2_out/${MB}_dada2_out_${TYP}
+Rscript --vanilla ${DB}/scripts/dada2_unified_script.R ${MB} ${OUT} ${length} ${TYP} ${MIN_ASV} ${MULTITHREAD} &>> ${OUT}/Run_info/dada2_out/${MB}dada2_out_${TYP}
 
 echo "moving on"

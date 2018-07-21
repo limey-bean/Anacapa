@@ -27,7 +27,6 @@ if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
   cat("Please specify sequence type as 'paired', 'forward', or 'reverse'")
   quit()
 }
-
 ## path to output
 
 if (paired_or_not == "paired") {
@@ -40,14 +39,10 @@ if (paired_or_not == "paired") {
 } else {
   path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/unpaired_R", sep='')
   outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out", sep='')
-
 }
-
-# Confirm that the user has Write access to the path
 if (file.access(path, mode = 2) != 0) {
   stop("Please make sure that you have write access to the supplied path.")
 }
-
 # Manage packages -----
 
 #1. Download packages from CRAN
@@ -225,13 +220,6 @@ functionally_useless <- filtered_seqs %>% filter(!(name %in% filtered_sample_nam
 #                                    filtered = filtered_seqs[-(which(rownames(filtered_seqs) %in% filtered_sample_names)),2])
 
 if (paired_or_not == "paired") {
-  #track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
-  #                    input = filtered_seqs_nonzeros[,"reads.in"],
-  #                    filtered = filtered_seqs_nonzeros[,"reads.out"],
-  #                    denoised = sapply(dada_output, getN),
-  #                    merged = sapply(mergers, getN),
-  #                    tabled = rowSums(seqtab),
-  #                    nochim = rowSums(seqtab_nochim))
   track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
                       input = filtered_seqs_nonzeros[,"reads.in"],
                       filtered = filtered_seqs_nonzeros[,"reads.out"],
@@ -243,7 +231,6 @@ if (paired_or_not == "paired") {
   track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
                       input = filtered_seqs_nonzeros[,"reads.in"],
                       filtered = filtered_seqs_nonzeros[,"reads.out"],
-                      #denoised = sapply(dada_output, getN),
                       denoised = ifelse(length(all_sample_names) == 1,getN(dada_output),sapply(dada_output, getN)),
                       tabled = rowSums(seqtab),
                       nochim = rowSums(seqtab_nochim))
@@ -256,44 +243,28 @@ head(track)
 
 # Make output FASTA files and abundance tables for the processed reads------
 
-#if (paired_or_not == "paired") {
- # working_barcode_name =  paste("merged_", barC , sep='')
- # working_barcode_seqnum = paste("merged_", barC , "_seq_number", sep = '')
- # nochim_fname.fasta = paste(mergedoutpath,"/", "nochim_merged",barC,".fasta", sep='')
- # nochim_fname.txt = paste(mergedoutpath,"/", "nochim_merged",barC,".txt", sep='')
-#} else if(paired_or_not == "forward") {
- # working_barcode_name =  paste("forward_", barC , sep='')
- # working_barcode_seqnum = paste("forward_", barC , "_seq_number", sep = '')
- # nochim_fname.fasta = paste(outpath,"/", "nochim_forward",barC,".fasta", sep='')
- # nochim_fname.txt = paste(outpath,"/", "nochim_forward",barC,".txt", sep='')
-#} else {
- # working_barcode_name =  paste("reverse_", barC , sep='')
- # working_barcode_seqnum = paste("reverse_", barC , "_seq_number", sep = '')
- # nochim_fname.fasta = paste(outpath,"/", "nochim_reverse",barC,".fasta", sep='')
- # nochim_fname.txt = paste(outpath,"/", "nochim_reverse",barC,".txt", sep='')
-#}
 if (paired_or_not == "paired") {
-  working_barcode_name =  paste("merged_", all_sample_names , sep='')
-  working_barcode_seqnum = paste("merged_", all_sample_names , "_seq_number", sep = '')
-  nochim_fname.fasta = paste(mergedoutpath,"/", "nochim_merged",all_sample_names,".fasta", sep='')
-  nochim_fname.txt = paste(mergedoutpath,"/", "nochim_merged",all_sample_names,".txt", sep='')
+  working_barcode_name =  ifelse(length(all_sample_names)==1,paste("merged_", all_sample_names , sep=''),paste("merged_", barC , sep=''))
+  working_barcode_seqnum = ifelse(length(all_sample_names)==1,paste("merged_", all_sample_names , "_seq_number", sep = ''),paste("merged_", barC , "_seq_number", sep = ''))
+  nochim_fname.fasta = ifelse(length(all_sample_names)==1,paste(mergedoutpath,"/", "nochim_merged",all_sample_names,".fasta", sep=''),paste(mergedoutpath,"/", "nochim_merged",barC,".fasta", sep=''))
+  nochim_fname.txt = ifelse(length(all_sample_names)==1,paste(mergedoutpath,"/", "nochim_merged",all_sample_names,".txt", sep=''),paste(mergedoutpath,"/", "nochim_merged",barC,".txt", sep=''))
 } else if(paired_or_not == "forward") {
-  working_barcode_name =  paste("forward_", all_sample_names , sep='')
-  working_barcode_seqnum = paste("forward_", all_sample_names , "_seq_number", sep = '')
-  nochim_fname.fasta = paste(outpath,"/", "nochim_forward",all_sample_names,".fasta", sep='')
-  nochim_fname.txt = paste(outpath,"/", "nochim_forward",all_sample_names,".txt", sep='')
+  working_barcode_name =  ifelse(length(all_sample_names)==1,paste("forward_", all_sample_names , sep=''),paste("forward_", barC , sep=''))
+  working_barcode_seqnum = ifelse(length(all_sample_names)==1,paste("forward_", all_sample_names , "_seq_number", sep = ''),paste("forward_", barC , "_seq_number", sep = ''))
+  nochim_fname.fasta = ifelse(length(all_sample_names)==1,paste(outpath,"/", "nochim_forward",all_sample_names,".fasta", sep=''),paste(outpath,"/", "nochim_forward",barC,".fasta", sep=''))
+  nochim_fname.txt = ifelse(length(all_sample_names)==1,paste(outpath,"/", "nochim_forward",all_sample_names,".txt", sep=''),paste(outpath,"/", "nochim_forward",barC,".txt", sep=''))
 } else {
-  working_barcode_name =  paste("reverse_", all_sample_names , sep='')
-  working_barcode_seqnum = paste("reverse_", all_sample_names , "_seq_number", sep = '')
-  nochim_fname.fasta = paste(outpath,"/", "nochim_reverse",all_sample_names,".fasta", sep='')
-  nochim_fname.txt = paste(outpath,"/", "nochim_reverse",all_sample_names,".txt", sep='')
+  working_barcode_name =  ifelse(length(all_sample_names)==1,paste("reverse_", all_sample_names , sep=''),paste("reverse_", barC , sep=''))
+  working_barcode_seqnum = ifelse(length(all_sample_names)==1,paste("reverse_", all_sample_names , "_seq_number", sep = ''),paste("reverse_", barC , "_seq_number", sep = ''))
+  nochim_fname.fasta = ifelse(length(all_sample_names)==1,paste(outpath,"/", "nochim_reverse",all_sample_names,".fasta", sep=''),paste(outpath,"/", "nochim_reverse",barC,".fasta", sep=''))
+  nochim_fname.txt = ifelse(length(all_sample_names)==1,paste(outpath,"/", "nochim_reverse",all_sample_names,".txt", sep=''),paste(outpath,"/", "nochim_reverse",barC,".txt", sep=''))
 }
 
 seqtab_nochim <- t(seqtab_nochim)
 nochim_merged <- seqtab_nochim %>% data.frame %>%
   rownames_to_column %>% rename(sequence = rowname) %>% # make sequences into a column
-  mutate(!!working_barcode_seqnum := paste0(working_barcode_name,"_",row_number())) %>% # Make a new column w seq number
-  select(!!working_barcode_seqnum,everything()) # reorder the columns
+  mutate((!! working_barcode_seqnum) := paste0(working_barcode_name,"_",row_number())) %>% # Make a new column w seq number
+  select((!! working_barcode_seqnum),everything()) # reorder the columns
 
 # Filter out ASVs with fewer occurrences than the threshold
 nochim_merged$total <- ifelse(length(all_sample_names) == 1, nochim_merged[,3],rowSums(nochim_merged[,3:ncol(nochim_merged)]))
@@ -309,7 +280,7 @@ if(paired_or_not == "paired") {
 }
 
 # Make a fasta file out of the sequences in this table
-nochim_merged_seq <- nochim_merged %>% select(!!working_barcode_seqnum, sequence)
+nochim_merged_seq <- nochim_merged %>% select((!!working_barcode_seqnum), sequence)
 nochim_merged_seq.fasta = dataframe2fas(nochim_merged_seq, file= nochim_fname.fasta)
 
 # If working with unpaired reads, this is the end! --------------
@@ -343,11 +314,9 @@ mine_unmerged <- function(df, seqs_list, forward_or_reverse, numSamples) {
   }
 
   if (forward_or_reverse == "forward") {
-    #seq <- seq_obj$sequence[as.numeric(df[2])]
-    seq <- seq_obj$sequence[as.numeric(df["forward"])]
+    seq = ifelse(numSamples==1,seq_obj$sequence[as.numeric(df["forward"])],seq_obj$sequence[as.numeric(df[2])])
   } else {
-    #seq <- seq_obj$sequence[as.numeric(df[3])]
-    seq <- seq_obj$sequence[as.numeric(df["reverse"])]
+    seq = ifelse(numSamples==1, seq_obj$sequence[as.numeric(df["reverse"])],seq_obj$sequence[as.numeric(df[3])])
   }
 
   return(seq)
@@ -423,10 +392,8 @@ unmerged_seqtab_nochim <- removeBimeraDenovo(unmerged_seqtab, method="consensus"
 
 
 # get barcode name info for numbering / nameing sequences in final fasta files / tables
-#unmergedbarC =  paste("unmerged_", barC , sep='')
-#unmergedbarCseqnum = paste("unmerged_", barC , "_seq_number", sep = '')
-unmergedbarC =  paste("unmerged_", all_sample_names , sep='')
-unmergedbarCseqnum = paste("unmerged_", all_sample_names , "_seq_number", sep = '')
+unmergedbarC = ifelse(length(all_sample_names)==1,paste("unmerged_", all_sample_names , sep=''),paste("unmerged_", barC , sep=''))
+unmergedbarCseqnum = ifelse(length(all_sample_names)==1,paste("unmerged_", all_sample_names , "_seq_number", sep = ''),paste("unmerged_", barC , "_seq_number", sep = ''))
 
 
 #transpose table, make rownames into a column -> sequnces
@@ -445,7 +412,7 @@ unmerged_seqtab_nochim$sequencesRrc <- NULL
 # Reorder the columns (seqF, seqR, all the samples)
 
 unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% select(sequencesF, sequencesR, everything()) %>%
-  mutate(!!unmergedbarCseqnum := paste0(unmergedbarC, "_", row_number())) %>% select(!!unmergedbarCseqnum, everything())
+  mutate((!! unmergedbarCseqnum) := paste0(unmergedbarC, "_", row_number())) %>% select(!! unmergedbarCseqnum, everything())
 
 # filter out ASVs with fewer occurrences than the total
 unmerged_seqtab_nochim$total <- rowSums(unmerged_seqtab_nochim[,4:ncol(unmerged_seqtab_nochim)])
@@ -471,7 +438,13 @@ nochim_unmerged_seq_F.fasta = dataframe2fas(nochim_unmerged_seq_F, file= nochim_
 nochim_unmerged_seq_R.fasta = dataframe2fas(nochim_unmerged_seq_R, file= nochim_unfnameR.fasta)
 
 # write summary table
-unmerged_ASVs <- data.frame(unmerged_seqtab_nochim[[unmergedbarCseqnum]],pairedsum_unmerged_table$abundance)
-ifelse(length(all_sample_names) == 1,write.table(unmerged_ASVs, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE),write.table(unmerged_seqtab_nochim, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE))
+if ( length(all_sample_names)==1 ){
+	unmerged_ASVs <- data.frame(unmerged_seqtab_nochim[[unmergedbarCseqnum]],pairedsum_unmerged_table$abundance)
+}
+if(length(all_sample_names) == 1){
+	write.table(unmerged_ASVs, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
+}else{
+	write.table(unmerged_seqtab_nochim, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
+}
 cat("Done with analzing your paired reads!\n\n")
 quit()
