@@ -368,4 +368,6 @@ Stoeck, T., Bass, D., Nebel, M., Christen, R., Jones, M.D., Breiner, H.W. and Ri
 
 Team, R.C., 2000. R language definition. Vienna, Austria: R foundation for statistical computing.
 
+White, T.J., Bruns, T., Lee, S.J.W.T. and Taylor, J.L., 1990. Amplification and direct sequencing of fungal ribosomal RNA genes for phylogenetics. PCR protocols: a guide to methods and applications, 18(1), pp.315-322.
+
 Zhang, J., Kobert, K., Flouri, T. and Stamatakis, A., 2013. PEAR: a fast and accurate Illumina Paired-End reAd mergeR. Bioinformatics, 30(5), pp.614-620.
