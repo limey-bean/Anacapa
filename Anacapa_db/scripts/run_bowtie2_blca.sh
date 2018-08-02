@@ -167,7 +167,7 @@ then
    ### blca
 
    echo "Run blca on sam output locally"
-   python ${DB}/scripts/blca_from_bowtie.py -i ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${B_VALUE} -l ${PER_MIN_LEN} -p ${DB}/muscle -n ${BOOT:=$BOOTSTRAP} -m ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP}
+   python ${DB}/scripts/blca_from_bowtie.py -i ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${B_VALUE} -l ${PER_MIN_LEN:=$BLCAperMINlen} -p ${DB}/muscle -n ${BOOT:=$BOOTSTRAP} -m ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP}
 
 else
   for str in ${OUT}/${MB}/${MB}bowtie2_out/*.sam
