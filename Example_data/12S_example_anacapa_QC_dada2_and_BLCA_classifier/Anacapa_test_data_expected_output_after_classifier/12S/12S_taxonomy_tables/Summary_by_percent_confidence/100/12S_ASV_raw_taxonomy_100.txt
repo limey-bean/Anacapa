@@ -1,0 +1,24 @@
+12S_seq_number	X12S_first1000reads.LSC.A.1.S19.L001	X12S_first1000reads.LSC.A.2.S20.L001	sum taxonomy
+forward_12S_1	1	0	
+forward_12S_2	1	0	Eukaryota;Chordata;Actinopteri;Centrarchiformes;Oplegnathidae;Oplegnathus;Oplegnathus woodwardi
+forward_12S_3	1	0	Eukaryota;Chordata;Actinopteri;NA;Pomacentridae;Hypsypops;Hypsypops rubicundus
+forward_12S_4	1	0	Eukaryota;Chordata;Actinopteri;NA;Pomacentridae;Hypsypops;Hypsypops rubicundus
+forward_12S_5	0	1	Eukaryota;Chordata;Actinopteri;Labriformes;Labridae;;
+forward_12S_6	0	1	Eukaryota;Chordata;Actinopteri;Clupeiformes;Engraulidae;Engraulis;Engraulis mordax
+forward_12S_7	0	1	Eukaryota;Chordata;Actinopteri;Pleuronectiformes;Paralichthyidae;;
+merged_12S_1	435	190	Eukaryota;Chordata;Actinopteri;;;;
+merged_12S_2	71	76	
+merged_12S_3	18	92	Eukaryota;Chordata;Actinopteri;NA;Sphyraenidae;Sphyraena;Sphyraena helleri
+merged_12S_4	104	0	Eukaryota;Chordata;Actinopteri;Labriformes;Labridae;;
+merged_12S_5	0	99	Eukaryota;Chordata;Actinopteri;Labriformes;Labridae;;
+merged_12S_6	31	43	Eukaryota;Chordata;Actinopteri;Clupeiformes;Engraulidae;Engraulis;Engraulis mordax
+merged_12S_7	37	26	Eukaryota;Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Girella;
+merged_12S_8	0	56	
+merged_12S_9	0	51	Eukaryota;Chordata;Actinopteri;Pleuronectiformes;Paralichthyidae;Citharichthys;
+merged_12S_10	0	44	Eukaryota;Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Medialuna;Medialuna californiensis
+merged_12S_11	35	8	Eukaryota;Chordata;Actinopteri;Labriformes;Labridae;Semicossyphus;Semicossyphus pulcher
+merged_12S_12	0	38	Eukaryota;Chordata;Actinopteri;NA;Pomacentridae;Chromis;Chromis punctipinnis
+merged_12S_13	0	35	Eukaryota;Chordata;Actinopteri;Atheriniformes;Atherinopsidae;Odontesthes;
+merged_12S_14	23	0	
+merged_12S_15	16	0	Eukaryota;Chordata;Actinopteri;;Embiotocidae;;
+merged_12S_16	0	6	

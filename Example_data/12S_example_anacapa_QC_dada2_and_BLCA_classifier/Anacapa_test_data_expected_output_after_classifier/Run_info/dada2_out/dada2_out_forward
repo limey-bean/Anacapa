@@ -1,0 +1,206 @@
+During startup - Warning messages:
+1: Setting LC_CTYPE failed, using "C" 
+2: Setting LC_COLLATE failed, using "C" 
+3: Setting LC_TIME failed, using "C" 
+4: Setting LC_MESSAGES failed, using "C" 
+5: Setting LC_MONETARY failed, using "C" 
+6: Setting LC_PAPER failed, using "C" 
+7: Setting LC_MEASUREMENT failed, using "C" 
+congrats, right version of dada2Loading required package: Rcpp
+Loading required package: methods
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning: namespace 'DelayedArray' is not available and has been replaced
+by .GlobalEnv when processing object 'plot.index'
+Warning messages:
+1: no function found corresponding to methods exports from 'SummarizedExperiment' for: 'acbind', 'arbind' 
+2: multiple methods tables found for 'rglist' 
+dada2 package version: 1.6.0Loading required package: BiocGenerics
+Loading required package: parallel
+
+Attaching package: 'BiocGenerics'
+
+The following objects are masked from 'package:parallel':
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following objects are masked from 'package:stats':
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from 'package:base':
+
+    Filter, Find, Map, Position, Reduce, anyDuplicated, append,
+    as.data.frame, cbind, colMeans, colSums, colnames, do.call,
+    duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,
+    lapply, lengths, mapply, match, mget, order, paste, pmax, pmax.int,
+    pmin, pmin.int, rank, rbind, rowMeans, rowSums, rownames, sapply,
+    setdiff, sort, table, tapply, union, unique, unsplit, which,
+    which.max, which.min
+
+Loading required package: S4Vectors
+Loading required package: stats4
+
+Attaching package: 'S4Vectors'
+
+The following object is masked from 'package:plyr':
+
+    rename
+
+The following object is masked from 'package:base':
+
+    expand.grid
+
+Loading required package: IRanges
+
+Attaching package: 'IRanges'
+
+The following object is masked from 'package:plyr':
+
+    desc
+
+Loading required package: XVector
+
+Attaching package: 'XVector'
+
+The following object is masked from 'package:plyr':
+
+    compact
+
+
+Attaching package: 'Biostrings'
+
+The following object is masked from 'package:base':
+
+    strsplit
+
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:Biostrings':
+
+    collapse, intersect, setdiff, setequal, union
+
+The following object is masked from 'package:XVector':
+
+    slice
+
+The following objects are masked from 'package:IRanges':
+
+    collapse, desc, intersect, setdiff, slice, union
+
+The following objects are masked from 'package:S4Vectors':
+
+    first, intersect, rename, setdiff, setequal, union
+
+The following objects are masked from 'package:BiocGenerics':
+
+    combine, intersect, setdiff, union
+
+The following objects are masked from 'package:plyr':
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise,
+    summarize
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+[1] "12S_first1000reads-LSC-A-1-S19-L001_Paired_1_singles.fastq"
+[2] "12S_first1000reads-LSC-A-2-S20-L001_Paired_1_singles.fastq"
+[3] "filtered"                                                  
+                                                           reads.in reads.out
+12S_first1000reads-LSC-A-1-S19-L001_Paired_1_singles.fastq        5         4
+12S_first1000reads-LSC-A-2-S20-L001_Paired_1_singles.fastq        4         3
+Not all sequences were the same length.
+Not all sequences were the same length.
+Initializing error rates to maximum possible estimate.
+Sample 1 - 4 reads in 4 unique sequences.
+Sample 2 - 3 reads in 3 unique sequences.
+   selfConsist step 2 
+Convergence after  2  rounds.
+Total reads used:  7 
+Dereplicating sequence entries in Fastq file: /home/vagrant/12S_time_test/12S/12S_sort_by_read_type/unpaired_F/filtered/12S_first1000reads-LSC-A-1-S19-L001_F_filt.fastq.gz
+Encountered 4 unique sequences from 4 total sequences read.
+Not all sequences were the same length.
+Dereplicating sequence entries in Fastq file: /home/vagrant/12S_time_test/12S/12S_sort_by_read_type/unpaired_F/filtered/12S_first1000reads-LSC-A-2-S20-L001_F_filt.fastq.gz
+Encountered 3 unique sequences from 3 total sequences read.
+Not all sequences were the same length.
+Sample 1 - 4 reads in 4 unique sequences.
+Sample 2 - 3 reads in 3 unique sequences.
+The sequences being tabled vary in length.
+Identified 0 bimeras out of 7 input sequences.
+                                 name input filtered denoised tabled nochim
+1 12S_first1000reads-LSC-A-1-S19-L001     5        4        4      4      4
+2 12S_first1000reads-LSC-A-2-S20-L001     4        3        3      3      3
+Warning message:
+In dir.create(outpath, recursive = T) :
+  '/home/vagrant/12S_time_test/12S/12Sdada2_out' already exists
+Done with analyzing your unpaired reads!
+

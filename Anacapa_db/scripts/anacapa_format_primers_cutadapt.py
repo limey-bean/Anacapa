@@ -16,6 +16,7 @@ prim = out_path
 adapt = sys.argv[1]
 next = "nextera"
 true = "truseq"
+neb = "NEBnext"
 
 if adapt == next:
    adapter_Frc='ACACCTGTCTCTTATACACATCTGACGCTGCCGACGA'
@@ -23,6 +24,9 @@ if adapt == next:
 elif adapt == true:
    adapter_Frc='GTGACTGGAGTTCAGACGTGTGCTCTTCCGATC'
    adapter_Rrc='GTGTAGATCTCGGTGGTCGCCGTATCATT'
+elif adapt == neb:
+    adapter_Frc='GATCGGAAGAGCACACGTCTGAACTCCAGTCAC'
+    adapter_Rrc='GATCGGAAGAGCACACGTCTGAACTCCAGTCAC'
 else:
    print "\n warning \n not nextera or truseq add adater to anacapa_format_primers_cutadapt.py"
 
@@ -46,8 +50,8 @@ header = ''
 seq = ''
 for line in F_infile:
     if line[0] == ">":
-    	header = line.strip() 
-        outfile.write(header + "\n")  
+    	header = line.strip()
+        outfile.write(header + "\n")
     else:
     	seq = line.strip()
     	outfile.write("^" + seq + "\n")
@@ -61,23 +65,23 @@ header = ''
 seq = ''
 for line in F_infile:
     if line[0] == ">":
-    	header = line.strip() 
-        outfile.write(header + "_rc" + "\n")  
+    	header = line.strip()
+        outfile.write(header + "_rc" + "\n")
     else:
     	seq = line.strip()
     	outfile.write(rComp(seq)+ "$" + "\n")
 outfile.close()
 F_infile.close()
 
-### make adapter reverse complement primers with seq+adpter+$ -> 
+### make adapter reverse complement primers with seq+adpter+$ ->
 F_infile = open(sys.argv[2], "r")
 outfile = open(prim_adapt + "A_Forward_PrimAdapt_rc.txt", "w+") # forwards with ^seq
 header = ''
 seq = ''
 for line in F_infile:
     if line[0] == ">":
-    	header = line.strip() 
-        outfile.write(header + "_rc" + "\n")  
+    	header = line.strip()
+        outfile.write(header + "_rc" + "\n")
     else:
     	seq = line.strip()
     	outfile.write(rComp(seq) + adapter_Frc  + "\n")
@@ -95,8 +99,8 @@ header = ''
 seq = ''
 for line in R_infile:
     if line[0] == ">":
-    	header = line.strip() 
-        outfile.write(header + "\n")  
+    	header = line.strip()
+        outfile.write(header + "\n")
     else:
     	seq = line.strip()
     	outfile.write("^" + seq + "\n")
@@ -110,8 +114,8 @@ header = ''
 seq = ''
 for line in R_infile:
     if line[0] == ">":
-    	header = line.strip() 
-        outfile.write(header + "_rc" + "\n")  
+    	header = line.strip()
+        outfile.write(header + "_rc" + "\n")
     else:
     	seq = line.strip()
     	outfile.write(rComp(seq)+ "$" + "\n")
@@ -125,8 +129,8 @@ header = ''
 seq = ''
 for line in R_infile:
     if line[0] == ">":
-    	header = line.strip() 
-        outfile.write(header + "_rc" + "\n")  
+    	header = line.strip()
+        outfile.write(header + "_rc" + "\n")
     else:
     	seq = line.strip()
     	outfile.write(rComp(seq) + adapter_Rrc + "\n")
