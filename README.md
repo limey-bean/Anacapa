@@ -5,7 +5,7 @@
 
 # The Anacapa Toolkit
 
-### last updated 4-11-2018
+### last updated 8-22-2018
 
 #### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zjgold@ucla.edu), Max Ogden (max@maxogden.com), and Baochen Shi (biosbc@gmail.com). Assistance was provided by Rachel Meyer (rsmeyer@ucla.edu).
 
@@ -60,11 +60,18 @@ This portion generates ecological diversity summary statistics for a set of samp
 
 The last step of the **Anacapa** Pipeline conducts exploratory data analysis to provide a first pass look at sequencing depth, taxonomic assignments, and generated data tables. This analysis is not meant for publication, but solely as a first stab at visualization of your data. This is helpful in identifying potential glaring errors or contamination, and identifying patterns worth investigating further through more robust analysis. We highly encourage data exploration before further analysis as different parameters within the **Anacapa** pipeline may produce differences in downstream results and these parameters will vary by project, stringency of taxonomic assignment, and users opinions. The exploratory_analysis.R script uses a variety of **R** packages, relying heavily on __phyloseq__, __vegan__, and __ggplot2__. See below for full list of R package dependencies and scripts. The output from reformat_summary_for_R.py is an ASV table with assigned taxonomy, or a summary table with taxonomy reported and is the input used for the exploratory_analysis.R script. In addition, the user supplies an input metadata table that only requires the first column be sample names. Users can include any type of metadata including categorical, continuous, and discete variables. The first step of the R script is to convert the input files into a **Phyloseq** class object. We then generate bar plots looking at total number of observed classes and relative abundance of each class. We then generate rarefaction curves, alpha diversity boxplots to observe total number of taxa and Shannon diversity, and alpha diversity statistics. In addition, we calculate Jaccard and Bray-Curtis distance matrices and conduct NMDS ordination plots, network map, heat maps, and ward-linkage maps. Each of the above analyses are repeated with different grouping for each metadata column. In addition we conduct two betadiversity statistical tests, pairwise adonis and betadisp from the vegan package. Again each analyses is repeated across groupings of each metadata column.
 
-__ranacapa__ instructions and scripts can be accessed at https://github.com/gauravsk/ranacapa.
+#Installing the Anacapa toolkit
+
+Anacapa Toolkit scripts for CRUX, Anacapa Sequence QC and ASV Parsing using dada2 and Taxonomic Assignment using Bowtie 2 and BLCA can be run locally on a personal computer (-l see optional arguments below), or in a High Performance Computing Environment (HPC).
+
+To install Anacapa and its dependencies see the instructions below. Alternativley to Anacapa can be downloaded with all of its dependencies in a Singularity container that was developed specifically for Anacapa by Code for Science and Society (https://codeforscience.org/).
+
+ For instructions on how to run Anacapa in the Singularity container in a linux environment or on a MAC or PC in a virtual environment on see https://github.com/datproject/anacapa-container and  http://www.ucedna.com/software/.
+
+ __ranacapa__ instructions and scripts can be accessed at https://github.com/gauravsk/ranacapa.
 
 
 # Running Anacapa Sequence QC and ASV Parsing using dada2 and Taxonomic Assignment using Bowtie 2 and BLCA scripts
-Anacapa scripts can be run locally on a personal computer (-l see optional arguments below), or in a High Performance Computing Environment (HPC). (For insrtuction on how to run Anacapa in a container see https://github.com/datproject/anacapa-container and  http://www.ucedna.com/software/ for more info)
 
 ## Required Programs and Dependencies
 ### Anacapa_db folder
