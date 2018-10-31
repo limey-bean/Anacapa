@@ -7,7 +7,7 @@
 
 ### last updated 8-22-2018
 
-#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zjgold@ucla.edu), Max Ogden (max@maxogden.com), and Baochen Shi (biosbc@gmail.com). Assistance was provided by Rachel Meyer (rsmeyer@ucla.edu).
+#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zjgold@ucla.edu), Max Ogden (max@maxogden.com), and Baochen Shi (biosbc@gmail.com).
 
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
 
@@ -237,12 +237,12 @@ Arguments:
     			     GTGYCAGCMGCCGCGGTAA
 			         >18S
 			         GTACACACCGCCCGTC
-	-r	path to file with forward primers in fasta format
+	-r	path to file with reverse primers in fasta format
     		e.g. 	 >16s
     			     GGACTACNVGGGTWTCTAAT
     			     >18S
 			         TGATCCTTCTGCAGGTTCACCTAC
-	-g	If .fastq read are not compressed: -g (no argument need)
+	-g	If .fastq read are uncompressed: -g (no argument need)
 	-c	To modify the allowed cutadapt error for 3' adapter and 5' primer adapter trimming: 0.0 to 1.0 (default 0.3)
 	-p	To modify the allowed cutadapt error 3' primer sorting and trimming: 0.0 to 1.0 (default 0.3)
 	-q	To modify the minimum quality score allowed: 0 - 40 (default 35)
