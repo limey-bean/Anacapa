@@ -47,4 +47,4 @@ Arguments:
   -k  maximum number of bowtie2 best hits include in BLCA
 
 - Other:
-	-h Shows program usage then quits
+  -h Shows program usage then quits
