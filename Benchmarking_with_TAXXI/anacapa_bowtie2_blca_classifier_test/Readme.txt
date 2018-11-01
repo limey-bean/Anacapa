@@ -36,13 +36,13 @@ The purpose of this script to run the Cross Validation by Identity framework of 
 
 Arguments:
 - Required:
-	-m path to directory containing scripts and where output will go
-	-n name of the database to test e.g ${name}_test.fasta  e.g. for ncbi_16s_100_test.fasta the $name=ncbi_16s_100
-	-p percent identity of test and training set e.g. for ncbi_16s_100_test.fasta the $per=100. It is ugly but....
+  -m path to directory containing scripts and where output will go
+  -n name of the database to test e.g ${name}_test.fasta  e.g. for ncbi_16s_100_test.fasta the $name=ncbi_16s_100
+  -p percent identity of test and training set e.g. for ncbi_16s_100_test.fasta the $per=100. It is ugly but....
   -t  path to test and training directory
 
 - Optional:
-	-b percent match between query and subject
+  -b percent match between query and subject
   -l  minimum lengt of match between query and subject
   -k  maximum number of bowtie2 best hits include in BLCA
 
