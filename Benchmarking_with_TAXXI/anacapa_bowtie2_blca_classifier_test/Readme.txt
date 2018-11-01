@@ -27,3 +27,24 @@ You will also need a directory for the test and training datasets found at the T
 
 example usage:
 /bin/bash Edgar_anacapa_BLCA_classifier_test_config.sh -m ~/anacapa/bowtie2_blca_classifier_test -n ncbi_16s_100 -p 100 -t ~/anacapa/TAXXI_test_train_datasets
+
+Help screen:
+
+<<< Anacapa: Edgar_anacapa_BLCA_classifier_test_config.sh help screen >>>
+
+The purpose of this script to run the Cross Validation by Identity framework of Edgar 2018 to evaluate Anacapa's Bowtie2 BLCA classifier
+
+Arguments:
+- Required:
+	-m	path to directory containing scripts and where output will go
+	-n 	name of the database to test e.g ${name}_test.fasta  e.g. for ncbi_16s_100_test.fasta the $name=ncbi_16s_100
+	-p  percent identity of test and training set e.g. for ncbi_16s_100_test.fasta the $per=100. It is ugly but....
+    -t	path to test and training directory
+
+- Optional:
+	-b	percent match between query and subject
+    -l	minimum lengt of match between query and subject
+    -k	maximum number of bowtie2 best hits include in BLCA
+
+- Other:
+	-h	Shows program usage then quits

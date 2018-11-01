@@ -8,8 +8,11 @@ maindir=""
 name=""
 per=""
 ttdir=""
+B_VALUE=""
+PER_MIN_LEN=""
+Best_hit=""
 
-while getopts "m:n:p:t:" opt; do
+while getopts "m:n:p:t:b:l:k:h?" opt; do
     case $opt in
         m) maindir="$OPTARG" # path to file that contains the scripts and where the output will go e.g. ~/anacapa/bowtie2_blca_classifier_test
         ;;
@@ -18,8 +21,27 @@ while getopts "m:n:p:t:" opt; do
         p) per="$OPTARG"  # percent identity of test and training set e.g. for ncbi_16s_100_test.fasta the $per=100. It is ugly but....
         ;;
         t) ttdir="$OPTARG" # path to test and training directory
+        ;;
+        b) B_VALUE="$OPTARG" # percent match between query and subject
+        ;;
+        l) PER_MIN_LEN="$OPTARG" # minimum lengt of match between query and subject
+        ;;
+        k) Best_hit="$OPTARG" # maximum number of bowtie2 best hits include in BLCA
+        ;;
+        h) HELP="TRUE"  # calls help screen
+        ;;
     esac
 done
+
+if [ "${HELP}" = "TRUE" ]
+then
+  printf "\n\n\n\n<<< Anacapa: Edgar_anacapa_BLCA_classifier_test_config.sh help screen >>>\n\nThe purpose of this script to run the Cross Validation by Identity framework of Edgar 2018 to evaluate Anacapa's Bowtie2 BLCA classifier\n\nArguments:\n- Required:\n  -m	path to directory containing scripts and where output will go\n  -n 	name of the database to test e.g ${name}_test.fasta  e.g. for ncbi_16s_100_test.fasta the $name=ncbi_16s_100\n  -p  percent identity of test and training set e.g. for ncbi_16s_100_test.fasta the $per=100. It is ugly but....\n -t	path to test and training directory\n    \n- Optional:\n -b	percent match between query and subject\n  -l	minimum lengt of match between query and subject\n -k	maximum number of bowtie2 best hits include in BLCA\n		\n- Other:\n  -h	Shows program usage then quits\n\n\n\n\n"
+  exit
+else
+  echo ""
+fi
+
+
 
 # load modules
 
@@ -99,14 +121,14 @@ bowtie2-build -f ${maindir}test_train/${name}/${name}_blca_train.fasta ${bowtie2
 # need biopython -> might be a waste of effort but Qiime alone did not seem to be working
 module load anaconda
 echo "global"
-bowtie2 -x ${bowtie2dir}/${name}_bowtie2_index  -f -U ${maindir}test_train/${name}/${name}_blca_test.fasta -S ${maindir}test_train/${name}/${name}_test_end_to_end.sam --no-hd --no-sq --very-sensitive --end-to-end --no-unal -p 120 -k 50 --un ${maindir}test_train/${name}/${name}_test_end_to_end_reject.fasta
+bowtie2 -x ${bowtie2dir}/${name}_bowtie2_index  -f -U ${maindir}test_train/${name}/${name}_blca_test.fasta -S ${maindir}test_train/${name}/${name}_test_end_to_end.sam --no-hd --no-sq --very-sensitive --end-to-end --no-unal -p 120 -k ${Best_hit:=50} --un ${maindir}test_train/${name}/${name}_test_end_to_end_reject.fasta
 #unmerged pair reads local
 echo "local"
-bowtie2 -x ${bowtie2dir}/${name}_bowtie2_index  -f -U ${maindir}test_train/${name}/${name}_test_end_to_end_reject.fasta -S ${maindir}test_train/${name}/${name}_test_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k 50 --un ${maindir}test_train/${name}/${name}_test_end_to_end_and_local_reject.fasta
+bowtie2 -x ${bowtie2dir}/${name}_bowtie2_index  -f -U ${maindir}test_train/${name}/${name}_test_end_to_end_reject.fasta -S ${maindir}test_train/${name}/${name}_test_local.sam --no-hd --no-sq --very-sensitive --local --no-unal -p 120 -k ${Best_hit:=50} --un ${maindir}test_train/${name}/${name}_test_end_to_end_and_local_reject.fasta
 ### concat all of the sam files for blca
 cat ${maindir}test_train/${name}/*.sam > ${maindir}test_train/${name}/${name}_bowtie2_all.sam
 ### run BLCA
-python ${maindir}scripts/blca_from_bowtie.py -i ${maindir}test_train/${name}/${name}_bowtie2_all.sam -r ${maindir}test_train/${name}/${name}_anacapa_blca_train_taxonomy.txt -q ${maindir}test_train/${name}/${name}_blca_train.fasta -b .90 -l 0.85 -n 100
+python ${maindir}scripts/blca_from_bowtie.py -i ${maindir}test_train/${name}/${name}_bowtie2_all.sam -r ${maindir}test_train/${name}/${name}_anacapa_blca_train_taxonomy.txt -q ${maindir}test_train/${name}/${name}_blca_train.fasta -n 100 -b ${B_VALUE:=0.85} -l ${PER_MIN_LEN:=0.85}
 
 ################### Summary stats
 # move a files around
