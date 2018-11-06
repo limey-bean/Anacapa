@@ -226,7 +226,7 @@ Arguments:
 	-i	path to .fastq.gz files, if files are already compressed use flag -g (see below)
 	-o	path to output directory
 	-d	path to Anacapa_db
-	-a	Illumina adapter type: nextera or truseq
+	-a	Illumina adapter type: nextera, truseq, or NEBnext
 	-t	Illumina Platform: HiSeq (2 x 150) or MiSeq ( >= 2 x 250)
 
  - Optional:
