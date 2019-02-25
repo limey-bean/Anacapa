@@ -1,4 +1,3 @@
-
 <p align="center">
 <img src="Anacapa_logo.png" height="250" width="500">
 </p>
@@ -12,14 +11,16 @@
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program (http://www.ucedna.com/)
 
 ## Introduction
-The toolkit is named for the iconic southern California island, Anacapa, that has significant cultural and biodiversity importance. The name derived from the Chumash word _Ennepah_ or _Anyapakh_ which translates to  "mirage island" (Bright, 2004; Gudde, 2010). Much like the name, using eDNA to monitor biodiversity seems like an illusion on the horizon, but like the real island, the __Anacapa__ toolkit can obtain true and quality results with full transparency of the caveats of eDNA. Here, we present __Anacapa__, an automated method to create custom reference databases and simultaneously analyze multiple metabarcoding reads produced by HiSeq and MiSeq Illumina sequence platforms, with a built-in exploration tool of the raw results output.
+__Anacapa__ is an eDNA toolkit that allows users to build comprehensive reference databases and assign taxonomy to raw multilocus metabarcode sequence data. It address longstanding needs of the eDNA for modular informatics tools, comprehensive and customizable reference databases, flexibility across high-throughput sequencing platforms, fast multilocus metabarcode processing, and accurate taxonomic assignment. __Anacapa__ toolkit processes eDNA reads and assigns taxonomy using existing software or modifications to existing software. This modular toolkit is designed to analyze multiple samples and metabarcodes simultaneously from any Ilumina sequencing platform. A significant advantage of the __Anacapa__ toolkit is that it does not require that paired reads overlap, or that both reads in a pair pass QC. Taxonomy results are generated for all read types and the user can decide which read types they wish to retain for downstream analysis.
 
-__Anacapa__ toolkit processes eDNA reads and assigns taxonomy using existing software or modifications to existing software. This modular toolkit is designed to analyze multiple samples and metabarcodes simultaneously from any Ilumina sequencing platform. __Anacapa__ accomplishes this in four steps: 1) building reference libraries using __CRUX__: Creating Reference libraries Using eXisting tools, 2) running quality control (QC) and assigning Amplicon Sequence Variants (ASV) using Dada2 (__Sequence QC and ASV Parsing__), 3) assigning taxonomy using Bowtie 2 and a Bowtie 2 specific Bayesian Least Common Ancestor (BLCA) (__Assignment__) and 4) Running exploratory data analysis and generating ecological diversity summary statistics for a set of samples (__ranacapa__). A significant advantage of the __Anacapa__ toolkit is that it does not require that paired reads overlap, or that both reads in a pair pass QC.  Taxonomy results are generated for all read types and the user can decide which read types they wish to retain for downstream analysis.
+## High Level overview
+
+__Anacapa__ works in four steps. 1) building reference libraries using [__CRUX__](https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools) 2) running quality control (QC) and assigning Amplicon Sequence Variants (ASV) using Dada2 (Sequence QC and ASV Parsing), 3) assigning taxonomy using Bowtie 2 and a Bowtie 2 specific Bayesian Least Common Ancestor (BLCA) (Assignment) and 4) Running exploratory data analysis and generating ecological diversity summary statistics for a set of samples (ranacapa).  
 
 #### Step 1: CRUX: Creating Reference libraries Using eXisting tools
 For full details on building reference libraries using CRUX, please refer to the following: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools.
 
-This first part of the toolkit generates reference libraries needed for taxonomic assignment using __CRUX__.  The output of __CRUX__ consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt __CRUX__ reference libraries (12S - MiFish, 16S - EMP, 18S V4, 18S V8-9, 18S - EMP, PITS - Plant ITS2, CO1 and FITS - Fungal ITS [see Table 1] can be found at [link to dryad]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta files, taxonomy files, and a Bowtie 2 index library.
+This first part of the toolkit generates reference libraries needed for taxonomic assignment using __CRUX__.  The output of __CRUX__ consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt __CRUX__ reference libraries (12S - MiFish, 16S - EMP, 18S V4, 18S V8-9, 18S - EMP, PITS - Plant ITS2, CO1 and FITS - Fungal ITS [see Table 1] can be found at Dryad [https://datadryad.org]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta files, taxonomy files, and a Bowtie 2 index library.
 
 <p align="center">
 <img src="/figures-and-tables-for-the-Github/Table_1.png">
@@ -85,10 +86,10 @@ To install Anacapa and its dependencies see the instructions below. Alternativle
 
   **NOTE**
 
-    * The Forward and reverse primer and metabarcode loci length files in the Anacapa_db folder will be run with the anacapa_QC_dada2.sh script unless the user over rides these by specifying alternative files as arguments (see optional arguments below).  
-    * Default primers: 12S (MiFish-U: F and R), 16S (V4: 515F and 806R), 18S (V9: Euk_1391f EukBr), PITS (Plant ITS2: ITS-S2F and ITS-S3R), CO1 (mlCOIintF and jgHCO2198), and FITS (Fungal ITS: ITS5 and 5.8S).  See Table 1 for details.
-    * It is **VERY IMPORTANT** that these files reflect your data set!
-    * If there is homology between primers sets, data may be processed as a metabarcode not included in dataset.
+>The Forward and reverse primer and metabarcode loci length files in the Anacapa_db folder will be run with the anacapa_QC_dada2.sh script unless the user over rides these by specifying alternative files as arguments (see optional arguments below).  
+>Default primers: 12S (MiFish-U: F and R), 16S (V4: 515F and 806R), 18S (V9: Euk_1391f EukBr), PITS (Plant ITS2: ITS-S2F and ITS-S3R), CO1 (mlCOIintF and jgHCO2198), and FITS (Fungal ITS: ITS5 and 5.8S).  See Table 1 for details.
+>It is **VERY IMPORTANT** that these files reflect your data set!
+>If there is homology between primers sets, data may be processed as a metabarcode not included in dataset.
 
 * **scripts/**
     * Contains the scripts required to run anacapa_QC_dada2.sh and anacapa_classifier.sh
@@ -103,7 +104,7 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
 
 3. __anaconda/python2-4.2__
 	* make sure biopython is installed http://biopython.org/wiki/Packages
-	* We recommend downloading using conda from conda
+	* We recommend downloading using conda from [Anaconda](https://www.anaconda.com/)
 
 4. __R (Version 3.4.2)__
    * Cran Packages
@@ -131,7 +132,7 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
  * __dada2__ (Version 1.6) https://github.com/benjjneb/dada2
 
 
-5. __Bowtie 2__: http://bowtie-bio.sourceforge.net/Bowtie 2/index.shtml
+5. __Bowtie 2__: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
 	* We recommend downloading using conda
 
 6. __muscle__: https://www.drive5.com/muscle/downloads.htm
@@ -351,52 +352,3 @@ __NOTE__: Script does not check that the user provided optional argument are wit
         * Within each subdirectory there are two files
           * A raw taxonomy file that gives the ASV number, the count per sample and the taxonomic path to the bootstrap confidence indicated
           * A summary taxonomy file that gives the taxonomic path to the bootstrap confidence indicated and the count of that taxonomic path per sample
-
-
-
-## References
-Amaral-Zettler, L.A., McCliment, E.A., Ducklow, H.W. and Huse, S.M., 2009. A method for studying protistan diversity using massively parallel sequencing of V9 hypervariable regions of small-subunit ribosomal RNA genes. PloS one, 4: p.e6372.
-
-Amir, A., McDonald, D., Navas-Molina, J.A., Kopylova, E., Morton, J.T., Xu, Z.Z., Kightley, E.P., Thompson, L.R., Hyde, E.R., Gonzalez, A. and Knight, R., 2017. Deblur rapidly resolves single-nucleotide community sequence patterns. MSystems, 2(2), pp.e00191-16.
-
-Bradley, I.M., Pinto, A.J. and Guest, J.S., 2016. Design and evaluation of Illumina MiSeq-compatible, 18S rRNA gene-specific primers for improved characterization of mixed phototrophic communities. Applied and environmental microbiology, 82(19), pp.5878-5891.
-
-Callahan, B. J., McMurdie, P. J., Rosen, M. J., Han, A. W., Johnson, A. J. A., & Holmes, S. P. (2016). DADA2: High-resolution sample inference from Illumina amplicon data. Nature Methods, 13(7), 581–583. doi:10.1038/nmeth.3869
-
-Caporaso J. G., Lauber C. L., Walters W. A., Berg-Lyons D., Huntley J., et al. - Ultrahigh-
-throughput microbial community analysis on the Illumina HiSeq and MiSeq
-platforms. The ISME Journal 6 (2012) 1621–1624. doi: 10.1038/ismej.2012.8 PMID:
-22402401.
-
-Caporaso, J.G., Kuczynski, J., Stombaugh, J., Bittinger, K., Bushman, F.D., Costello, E.K., Fierer, N., Peña, A.G., Goodrich, J.K., Gordon, J.I. and Huttley, G.A., 2010. QIIME allows analysis of high-throughput community sequencing data. Nature methods, 7(5), pp.335-336.
-
-Edgar, R.C., 2010. Search and clustering orders of magnitude faster than BLAST. Bioinformatics, 26(19), pp.2460-2461.
-
-Epp, L.S., Boessenkool, S., Bellemain, E.P., Haile, J., Esposito, A., Riaz, T., Erseus, C., Gusarov, V.I., Edwards, M.E., Johnsen, A. and Stenøien, H.K., 2012. New environmental metabarcodes for analysing soil DNA: potential for studying past and present ecosystems. Molecular Ecology, 21: pp.1821-1833.
-
-Geller, J., Meyer, C., Parker, M. and Hawk, H., 2013. Redesign of PCR primers for mitochondrial cytochrome c oxidase subunit I for marine invertebrates and application in all‐taxa biotic surveys. Molecular ecology resources, 13(5), pp.851-861.
-
-Gordon, A. and Hannon, G.J., 2010. Fastx-toolkit. FASTQ/A short-reads preprocessing tools (unpublished) http://hannonlab. cshl. edu/fastx_toolkit, 5.
-
-Gudde, Erwin; William Bright (2004). California Place Names (Fourth ed.). University of California Press. p. 12. ISBN 0-520-24217-3.
-
-Gu, W., Song, J., Cao, Y., Sun, Q., Yao, H., Wu, Q., Chao, J., Zhou, J., Xue, W. and Duan, J., 2013. Application of the ITS2 region for barcoding medicinal plants of Selaginellaceae in Pteridophyta. PloS one, 8: p.e67818.
-
-Kandlikar, G.S., Gold, Z.J., Cowen, M.C., Meyer, R.S., Freise, A.C., Kraft, N.J., Moberg-Parker, J., Sprague, J., Kushner, D.J. & Curd, E.E. (2018). Ranacapa: An r package and shiny web app to explore environmental DNA data with exploratory statistics and interactive visualizations. F1000Research, 7, 1734.
-
-
-Langmead, B. and Salzberg, S.L., 2012. Fast gapped-read alignment with Bowtie 2. Nature methods, 9(4), pp.357-359.
-
-Leray, M., Yang, J.Y., Meyer, C.P., Mills, S.C., Agudelo, N., Ranwez, V., Boehm, J.T. and Machida, R.J., 2013. A new versatile primer set targeting a short fragment of the mitochondrial COI region for metabarcoding metazoan diversity: application for characterizing coral reef fish gut contents. Frontiers in Zoology, 10 p.34.
-
-Martin, M., 2011. Cutadapt removes adapter sequences from high-throughput sequencing reads. EMBnet. journal, 17(1), pp.pp-10.
-
-Miya, M., Sato, Y., Fukunaga, T., Sado, T., Poulsen, J.Y., Sato, K., Minamoto, T., Yamamoto, S., Yamanaka, H., Araki, H. and Kondoh, M., 2015. MiFish, a set of universal PCR primers for metabarcoding environmental DNA from fishes: detection of more than 230 subtropical marine species. Royal Society open science, 2, p.150088.
-
-Stoeck, T., Bass, D., Nebel, M., Christen, R., Jones, M.D., Breiner, H.W. and Richards, T.A., 2010. Multiple marker parallel tag environmental DNA sequencing reveals a highly complex eukaryotic community in marine anoxic water. Molecular Ecology, 19, pp.21-31.
-
-Team, R.C., 2000. R language definition. Vienna, Austria: R foundation for statistical computing.
-
-White, T.J., Bruns, T., Lee, S.J.W.T. and Taylor, J.L., 1990. Amplification and direct sequencing of fungal ribosomal RNA genes for phylogenetics. PCR protocols: a guide to methods and applications, 18(1), pp.315-322.
-
-Zhang, J., Kobert, K., Flouri, T. and Stamatakis, A., 2013. PEAR: a fast and accurate Illumina Paired-End reAd mergeR. Bioinformatics, 30(5), pp.614-620.
