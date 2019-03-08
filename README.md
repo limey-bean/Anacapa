@@ -138,6 +138,7 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
 6. __muscle__: https://www.drive5.com/muscle/downloads.htm
 	* version muscle3.8.31
 	* **!!!!!__muscle must be installed within the anacapa_db folder__!!!!!**
+  * __muscle__ sets your read name character length to a maximum of 32 characters. Make sure your ASV names are shorter than 32 characters. To change this can be fixed by changing the aln.cppmfile for the __muscle__ source code and then recompile the program. On line 9 of aln.cpp change: const int MAX_NAME = INSERT_NEW_MAX_LENGTH;
 
 #### Special note for UCLA Hoffman2 Cluster users
   _Hoffman users running the QC dada2 need to do the following before dada2 will run_
