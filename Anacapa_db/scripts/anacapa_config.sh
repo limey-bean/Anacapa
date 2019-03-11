@@ -1,7 +1,6 @@
-# Config file for Anacapa_release_V1		09-15-2017
-# Developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), with contributions from Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
+# Developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com),Baochen Shi (biosbc@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com)
 # Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
-# Last Updated 9-15-2017
+# Last Updated 11-02-2018
 
 
 #Local mode
@@ -44,3 +43,8 @@ MUSCLE="${DB}/muscle"
 
 #load GCC
 GCC="module load gcc/6.3.0"
+
+# modify job run / submit Parameters
+RUNNER="/bin/bash"
+
+QUEUESUBMIT="qsub"

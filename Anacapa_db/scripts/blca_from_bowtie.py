@@ -114,6 +114,7 @@ required.add_argument("-r","--tax", help="reference taxonomy file for the Databa
 taxoptions = parser.add_argument_group('taxonomy profiling options [filtering of hits]')
 taxoptions.add_argument("-n","--nper",help="number of times to bootstrap. Default: 100",type=int,default=100)
 taxoptions.add_argument("-b","--iset",help="minimum identity score to include", type=float, default=0.8)
+taxoptions.add_argument('-l', '--length', help="minimum length of hit to include relative to query", type=float, default=0.5)
 ##### Alignment control arguments #####
 alignoptions = parser.add_argument_group('alignment control arguments')
 alignoptions.add_argument("-m","--match",default=1.0,help="alignment match score. Default: 1",type=float)
@@ -134,7 +135,7 @@ iset = args.iset  # identify threshold
 ngap = args.ngap  # gap penalty
 match = args.match  # match score
 mismatch = args.mismatch  # mismatch penalty
-
+min_length = args.length
 sam_file_name = args.sam
 outfile_name = args.outfile or (sam_file_name + '.blca.out')
 reference_fasta = args.reference
@@ -260,6 +261,15 @@ def read_tax_acc(taxfile, not_available_handler):
 na_handler = NotAvailableHandler()
 acc2tax = read_tax_acc(tax, na_handler)
 print "> 1 > Read in taxonomy information!"
+
+reference_sequences = {}
+with open(reference_fasta) as f:
+    for r in SeqIO.parse(f, "fasta"):
+        reference_sequences[r.id] = str(r.seq)
+
+print "> 2 > Read in reference db"
+
+
 SequenceInfo = namedtuple('SequenceInfo', ['seq', 'hits'])
 ### read in input fasta file ###
 input_sequences = {}
@@ -268,24 +278,22 @@ with open(sam_file_name) as sam_file:
     for line in sam_file:
         pieces = line.strip().split('\t')
         entry = SamEntry(pieces)
-        # entry does not match filter
-        # change this to identity_ratio_old to get the old way back
+
         if entry.identity_ratio < iset:
             possible_rejects.add(entry.qname)
-        elif entry.qname in input_sequences:
-            input_sequences[entry.qname].hits.append(entry.rname)
-        else:
+        elif entry.rname not in reference_sequences:
+            possible_rejects.add(entry.qname)
+        elif len(reference_sequences[entry.rname])/float(len(input_sequences[entry.qname].seq)) < min_length:
+
+            possible_rejects.add(entry.qname)
+        elif entry.qname not in input_sequences:
             input_sequences[entry.qname] = SequenceInfo(seq=entry.seq, hits=[entry.rname])
+        else:
+            input_sequences[entry.qname].hits.append(entry.rname)
 
 rejects = possible_rejects.difference(set(input_sequences))
-print "> 2 > Read in bowtie2 output!"
+print "> 3 > Read in bowtie2 output!"
 
-reference_sequences = {}
-with open(reference_fasta) as f:
-    for r in SeqIO.parse(f, "fasta"):
-        reference_sequences[r.id] = str(r.seq)
-
-print "> 3 > Read in reference db"
 
 outfile = open(outfile_name, 'w')
 for seqn, info in input_sequences.items():

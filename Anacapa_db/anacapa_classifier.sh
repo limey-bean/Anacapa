@@ -7,6 +7,7 @@ OUT=""
 DB=""
 UN=""
 B_VALUE=""
+PER_MIN_LEN=""
 HELP=""
 LOCALMODE="FALSE"
 BCC_CUT_OFF=""
@@ -16,7 +17,7 @@ MISMATCH=""
 GAPP=""
 HPC_HEADER=""
 
-while getopts "o:d:u:b:h?:l?:c:n:x:f:g:k:" opt; do
+while getopts "o:d:u:b:p:h?:l?:c:n:x:f:g:k:" opt; do
     case $opt in
         o) OUT="$OPTARG" # path to desired Anacapa output
         ;;
@@ -24,7 +25,9 @@ while getopts "o:d:u:b:h?:l?:c:n:x:f:g:k:" opt; do
         ;;
         u) UN="$OPTARG"  # need username for submitting sequencing job
         ;;
-        b) B_VALUE="$OPTARG"  # percent of missmatch alloweb between the qury and subject, for blca
+        b) B_VALUE="$OPTARG"  # percent of missmatch allowed between the qury and subject for blca
+        ;;
+        p) PER_MIN_LEN="$OPTARG"  # minpercent of length of query relative to subject for blca
         ;;
         h) HELP="TRUE"  # calls help screen
         ;;
@@ -67,7 +70,7 @@ esac
 
 if [ "${HELP}" = "TRUE" ]
 then
-  printf "<<< Anacapa: Taxonomic Assignment using Bowtie 2 and BLCA >>>\n\nThe purpose of this script is assign taxonomy to ASVs generated in the Sequence QC and ASV Parsing script. ASV files are mapped to CRUX reference libraries using Bowtie 2, taxonomy is assigned using BLCA, and summary tables are given. \n\n	For successful implementation \n		1. Make sure you have all of the dependencies and correct paths in the anacapa_config.sh file\n		2. Add the Metabarcode locus specific CRUX reference libraries to the Anacapa_db folder\n		3. All parameters can be modified using the arguments below.  Alternatively, all parameters can be altered in the anacapa_vars.sh folder\n\nArguments:\n- Required for either mode:\n	-o	path to output directory generated in the Sequence QC and ASV Parsing script\n	-d	path to Anacapa_db\n    \n- Optional:\n 	-u	If running on an HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd\n	-l	If running locally: -l  (no argument needed)\n	-b	Percent of missmatch allowed between the qury and subject, for BLCA: 0.0 to 1.0 (default 0.8)\n	-c	A list of BCC cut-off values to report taxonomy: \"0 to 100\" quotes required (default \"40 50 60 70 80 90 95\")	\n		The file must contain the following format: PERCENT=\"40 50 60 70 80 90 95 100\"\n		Where the value may differ but the PERCENT=\"values\" is required\n		see ~/Anacapa_db/scripts/BCC_default_cut_off.sh as an example\n	-n	BLCA number of times to bootstrap: integer value (default 100)\n	-m	Muscle alignment match score: default 1\n	-f	Muscle alignment mismatch score: default -2.5\n	-g	Muscle alignment gap penalty: default -2	\n	-k	Path to file with alternate HPC job submission parameters:  \n		default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh\n		modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh\n		\n- Other:\n	-h	Shows program usage then quits\n\n\n\n "
+  printf "<<< Anacapa: Taxonomic Assignment using Bowtie 2 and BLCA >>>\n\nThe purpose of this script is assign taxonomy to ASVs generated in the Sequence QC and ASV Parsing script. ASV files are mapped to CRUX reference libraries using Bowtie 2, taxonomy is assigned using BLCA, and summary tables are given. \n\n	For successful implementation \n		1. Make sure you have all of the dependencies and correct paths in the anacapa_config.sh file\n		2. Add the Metabarcode locus specific CRUX reference libraries to the Anacapa_db folder\n		3. All parameters can be modified using the arguments below.  Alternatively, all parameters can be altered in the anacapa_vars.sh folder\n\nArguments:\n- Required for either mode:\n	-o	path to output directory generated in the Sequence QC and ASV Parsing script\n	-d	path to Anacapa_db\n    \n- Optional:\n 	-u	If running on an HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd\n	-l	If running locally: -l  (no argument needed)\n	-b	Percent of missmatch allowed between the qury and subject for BLCA: 0.0 to 1.0 (default 0.8)\n	-p	Minimum percent of length of the subject reltive to the query for BLCA: 0.0 to 1.0 (default 0.8)\n -c	A list of BCC cut-off values to report taxonomy: \"0 to 100\" quotes required (default \"40 50 60 70 80 90 95\")	\n		The file must contain the following format: PERCENT=\"40 50 60 70 80 90 95 100\"\n		Where the value may differ but the PERCENT=\"values\" is required\n		see ~/Anacapa_db/scripts/BCC_default_cut_off.sh as an example\n	-n	BLCA number of times to bootstrap: integer value (default 100)\n	-m	Muscle alignment match score: default 1\n	-f	Muscle alignment mismatch score: default -2.5\n	-g	Muscle alignment gap penalty: default -2	\n	-k	Path to file with alternate HPC job submission parameters:  \n		default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh\n		modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh\n		\n- Other:\n	-h	Shows program usage then quits\n\n\n\n "
   exit
 else
   echo ""
@@ -154,12 +157,13 @@ do
     if [ "${LOCALMODE}" = "TRUE"  ]  # if you are running locally (no hoffman2) you can run these jobs one after the other.
     then
         echo "Running Bowtie 2 inline"
-        printf "#!/bin/bash\n\n${RUNNER} ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -l -b ${B_VALUE:=$BLCAB} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
+        printf "#!/bin/bash\n\n ${RUNNER} ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -l -b ${B_VALUE:=$BLCAB} -p ${PER_MIN_LEN:=$BLCAperMINlen} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
+        chmod 755 ${OUT}/Run_info/run_scripts/*
         ${RUNNER} ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         date
     else
-        printf "${B2_HEADER} \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\n${RUNNER} ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -u ${UN} -b ${B_VALUE:=$BLCAB} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
-        qsub ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
+        printf "${B2_HEADER} \n\necho _BEGIN_ [run_bowtie2_blca_paired.sh]: `date`\n\n /bin/bash ${DB}/scripts/run_bowtie2_blca.sh -o ${OUT} -d ${DB} -m ${j} -u ${UN} -b ${B_VALUE:=$BLCAB} -p ${PER_MIN_LEN:=$BLCAperMINlen} -c ${BCC_CUT_OFF:=$DEF_BCC_CUT_OFF} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} -k ${HPC_HEADER:=$HPC_HEADER_FILE}\n\necho _END_ [run_bowtie2_blca.sh]" > ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
+        ${QUEUESUBMIT} ${OUT}/Run_info/run_scripts/${j}_bowtie2_blca_job.sh
         date
     fi
  fi

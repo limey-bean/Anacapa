@@ -22,8 +22,9 @@ MINTIMES_ASV=""
 MIN_MERGE_LENGTH=""
 LOCALMODE="FALSE"
 HPC_HEADER=""
+MULTITHREAD="TRUE"
 
-while getopts "h?:i:o:d:u:f:r:a:t:l?:g?:c:p:q:m:x:y:b:e:k:" opt; do
+while getopts "h?:i:o:d:u:f:r:a:t:l?:g?:j:c:p:q:m:x:y:b:e:k:" opt; do
     case $opt in
         h) HELP="TRUE"
         ;;
@@ -47,6 +48,8 @@ while getopts "h?:i:o:d:u:f:r:a:t:l?:g?:c:p:q:m:x:y:b:e:k:" opt; do
         ;;
         g) GUNZIPED="TRUE" #reads not compressed
         ;;
+		j) MULTITHREAD="$OPTARG" #turn on/off multithreading for dada2
+		;;
         c) CTADE="$OPTARG"  # cutadapt error for 3' adapter and 5' primer adapter trimming
         ;;
         p) PCTADE="$OPTARG"  # cutadapt error 3' primer sorting and trimming
@@ -80,7 +83,7 @@ esac
 
 if [ "${HELP}" = "TRUE" ]
 then
-  printf "<<< Anacapa: Sequence QC and ASV Parsing >>>\n\nThe purpose of these script is to process raw fastq or fastq.gz files from an Illumina HiSeq or MiSeq.  It removes 3' and 5' sequencing artifacts and 5' metabarcode primers (cutadapt), removes low quality base pairs and short reads (fastX-toolkit), sorts reads by 3' metabarcode primers prior to trimming (cutadapt), and uses dada2 to denoise, dereplicate, merge and remove chimeric reads\n\n	For successful implementation \n		1. Make sure you have all of the dependencies and correct paths in the anacapa_config.sh file\n		2. Add the Metabarcode locus specific CRUX reference libraries to the Anacapa_db folder\n		3. All parameters can be modified using the arguments below.  Alternatively, all parameters can be altered in the anacapa_vars.sh folder\n\nArguments:\n- Required for either mode:\n	-i	path to .fastq.gz files, if files are already compressed use flag -g (see below)\n	-o	path to output directory\n	-d	path to Anacapa_db\n	-a	Illumina adapter type: nextera or truseq\n	-t	Illumina Platform: HiSeq (2 x 150) or MiSeq ( >= 2 x 250)\n    \n- Optional:\n 	-u	If running on an HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd\n	-l	If running locally: -l  (no argument needed)\n 	-f	path to file with forward primers in fasta format \n    		e.g.	>16s\n    			GTGYCAGCMGCCGCGGTAA\n			>18S\n			GTACACACCGCCCGTC\n	-r	path to file with forward primers in fasta format \n    		e.g. 	>16s\n    			GGACTACNVGGGTWTCTAAT\n    			>18S\n			TGATCCTTCTGCAGGTTCACCTAC\n	-g	If .fastq read are not compressed: -g (no argument need)\n	-c	To modify the allowed cutadapt error for 3' adapter and 5' primer adapter trimming: 0.0 to 1.0 (default 0.3)\n	-p	To modify the allowed cutadapt error 3' primer sorting and trimming: 0.0 to 1.0 (default 0.3)\n	-q	To modify the minimum quality score allowed: 0 - 40 (default 35)\n	-m	To modify the minimum length after quality trimming: 0 - 300 (default 100)\n	-x	To modify the additional 5' trimming of forward reads: 0 - 300 (default HiSeq 10, default MiSeq 20)\n	-y	To modify the additional 5' trimming of reverse reads: 0 - 300 (default HiSeq 25, default MiSeq 50)\n	-b	To modify the number of occurrences required to keep an ASV: 0 - any integer (default 0)\n	-e	File path to a list of minimum length(s) reqired for paired F and R reads to overlap \n		(length of the locus - primer length + 20 bp). The user should take into account variability in amplicon \n		region (e.g.The amplicon size for 18S 1389f-1510r is ~260 +/- 50 bp) and make appropriate allowances.\n		e.g.	LENGTH_16S="235"\n			LENGTH_18S="200"\n	-k	Path to file with alternate HPC job submission parameters:  \n		default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh\n		modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh\n\n\n-Other:\n	-h	Shows program usage then quits\n\n\n\n"
+  printf "<<< Anacapa: Sequence QC and ASV Parsing >>>\n\nThe purpose of these script is to process raw fastq or fastq.gz files from an Illumina HiSeq or MiSeq.  It removes 3' and 5' sequencing artifacts and 5' metabarcode primers (cutadapt), removes low quality base pairs and short reads (fastX-toolkit), sorts reads by 3' metabarcode primers prior to trimming (cutadapt), and uses dada2 to denoise, dereplicate, merge and remove chimeric reads\n\n	For successful implementation \n		1. Make sure you have all of the dependencies and correct paths in the anacapa_config.sh file\n		2. Add the Metabarcode locus specific CRUX reference libraries to the Anacapa_db folder\n		3. All parameters can be modified using the arguments below.  Alternatively, all parameters can be altered in the anacapa_vars.sh folder\n\nArguments:\n- Required for either mode:\n	-i	path to .fastq.gz files, if files are already compressed use flag -g (see below)\n	-o	path to output directory\n	-d	path to Anacapa_db\n	-a	Illumina adapter type: nextera, truseq, or NEBnext\n	-t	Illumina Platform: HiSeq (2 x 150) or MiSeq ( >= 2 x 250)\n    \n- Optional:\n 	-u	If running on an HPC (e.g. UCLA's Hoffman2 cluster), this is your username: e.g. eecurd\n	-l	If running locally: -l  (no argument needed)\n 	-f	path to file with forward primers in fasta format \n    		e.g.	>16s\n    			GTGYCAGCMGCCGCGGTAA\n			>18S\n			GTACACACCGCCCGTC\n	-r	path to file with forward primers in fasta format \n    		e.g. 	>16s\n    			GGACTACNVGGGTWTCTAAT\n    			>18S\n			TGATCCTTCTGCAGGTTCACCTAC\n	-g	If .fastq read are uncompressed: -g (no argument need)\n	-c	To modify the allowed cutadapt error for 3' adapter and 5' primer adapter trimming: 0.0 to 1.0 (default 0.3)\n	-p	To modify the allowed cutadapt error 3' primer sorting and trimming: 0.0 to 1.0 (default 0.3)\n	-q	To modify the minimum quality score allowed: 0 - 40 (default 35)\n	-m	To modify the minimum length after quality trimming: 0 - 300 (default 100)\n	-x	To modify the additional 5' trimming of forward reads: 0 - 300 (default HiSeq 10, default MiSeq 20)\n	-y	To modify the additional 5' trimming of reverse reads: 0 - 300 (default HiSeq 25, default MiSeq 50)\n	-b	To modify the number of occurrences required to keep an ASV: 0 - any integer (default 0)\n  -e  File path to a list of minimum length(s) reqired for paired F and R reads to overlap \n		(length of the locus - primer length + 20 bp). The user should take into account variability in amplicon \n		region (e.g.The amplicon size for 18S 1389f-1510r is ~260 +/- 50 bp) and make appropriate allowances.\n		e.g.	LENGTH_16S="235"\n			LENGTH_18S="200"\n	-j Multithreading (True/False) in dada2. Multithreading is turned on by default. If user wished to process a single sample turn multithreading to FALSE.  \n -k	Path to file with alternate HPC job submission parameters:  \n		default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh\n		modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh\n\n\n-Other:\n	-h	Shows program usage then quits\n\n\n\n"
   exit
 else
   echo ""
@@ -187,6 +190,8 @@ mkdir -p ${OUT}/Run_info/run_logs
 mkdir -p ${OUT}/QC
 mkdir -p ${OUT}/QC/fastq
 
+
+
 echo " "
 date
 echo " "
@@ -255,7 +260,7 @@ do
  echo ${j} "..."
  # this step removes all primers and adapters with the exception of the 5' forward and reverse primers.  These are needed in a later step to sort reads by primer set.  Leaving 3' primers and 5' or 3' adapters acn affect read merging and taxonomic assignment.
  # this cutadapt command allows a certain amount of error/missmatch (-e) between the query (seqeuncing read) and the primer and adapter.  It searches for and trims off all of the 5' forward adapter (-g) and the 3' reverse complement reverse primer / reverse complement reverse adapter (-a) or the 5' reverse adapter (-G) and the 3' reverse complement forward primer / reverse complement forward adapter (-A).  It processes read pairs, and results in two files one for each read pair.
- ${CUTADAPT} -e ${CTADE:=$ERROR_QC1} -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} -G ${R_ADAPT} -A ${Frc_PRIM_ADAPT} -o ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -p ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq ${str1}_1.fastq ${str1}_2.fastq >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
+ ${CUTADAPT} -e ${CTADE:=$ERROR_QC1} -f ${FILE_TYPE_QC1} -g ${F_ADAPT} -a ${Rrc_PRIM_ADAPT} -G ${R_ADAPT} -A ${Frc_PRIM_ADAPT} --minimum-length 1 -o ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_1.fastq -p ${OUT}/QC/cutadapt_fastq/untrimmed/${j}_Paired_2.fastq ${str1}_1.fastq ${str1}_2.fastq >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
  rm ${str1}_1.fastq # remove intermediate files
  rm ${str1}_2.fastq # remove intermediate files
  # stringent quality fileter to get rid of the junky reads. It mostly chops the lowquality reads off of the ends. See the documentation for details. The default average quality score for retained bases is 35 and the minimum length is 100.  Any reads that do not meet that criteria are removed
@@ -268,7 +273,7 @@ do
  if [ "${ILLTYPE}" == "MiSeq"  ]; # if MiSeq chop more off the end than if HiSeq - modify length in the vars file
  then
    # use cut adapt to search 5' end of forward reads for forward primers.  These are then sorted by primer name.  We do an additional trimming step analagous to the trimming step in the dada2 tutorial.  Because these a forward reads an tend to be higher quality we only trim  20 bp from the end by default for the MiSeq (longer Reads). Users can modify all parameters in the vars file.
-  ${CUTADAPT} -e ${PCTADE:=$ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM}  -u -${FETRIM:=$MS_F_TRIM} -o ${OUT}/QC/cutadapt_fastq/primer_sort/{name}_${j}_Paired_1.fastq  ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_1.fastq >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
+  ${CUTADAPT} -e ${PCTADE:=$ERROR_PS} -f ${FILE_TYPE_PS} -g ${F_PRIM}  -u -${FETRIM:=$MS_F_TRIM} --minimum-length 1 -o ${OUT}/QC/cutadapt_fastq/primer_sort/{name}_${j}_Paired_1.fastq  ${OUT}/QC/cutadapt_fastq/${j}_qcPaired_1.fastq --minimum-length 1 >> ${OUT}/Run_info/cutadapt_out/cutadapt-report.txt
   echo "check"
   echo "reverse..."
   # use cut adapt to search 5' end of reverse reads for reverse primers.  These are then sorted by primer name.  We do an additional trimming step analagous to the trimming step in the dada2 tutorial.  Because these a reverse reads an tend to be lower quality we only trim  50 bp from the end by default for the MiSeq (longer Reads). Users can modify all parameters in the vars file.
@@ -351,9 +356,11 @@ do
     if [ "${LOCALMODE}" = "TRUE"  ]  # if you are running loally (no hoffman2) you can run these jobs one after the other.
     then
         echo "Running Dada2 inline"
-        printf "#!/bin/bash\n${RUNNER} ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t paired -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE}\ n" > ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
-        printf "#!/bin/bash\n${RUNNER} ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t forward -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} \n" > ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
-        printf "#!/bin/bash\n${RUNNER} ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t reverse -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} \n" > ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
+        printf "#!/bin/bash\n${RUNNER} ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t paired -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} -j ${MULTITHREAD}\ n" > ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
+        printf "#!/bin/bash\n${RUNNER} ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t forward -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} -j ${MULTITHREAD} \n" > ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
+        printf "#!/bin/bash\n${RUNNER} ${DB}/scripts/run_dada2.sh -o ${OUT} -d ${DB} -m ${j} -t reverse -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} -j ${MULTITHREAD} \n" > ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
+        /bin/bash ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
+        chmod 755 ${OUT}/Run_info/run_scripts/*
         ${RUNNER} ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
         date
         ${RUNNER} ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
@@ -364,13 +371,14 @@ do
         # generate runlogs that you can submit at any time!
         mkdir -p ${OUT}/Run_info/run_logs
         echo "Submitting Dada2 jobs"
-        printf "${DADA2_PAIRED_HEADER} \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\n${RUNNER} ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t paired -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} \n\necho _END_ [run_dada2_paired.sh]"  > ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
-        printf "${DADA2_UNPAIRED_F_HEADER}\n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\n${RUNNER} ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t forward -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} \n\necho _END_ [run_dada2_unpaired_F.sh]" > ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
-        printf "${DADA2_UNPAIRED_R_HEADER}\n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\n${RUNNER} ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t reverse -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} \n\necho _END_ [run_dada2_unpaired_R.sh]" > ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
+        printf "${DADA2_PAIRED_HEADER} \n\necho _BEGIN_ [run_dada2_bowtie2_paired.sh]: `date`\n\n${RUNNER} ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t paired -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} -j ${MULTITHREAD}\n\necho _END_ [run_dada2_paired.sh]"  > ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
+        printf "${DADA2_UNPAIRED_F_HEADER}\n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_F.sh]: `date`\n\n${RUNNER} ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t forward -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} -j ${MULTITHREAD}\n\necho _END_ [run_dada2_unpaired_F.sh]" > ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
+        printf "${DADA2_UNPAIRED_R_HEADER}\n\necho _BEGIN_ [run_dada2_bowtie2_unpaired_R.sh]: `date`\n\n${RUNNER} ${DB}/scripts/run_dada2.sh  -o ${OUT} -d ${DB} -m ${j} -t reverse -e ${MIN_MERGE_LENGTH:=$DEF_MIN_LENGTH} -b ${MINTIMES_ASV:=$MIN_ASV_ABUNDANCE} -j ${MULTITHREAD}\n\necho _END_ [run_dada2_unpaired_R.sh]" > ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
+
         # submit jobs to run dada2 and bowtie2 (only works if you have an ATS like module)
-        qsub ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
-        qsub ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
-        qsub ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
+        ${QUEUESUBMIT} ${OUT}/Run_info/run_scripts/${j}_dada2_paired_job.sh
+        ${QUEUESUBMIT} ${OUT}/Run_info/run_scripts/${j}_dada2_F_job.sh
+        ${QUEUESUBMIT} ${OUT}/Run_info/run_scripts/${j}_dada2_R_job.sh
         date
     fi
  fi
