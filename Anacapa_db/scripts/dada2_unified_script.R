@@ -7,27 +7,23 @@
 
 args = commandArgs(trailingOnly=TRUE)
 # check that there's four arguments
-if (length(args) != 6) {
-  stop("please make sure there are 6 arguments: the barcode name, the path to fastq files, the expected seq length of the barcode, the type of reads being processed, minimum ASV abundance, and T/F to turn on multithreading")
+if (length(args) != 5) {
+  stop("please make sure there are 5 arguments: the barcode name, the path to fastq files, the expected seq length of the barcode, and the type of reads being processed, minimum ASV abundance")
 }
+
 
 barC = args[1]  #barcode target
 odirpath = args[2]  #path to the fastq files
 barC_length = args[3] # expected seq length of the barcode.
 paired_or_not = args[4] # type of reads- should be "paired", "forward", or "reverse
 min_asv_abundance = as.numeric(args[5]) # minimum number of times an ASV needs to appear to be kept in output files
-multit = args[6] #turn on multithread (should be "T" or "F"), if T then this script uses all available cores
-if (multit == "TRUE" || multit == "T"){
-	multithreadFlag<-T;
-}else{
-	multithreadFlag<-F;
-}
 
 # confirm that the user has specified paired_or_not properly
 if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
   cat("Please specify sequence type as 'paired', 'forward', or 'reverse'")
   quit()
 }
+
 ## path to output
 
 if (paired_or_not == "paired") {
@@ -40,10 +36,14 @@ if (paired_or_not == "paired") {
 } else {
   path = paste(odirpath,"/", barC, "/", barC, "_sort_by_read_type/unpaired_R", sep='')
   outpath=paste(odirpath,"/", barC, "/", barC, "dada2_out", sep='')
+
 }
+
+# Confirm that the user has Write access to the path
 if (file.access(path, mode = 2) != 0) {
   stop("Please make sure that you have write access to the supplied path.")
 }
+
 # Manage packages -----
 
 #1. Download packages from CRAN
@@ -135,11 +135,11 @@ if(paired_or_not == "paired") {
 if(paired_or_not == "paired") {
   filtered_seqs <- filterAndTrim(fnFs, filtered_seqs_name, fnRs, filtered_seqs_name_R, minLen = 10,
                                  maxN=0, maxEE=c(2,2), truncQ=0, rm.phix=TRUE,
-                                 compress=F,matchIDs=TRUE, multithread=multithreadFlag) # On Windows set multithread=FALSE
+                                 compress=F,matchIDs=TRUE, multithread=TRUE) # On Windows set multithread=FALSE
 } else {
   filtered_seqs <- filterAndTrim(fnFs, filtered_seqs_name, minLen = 10,
                                  maxN=0, maxEE=c(2), truncQ=0, rm.phix=TRUE,
-                                 compress=TRUE, multithread=multithreadFlag) # On Windows set multithread=FALSE
+                                 compress=TRUE, multithread=TRUE) # On Windows set multithread=FALSE
 
 }
 head(filtered_seqs)
@@ -164,12 +164,12 @@ if (paired_or_not == "paired") {
 
 # Learn errors and save plots---------
 if (paired_or_not == "paired"){
-  error_profile <- learnErrors(filtered_seqs_name, multithread=multithreadFlag)
-  error_profile_R <- learnErrors(filtered_seqs_name_R, multithread=multithreadFlag)
+  error_profile <- learnErrors(filtered_seqs_name, multithread=TRUE)
+  error_profile_R <- learnErrors(filtered_seqs_name_R, multithread=TRUE)
  # plotErrors(error_profile, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/forward_error_profile.pdf"))
  # plotErrors(error_profile_R, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/reverse_error_profile.pdf"))
 } else {
-  error_profile <- learnErrors(filtered_seqs_name, multithread=multithreadFlag)
+  error_profile <- learnErrors(filtered_seqs_name, multithread=TRUE)
  #plotErrors(error_profile, nominalQ=TRUE) + ggsave(filename = paste0(path, "/plots/singleton_error_profile.pdf"))
 }
 
@@ -186,10 +186,10 @@ if (paired_or_not == "paired"){
 
 # Run dada on the dereplicated sequences ------
 if (paired_or_not == "paired"){
-  dada_output <- dada(derep_seqs, err=error_profile, multithread=multithreadFlag)
-  dada_output_R <- dada(derep_seqs_R, err=error_profile_R, multithread=multithreadFlag)
+  dada_output <- dada(derep_seqs, err=error_profile, multithread=TRUE)
+  dada_output_R <- dada(derep_seqs_R, err=error_profile_R, multithread=TRUE)
 } else {
-  dada_output <- dada(derep_seqs, err=error_profile, multithread=multithreadFlag)
+  dada_output <- dada(derep_seqs, err=error_profile, multithread=TRUE)
 }
 
 # Merge F and R if paired, and make sequence table -----
@@ -206,7 +206,7 @@ if (paired_or_not == "paired") {
 }
 
 # Remove chimeras ----
-seqtab_nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=multithreadFlag, verbose=TRUE)
+seqtab_nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
 
 # Track the status of the sequences through the steps ----
 getN <- function(x) {sum(getUniques(x))}
@@ -224,15 +224,15 @@ if (paired_or_not == "paired") {
   track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
                       input = filtered_seqs_nonzeros[,"reads.in"],
                       filtered = filtered_seqs_nonzeros[,"reads.out"],
-                      denoised = ifelse(length(all_sample_names) == 1,getN(dada_output),sapply(dada_output, getN)),
-                      merged = ifelse(length(all_sample_names) == 1,getN(mergers),sapply(mergers, getN)),
+                      denoised = sapply(dada_output, getN),
+                      merged = sapply(mergers, getN),
                       tabled = rowSums(seqtab),
                       nochim = rowSums(seqtab_nochim))
 } else {
   track <- data.frame(name = filtered_seqs_nonzeros[,"name"],
                       input = filtered_seqs_nonzeros[,"reads.in"],
                       filtered = filtered_seqs_nonzeros[,"reads.out"],
-                      denoised = ifelse(length(all_sample_names) == 1,getN(dada_output),sapply(dada_output, getN)),
+                      denoised = sapply(dada_output, getN),
                       tabled = rowSums(seqtab),
                       nochim = rowSums(seqtab_nochim))
 }
@@ -245,31 +245,27 @@ head(track)
 # Make output FASTA files and abundance tables for the processed reads------
 
 if (paired_or_not == "paired") {
-  working_barcode_name =  ifelse(length(all_sample_names)==1,paste("merged_", all_sample_names , sep=''),paste("merged_", barC , sep=''))
-  working_barcode_seqnum = ifelse(length(all_sample_names)==1,paste("merged_", all_sample_names , "_seq_number", sep = ''),paste("merged_", barC , "_seq_number", sep = ''))
-  nochim_fname.fasta = ifelse(length(all_sample_names)==1,paste(mergedoutpath,"/", "nochim_merged",all_sample_names,".fasta", sep=''),paste(mergedoutpath,"/", "nochim_merged",barC,".fasta", sep=''))
-  nochim_fname.txt = ifelse(length(all_sample_names)==1,paste(mergedoutpath,"/", "nochim_merged",all_sample_names,".txt", sep=''),paste(mergedoutpath,"/", "nochim_merged",barC,".txt", sep=''))
+  working_barcode_name =  paste("merged_", barC , sep='')
+  working_barcode_seqnum = paste("merged_", barC , "_seq_number", sep = '')
+  nochim_fname.fasta = paste(mergedoutpath,"/", "nochim_merged",barC,".fasta", sep='')
+  nochim_fname.txt = paste(mergedoutpath,"/", "nochim_merged",barC,".txt", sep='')
 } else if(paired_or_not == "forward") {
-  working_barcode_name =  ifelse(length(all_sample_names)==1,paste("forward_", all_sample_names , sep=''),paste("forward_", barC , sep=''))
-  working_barcode_seqnum = ifelse(length(all_sample_names)==1,paste("forward_", all_sample_names , "_seq_number", sep = ''),paste("forward_", barC , "_seq_number", sep = ''))
-  nochim_fname.fasta = ifelse(length(all_sample_names)==1,paste(outpath,"/", "nochim_forward",all_sample_names,".fasta", sep=''),paste(outpath,"/", "nochim_forward",barC,".fasta", sep=''))
-  nochim_fname.txt = ifelse(length(all_sample_names)==1,paste(outpath,"/", "nochim_forward",all_sample_names,".txt", sep=''),paste(outpath,"/", "nochim_forward",barC,".txt", sep=''))
+  working_barcode_name =  paste("forward_", barC , sep='')
+  working_barcode_seqnum = paste("forward_", barC , "_seq_number", sep = '')
+  nochim_fname.fasta = paste(outpath,"/", "nochim_forward",barC,".fasta", sep='')
+  nochim_fname.txt = paste(outpath,"/", "nochim_forward",barC,".txt", sep='')
 } else {
-  working_barcode_name =  ifelse(length(all_sample_names)==1,paste("reverse_", all_sample_names , sep=''),paste("reverse_", barC , sep=''))
-  working_barcode_seqnum = ifelse(length(all_sample_names)==1,paste("reverse_", all_sample_names , "_seq_number", sep = ''),paste("reverse_", barC , "_seq_number", sep = ''))
-  nochim_fname.fasta = ifelse(length(all_sample_names)==1,paste(outpath,"/", "nochim_reverse",all_sample_names,".fasta", sep=''),paste(outpath,"/", "nochim_reverse",barC,".fasta", sep=''))
-  nochim_fname.txt = ifelse(length(all_sample_names)==1,paste(outpath,"/", "nochim_reverse",all_sample_names,".txt", sep=''),paste(outpath,"/", "nochim_reverse",barC,".txt", sep=''))
+  working_barcode_name =  paste("reverse_", barC , sep='')
+  working_barcode_seqnum = paste("reverse_", barC , "_seq_number", sep = '')
+  nochim_fname.fasta = paste(outpath,"/", "nochim_reverse",barC,".fasta", sep='')
+  nochim_fname.txt = paste(outpath,"/", "nochim_reverse",barC,".txt", sep='')
 }
 
 seqtab_nochim <- t(seqtab_nochim)
 nochim_merged <- seqtab_nochim %>% data.frame %>%
   rownames_to_column %>% rename(sequence = rowname) %>% # make sequences into a column
-  mutate((!! working_barcode_seqnum) := paste0(working_barcode_name,"_",row_number())) %>% # Make a new column w seq number
-  select((!! working_barcode_seqnum),everything()) # reorder the columns
-
-# Filter out ASVs with fewer occurrences than the threshold
-nochim_merged$total <- ifelse(length(all_sample_names) == 1, nochim_merged[,3],rowSums(nochim_merged[,3:ncol(nochim_merged)]))
-nochim_merged <- nochim_merged %>% filter(total > min_asv_abundance) %>% select(-total)
+  mutate(!!working_barcode_seqnum := paste0(working_barcode_name,"_",row_number())) %>% # Make a new column w seq number
+  select(!!working_barcode_seqnum,everything()) # reorder the columns
 
 # Filter out ASVs with fewer occurrences than the threshold
 nochim_merged$total <- rowSums(nochim_merged[,3:ncol(nochim_merged)])
@@ -285,7 +281,7 @@ if(paired_or_not == "paired") {
 }
 
 # Make a fasta file out of the sequences in this table
-nochim_merged_seq <- nochim_merged %>% select((!!working_barcode_seqnum), sequence)
+nochim_merged_seq <- nochim_merged %>% select(!!working_barcode_seqnum, sequence)
 nochim_merged_seq.fasta = dataframe2fas(nochim_merged_seq, file= nochim_fname.fasta)
 
 # If working with unpaired reads, this is the end! --------------
@@ -295,45 +291,37 @@ if(paired_or_not != "paired"){
 }
 
 # If working with paired data, there's more to be done ----------
-#attempt <- ifelse(length(all_sample_names) == 1, as.data.frame(mergers), ldply(mergers))  #merge all dataframes resulting from merger
-if(length(all_sample_names) == 1) {
-	pairedsum_unmerged_table <- mergers %>% select(forward, reverse, abundance, accept) %>% data.frame %>% filter(accept == FALSE) %>% select(-accept)
-} else {
-    attempt <- ldply(mergers)
-    pairedsum_unmerged_table <- attempt %>% select(id = .id, forward, reverse, abundance, accept) %>% data.frame %>% filter(accept == FALSE) %>% select(-accept) # remove the ones that worked well during merge
-}
+try <- ldply(mergers)  #merge all dataframes resulting from merger
+
+
+pairedsum_unmerged_table <- try %>% select(id = .id, forward, reverse, abundance, accept) %>% data.frame %>%
+  filter(accept == FALSE) %>% select(-accept) # remove the ones that worked well during merge
 
 # grab the correct F and R reads from the dadaF and dadaR files ------
 
 
+mine_unmerged <- function(df, seqs_list, forward_or_reverse) {
+  seq_obj <- seqs_list[[(df[1])]]
 
-mine_unmerged <- function(df, seqs_list, forward_or_reverse, numSamples) {
   # Make sure nothing silly is happening
   if (!(forward_or_reverse %in% c("forward","reverse"))){
     stop("forward_or_reverse must be specified as 'forward' or 'reverse'")
   }
 
-  if(numSamples == 1) {
-    seq_obj <- seqs_list
-  } else {
-    seq_obj <- seqs_list[[(df[1])]]
-  }
-
   if (forward_or_reverse == "forward") {
-    seq = ifelse(numSamples==1,seq_obj$sequence[as.numeric(df["forward"])],seq_obj$sequence[as.numeric(df[2])])
+    seq <- seq_obj$sequence[as.numeric(df[2])]
   } else {
-    seq = ifelse(numSamples==1, seq_obj$sequence[as.numeric(df["reverse"])],seq_obj$sequence[as.numeric(df[3])])
+    seq <- seq_obj$sequence[as.numeric(df[3])]
   }
 
   return(seq)
 }
 
 pairedsum_unmerged_table$sequenceF <- apply(pairedsum_unmerged_table, 1, function(x)
-  mine_unmerged(x, seqs_list = dada_output, forward_or_reverse = "forward", numSamples=length(all_sample_names)))
+  mine_unmerged(x, seqs_list = dada_output, forward_or_reverse = "forward"))
 
 pairedsum_unmerged_table$sequenceR <- apply(pairedsum_unmerged_table, 1, function(x)
-  mine_unmerged(x, seqs_list = dada_output_R, forward_or_reverse = "reverse", numSamples=length(all_sample_names)))
-
+  mine_unmerged(x, seqs_list = dada_output_R, forward_or_reverse = "reverse"))
 
 
 
@@ -343,8 +331,6 @@ pairedsum_unmerged_table$sequenceR <- apply(pairedsum_unmerged_table, 1, functio
 
 pairedsum_unmerged_table$lengthF <- nchar(gsub("[a-z]","",pairedsum_unmerged_table$sequenceF))
 pairedsum_unmerged_table$lengthR <- nchar(gsub("[a-z]","",pairedsum_unmerged_table$sequenceR))
-pairedsum_unmerged_table$lengthF[is.na(pairedsum_unmerged_table$lengthF)] <- 0
-pairedsum_unmerged_table$lengthR[is.na(pairedsum_unmerged_table$lengthR)] <- 0
 pairedsum_unmerged_table$totalseq <- pairedsum_unmerged_table$lengthF + pairedsum_unmerged_table$lengthR
 
 # add expected length of amplicon
@@ -352,29 +338,13 @@ pairedsum_unmerged_table$keep[pairedsum_unmerged_table$totalseq>=barC_length] <-
 pairedsum_unmerged_table$keep[pairedsum_unmerged_table$totalseq<barC_length] <- TRUE
 
 # Get the reverse complement of the R sequence
-if(length(all_sample_names) == 1) {
-  pairedsum_unmerged_table$sequenceRc <- sapply(pairedsum_unmerged_table$sequenceR, FUN=function(x){
-    if(is.na(x)) {
-      return("")
-    } else {
-      return(toString(reverseComplement(DNAString(x))))
-    }
-  })
-} else {
-  pairedsum_unmerged_table$sequenceRc <- sapply(sapply(sapply(pairedsum_unmerged_table$sequenceR, DNAString), reverseComplement), toString)
-}
+pairedsum_unmerged_table$sequenceRc <- sapply(sapply(sapply(pairedsum_unmerged_table$sequenceR, DNAString), reverseComplement), toString)
 
 # pairedsum_unmerged_table$NNNNNN <- "AAAAAAAAAATTCTTAAAAAAAAAA"
 pairedsum_unmerged_table$sequenceF_N_Rrc <- paste(pairedsum_unmerged_table$sequenceF,"AAAAAAAAAATTCTTAAAAAAAAAA",pairedsum_unmerged_table$sequenceRc,sep="")
 
 
-if(length(all_sample_names) == 1) {
-  pairedsum_unmerged_dada2 <- pairedsum_unmerged_table %>% filter(keep == TRUE) %>% select(sequenceF_N_Rrc, abundance)
-  if(nrow(pairedsum_unmerged_dada2) > 0) 
-    pairedsum_unmerged_dada2$id <- 1:nrow(pairedsum_unmerged_dada2)
-} else {
-  pairedsum_unmerged_dada2 <- pairedsum_unmerged_table %>% filter(keep == TRUE) %>% select(sequenceF_N_Rrc, id, abundance)
-}
+pairedsum_unmerged_dada2 <- pairedsum_unmerged_table %>% filter(keep == TRUE) %>% select(sequenceF_N_Rrc, id, abundance)
 
 
 
@@ -391,7 +361,7 @@ unmerged_seqtab <- dcast(pairedsum_unmerged_dada2, sequenceF_N_Rrc ~ id, fun.agg
 
 # Run bimera detection on unmerged reads and discard bimeras -----
 
-unmerged_seqtab_nochim <- removeBimeraDenovo(unmerged_seqtab, method="consensus", multithread=multithreadFlag, verbose=TRUE)
+unmerged_seqtab_nochim <- removeBimeraDenovo(unmerged_seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
 
 
 
@@ -399,8 +369,8 @@ unmerged_seqtab_nochim <- removeBimeraDenovo(unmerged_seqtab, method="consensus"
 
 
 # get barcode name info for numbering / nameing sequences in final fasta files / tables
-unmergedbarC = ifelse(length(all_sample_names)==1,paste("unmerged_", all_sample_names , sep=''),paste("unmerged_", barC , sep=''))
-unmergedbarCseqnum = ifelse(length(all_sample_names)==1,paste("unmerged_", all_sample_names , "_seq_number", sep = ''),paste("unmerged_", barC , "_seq_number", sep = ''))
+unmergedbarC =  paste("unmerged_", barC , sep='')
+unmergedbarCseqnum = paste("unmerged_", barC , "_seq_number", sep = '')
 
 
 #transpose table, make rownames into a column -> sequnces
@@ -419,11 +389,7 @@ unmerged_seqtab_nochim$sequencesRrc <- NULL
 # Reorder the columns (seqF, seqR, all the samples)
 
 unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% select(sequencesF, sequencesR, everything()) %>%
-  mutate((!! unmergedbarCseqnum) := paste0(unmergedbarC, "_", row_number())) %>% select(!! unmergedbarCseqnum, everything())
-
-# filter out ASVs with fewer occurrences than the total
-unmerged_seqtab_nochim$total <- rowSums(unmerged_seqtab_nochim[,4:ncol(unmerged_seqtab_nochim)])
-unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% filter(total > min_asv_abundance) %>% select(-total)
+  mutate(!!unmergedbarCseqnum := paste0(unmergedbarC, "_", row_number())) %>% select(!!unmergedbarCseqnum, everything())
 
 # filter out ASVs with fewer occurrences than the total
 unmerged_seqtab_nochim$total <- rowSums(unmerged_seqtab_nochim[,4:ncol(unmerged_seqtab_nochim)])
@@ -449,13 +415,6 @@ nochim_unmerged_seq_F.fasta = dataframe2fas(nochim_unmerged_seq_F, file= nochim_
 nochim_unmerged_seq_R.fasta = dataframe2fas(nochim_unmerged_seq_R, file= nochim_unfnameR.fasta)
 
 # write summary table
-if ( length(all_sample_names)==1 ){
-	unmerged_ASVs <- data.frame(unmerged_seqtab_nochim[[unmergedbarCseqnum]],pairedsum_unmerged_table$abundance)
-}
-if(length(all_sample_names) == 1){
-	write.table(unmerged_ASVs, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
-}else{
-	write.table(unmerged_seqtab_nochim, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
-}
+write.table(unmerged_seqtab_nochim, file = nochim_unfname.txt, row.names=FALSE, sep="\t", quote=FALSE)
 cat("Done with analzing your paired reads!\n\n")
 quit()
