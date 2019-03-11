@@ -1,0 +1,16 @@
+sum.taxonomy	X12S_first1000reads.LSC.A.1.S19.L001	X12S_first1000reads.LSC.A.2.S20.L001
+Eukaryota;Chordata;Actinopteri;Atheriniformes;Atherinopsidae;Odontesthes;	0	35
+Eukaryota;Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Girella;	37	26
+Eukaryota;Chordata;Actinopteri;Centrarchiformes;Kyphosidae;Medialuna;Medialuna californiensis	0	44
+Eukaryota;Chordata;Actinopteri;Centrarchiformes;Oplegnathidae;Oplegnathus;Oplegnathus woodwardi	1	0
+Eukaryota;Chordata;Actinopteri;Clupeiformes;Engraulidae;Engraulis;Engraulis mordax	31	44
+Eukaryota;Chordata;Actinopteri;Labriformes;Labridae;NA;	104	100
+Eukaryota;Chordata;Actinopteri;Labriformes;Labridae;Semicossyphus;Semicossyphus pulcher	35	8
+Eukaryota;Chordata;Actinopteri;NA;;NA;	435	190
+Eukaryota;Chordata;Actinopteri;NA;Embiotocidae;NA;	16	0
+Eukaryota;Chordata;Actinopteri;NA;Pomacentridae;Chromis;Chromis punctipinnis	0	38
+Eukaryota;Chordata;Actinopteri;NA;Pomacentridae;Hypsypops;Hypsypops rubicundus	2	0
+Eukaryota;Chordata;Actinopteri;NA;Sphyraenidae;Sphyraena;Sphyraena helleri	18	92
+Eukaryota;Chordata;Actinopteri;Pleuronectiformes;Paralichthyidae;Citharichthys;	0	51
+Eukaryota;Chordata;Actinopteri;Pleuronectiformes;Paralichthyidae;NA;	0	1
+NA	95	138

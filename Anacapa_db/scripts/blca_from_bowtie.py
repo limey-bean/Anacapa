@@ -284,6 +284,7 @@ with open(sam_file_name) as sam_file:
         elif entry.rname not in reference_sequences:
             possible_rejects.add(entry.qname)
         elif len(reference_sequences[entry.rname])/float(len(input_sequences[entry.qname].seq)) < min_length:
+
             possible_rejects.add(entry.qname)
         elif entry.qname not in input_sequences:
             input_sequences[entry.qname] = SequenceInfo(seq=entry.seq, hits=[entry.rname])

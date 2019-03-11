@@ -1,0 +1,66 @@
+singularity exec /home/anacapa-container/anacapa-1.3.0.img /bin/bash /home/Anacapa-git/Anacapa_db/anacapa_QC_dada2.sh -i /home/12S_test_files -o /home/12S_time_test -d /home/Anacapa-git/Anacapa_db -f /home/12S_test_files/forward_12S.txt -r /home/12S_test_files/reverse_12S.txt -e /home/Anacapa-git/Anacapa_db/metabarcode_loci_min_merge_length.txt -a nextera -t MiSeq -l
+
+
+Running in local mode
+Using User Defined Primers
+Required Arguments Given
+
+
+ 
+Thu Jul 26 18:26:48 UTC 2018
+ 
+Preprocessing: 1) Generate an md5sum file
+Thu Jul 26 18:26:48 UTC 2018
+Preprocessing: 2) Change file suffixes
+Thu Jul 26 18:26:48 UTC 2018
+Preprocessing: 3) Uncompress files
+Thu Jul 26 18:26:48 UTC 2018
+QC: 1) Run cutadapt to remove 5'sequncing adapters and 3'primers + sequencing adapters, sort for length, and quality.
+ 
+Generating Primer and Primer + Adapter files for cutadapt steps.  Your adapter type is nextera.
+ 
+first1000reads-LSC-A-1-S19-L001 ...
+forward...
+check
+reverse...
+check
+Thu Jul 26 18:26:48 UTC 2018
+ 
+first1000reads-LSC-A-2-S20-L001 ...
+forward...
+check
+reverse...
+check
+Thu Jul 26 18:26:49 UTC 2018
+12S
+ 
+Checking that Paired reads are still paired:
+ 
+12S ...
+12S_first1000reads-LSC-A-1-S19-L001 ...check!
+12S_first1000reads-LSC-A-2-S20-L001 ...check!
+Thu Jul 26 18:26:49 UTC 2018
+ 
+Process metabarcode reads for with dada2
+
+12S
+Running Dada2 inline
+
+Running dada2 on paired reads
+0
+moving on
+Thu Jul 26 18:27:09 UTC 2018
+
+Running dada2 on forward reads
+0
+moving on
+Thu Jul 26 18:27:22 UTC 2018
+
+Running dada2 on reverse reads
+0
+moving on
+Thu Jul 26 18:27:33 UTC 2018
+
+real	0m45.906s
+user	0m43.568s
+sys	0m1.396s

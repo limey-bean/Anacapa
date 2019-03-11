@@ -1,0 +1,88 @@
+$ time singularity exec /home/anacapa-container/anacapa-1.4.0.img /bin/bash /home/Anacapa-git/Anacapa_db/anacapa_classifier.sh -o /home/12S_time_test -d /home/Anacapa-git/Anacapa_db  -l
+
+
+
+Running in local mode
+Required Arguments Given
+
+
+Thu Jul 26 18:45:48 UTC 2018
+Assign taxonomy!: 1) submit bowtie2 and blca for the dada2 output for each metabarcode
+
+12S
+Running Bowtie 2 inline
+Running in local mode
+Thu Jul 26 18:45:48 UTC 2018
+12S
+Run Bowtie2 on merged, forward, and reverse dada2 ASV fasta file
+
+nochim_merged12S.fasta exists
+end-to-end
+16 reads; of these:
+  16 (100.00%) were unpaired; of these:
+    5 (31.25%) aligned 0 times
+    1 (6.25%) aligned exactly 1 time
+    10 (62.50%) aligned >1 times
+68.75% overall alignment rate
+Thu Jul 26 18:45:50 UTC 2018
+local
+5 reads; of these:
+  5 (100.00%) were unpaired; of these:
+    4 (80.00%) aligned 0 times
+    0 (0.00%) aligned exactly 1 time
+    1 (20.00%) aligned >1 times
+20.00% overall alignment rate
+Thu Jul 26 18:45:51 UTC 2018
+
+nochim_forward12S.fasta exists
+end-to-end
+7 reads; of these:
+  7 (100.00%) were unpaired; of these:
+    1 (14.29%) aligned 0 times
+    1 (14.29%) aligned exactly 1 time
+    5 (71.43%) aligned >1 times
+85.71% overall alignment rate
+Thu Jul 26 18:45:52 UTC 2018
+local
+1 reads; of these:
+  1 (100.00%) were unpaired; of these:
+    0 (0.00%) aligned 0 times
+    0 (0.00%) aligned exactly 1 time
+    1 (100.00%) aligned >1 times
+100.00% overall alignment rate
+Thu Jul 26 18:45:54 UTC 2018
+
+nochim_reverse12S.fasta does not exist
+Run Bowtie2 on unmerged dada2 ASV fasta files
+
+nochim_unmerged12S.fasta files do not exist
+
+Concatenate all ASV site frequency tables and sam output
+
+Run BLCA
+Running BLCA inline
+Run blca on sam output locally
+> 1 > Read in taxonomy information!
+> 2 > Read in reference db
+> 3 > Read in bowtie2 output!
+>> Taxonomy file generated!!
+Thu Jul 26 18:46:01 UTC 2018
+
+Add blca taxonomy to the ASV site frequency table
+40
+50
+60
+70
+80
+90
+95
+100
+Thu Jul 26 18:46:08 UTC 2018
+_END_ [run_bowtie2_blca.sh]
+
+If a Bowtie 2 or BLCA step fails you can find the job script in /home/12S_time_test/Run_info/run_scripts
+good luck!
+
+real	0m19.467s
+user	0m13.384s
+sys	0m1.480s

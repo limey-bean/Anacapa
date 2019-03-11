@@ -61,3 +61,4 @@ MUSMISMATCH="-2.5" # Muscle alignment mismatch score
 MUSGAPP="-2" # Muscle alignment gap penalty
 
 BLCAB="0.8" # percent of missmatch allowed between the qury and subject, for BLCA
+BLCAperMINlen="0.8" #min percent length of subject relative to query
