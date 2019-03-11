@@ -180,6 +180,7 @@ else
     if [ -s "${str}" ]
     then
      # generate runlogs that you can submit at any time!
+
      printf "${BLCA_HEADER} \n/${RUNNER} ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -b ${B_VALUE:=$BLCAB} -l ${PER_MIN_LEN:=$BLCAperMINlen} -m ${MB} -s ${str} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} \n\n" > ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
      echo ''
      ${QUEUESUBMIT} ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
