@@ -6,7 +6,7 @@
 
 ### last updated 11-06-2018
 
-#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zjgold@ucla.edu), Max Ogden (max@maxogden.com), Lenore Pipes and Baochen Shi (biosbc@gmail.com).
+#### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zjgold@ucla.edu), Max Ogden (max@maxogden.com), Lenore Pipes lpipes@berkeley.edu), and Baochen Shi (biosbc@gmail.com).
 
 #### Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program (http://www.ucedna.com/)
 
@@ -245,9 +245,10 @@ Arguments:
     			     >18S
 			         TGATCCTTCTGCAGGTTCACCTAC
 	-g	If .fastq read are uncompressed: -g (no argument need)
-	-c	To modify the allowed cutadapt error for 3' adapter and 5' primer adapter trimming: 0.0 to 1.0 (default 0.3)
-  -p	To modify the allowed cutadapt error 3' primer sorting and trimming: 0.0 to 1.0 (default 0.3)
-  -q	To modify the minimum quality score allowed: 0 - 40 (default 35)
+	-c	To modify the allowed cutadapt error for 3' adapter and 5' primer adapter trimming: 0.0 to 1.0
+      (default 0.3)
+  -p  To modify the allowed cutadapt error 3' primer sorting and trimming: 0.0 to 1.0 (default 0.3)
+  -q  To modify the minimum quality score allowed: 0 - 40 (default 35)
 	-m	To modify the minimum length after quality trimming: 0 - 300 (default 100)
 	-x	To modify the additional 5' trimming of forward reads: 0 - 300 (default HiSeq 10, default MiSeq 20)
 	-y	To modify the additional 5' trimming of reverse reads: 0 - 300 (default HiSeq 25, default MiSeq 50)
@@ -256,11 +257,12 @@ Arguments:
 		  (length of the locus - primer length + 20 bp). The user should take into account variability in amplicon
 		  region (e.g.The amplicon size for 18S 1389f-1510r is ~260 +/- 50 bp) and make appropriate allowances.
       e.g.  LENGTH_16S="235"
-          LENGTH_18S="200"
-          -j Multithreading (True/False) in dada2. Multithreading is turned on by default. If the user wished to process a single sample turn multithreading to FALSE.
-          -k	Path to file with alternate HPC job submission parameters:
-          default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh
-          modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh
+            LENGTH_18S="200"
+  -j  Multithreading (True/False) in dada2. Multithreading is turned on by default.
+      If the user wishes to process a single sample turn multithreading to FALSE.
+  -k  Path to file with alternate HPC job submission parameters:
+      default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh
+      modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh
 
  - Other:
 	-h	Shows program usage then quits
