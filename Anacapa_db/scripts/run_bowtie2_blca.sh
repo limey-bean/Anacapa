@@ -8,6 +8,7 @@ DB=""
 MB=""
 UN=""
 B_VALUE=""
+PER_MIN_LEN=""
 LOCALMODE="FALSE"
 BCC_CUT_OFF=""
 BOOT=""
@@ -16,7 +17,7 @@ MISMATCH=""
 GAPP=""
 HPC_HEADER_FILE=""
 
-while getopts "o:d:m:u:b:l?:c:n:x:f:g:k:" opt; do
+while getopts "o:d:m:u:b:p:l?:c:n:x:f:g:k:" opt; do
     case $opt in
         o) OUT="$OPTARG" # path to desired Anacapa output
         ;;
@@ -26,7 +27,9 @@ while getopts "o:d:m:u:b:l?:c:n:x:f:g:k:" opt; do
         ;;
         u) UN="$OPTARG"  # need username for submitting sequencing job
         ;;
-        b) B_VALUE="$OPTARG"  # need sername for submitting sequencing job
+        b) B_VALUE="$OPTARG"  # percent sim req for match
+        ;;
+        p) PER_MIN_LEN="$OPTARG" # min percent length of subject relative to query
         ;;
         l) LOCALMODE="TRUE"  # need sername for submitting sequencing job
         ;;
@@ -164,7 +167,7 @@ then
    ### blca
 
    echo "Run blca on sam output locally"
-   python ${DB}/scripts/blca_from_bowtie.py -i ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${B_VALUE}  -p ${DB}/muscle -n ${BOOT:=$BOOTSTRAP} -m ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP}
+   python ${DB}/scripts/blca_from_bowtie.py -i ${OUT}/${MB}/${MB}bowtie2_out/${MB}_bowtie2_all.sam -r ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_taxonomy.txt -q ${DB}/${MB}/${MB}_fasta_and_taxonomy/${MB}_.fasta -b ${B_VALUE} -l ${PER_MIN_LEN:=$BLCAperMINlen} -p ${DB}/muscle -n ${BOOT:=$BOOTSTRAP} -m ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP}
 
 else
   for str in ${OUT}/${MB}/${MB}bowtie2_out/*.sam
@@ -177,9 +180,9 @@ else
     if [ -s "${str}" ]
     then
      # generate runlogs that you can submit at any time!
-     printf "${BLCA_HEADER} \n/bin/bash/ ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -m ${MB} -s ${str} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} \n\n" > ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
+     printf "${BLCA_HEADER} \n/${RUNNER} ${DB}/scripts/run_blca.sh -o ${OUT} -d ${DB} -b ${B_VALUE:=$BLCAB} -l ${PER_MIN_LEN:=$BLCAperMINlen} -m ${MB} -s ${str} -n ${BOOT:=$BOOTSTRAP} -x ${MATCH:=$MUSMATCH} -f ${MISMATCH:=$MUSMISMATCH} -g ${GAPP:=$MUSGAPP} \n\n" > ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
      echo ''
-     qsub ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
+     ${QUEUESUBMIT} ${OUT}/Run_info/run_scripts/${j}_blca_job.sh
      echo "if a blca job(s) fails you can find the job submission file in ${OUT}/Run_info/run_scripts"
      echo "${str}.blca.complete" >> ${OUT}/${MB}/${MB}bowtie2_out/${MB}_complete_outfiles.txt
     else

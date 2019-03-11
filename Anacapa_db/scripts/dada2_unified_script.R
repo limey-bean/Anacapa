@@ -22,6 +22,7 @@ if (multit == "TRUE" || multit == "T"){
 }else{
 	multithreadFlag<-F;
 }
+
 # confirm that the user has specified paired_or_not properly
 if (!(paired_or_not %in% c("paired", "forward", "reverse"))) {
   cat("Please specify sequence type as 'paired', 'forward', or 'reverse'")
@@ -270,6 +271,10 @@ nochim_merged <- seqtab_nochim %>% data.frame %>%
 nochim_merged$total <- ifelse(length(all_sample_names) == 1, nochim_merged[,3],rowSums(nochim_merged[,3:ncol(nochim_merged)]))
 nochim_merged <- nochim_merged %>% filter(total > min_asv_abundance) %>% select(-total)
 
+# Filter out ASVs with fewer occurrences than the threshold
+nochim_merged$total <- rowSums(nochim_merged[,3:ncol(nochim_merged)])
+nochim_merged <- nochim_merged %>% filter(total > min_asv_abundance) %>% select(-total)
+
 # Save this table
 if(paired_or_not == "paired") {
   dir.create(mergedoutpath, recursive = T)
@@ -301,6 +306,7 @@ if(length(all_sample_names) == 1) {
 # grab the correct F and R reads from the dadaF and dadaR files ------
 
 
+
 mine_unmerged <- function(df, seqs_list, forward_or_reverse, numSamples) {
   # Make sure nothing silly is happening
   if (!(forward_or_reverse %in% c("forward","reverse"))){
@@ -327,6 +333,7 @@ pairedsum_unmerged_table$sequenceF <- apply(pairedsum_unmerged_table, 1, functio
 
 pairedsum_unmerged_table$sequenceR <- apply(pairedsum_unmerged_table, 1, function(x)
   mine_unmerged(x, seqs_list = dada_output_R, forward_or_reverse = "reverse", numSamples=length(all_sample_names)))
+
 
 
 
@@ -413,6 +420,10 @@ unmerged_seqtab_nochim$sequencesRrc <- NULL
 
 unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% select(sequencesF, sequencesR, everything()) %>%
   mutate((!! unmergedbarCseqnum) := paste0(unmergedbarC, "_", row_number())) %>% select(!! unmergedbarCseqnum, everything())
+
+# filter out ASVs with fewer occurrences than the total
+unmerged_seqtab_nochim$total <- rowSums(unmerged_seqtab_nochim[,4:ncol(unmerged_seqtab_nochim)])
+unmerged_seqtab_nochim <- unmerged_seqtab_nochim %>% filter(total > min_asv_abundance) %>% select(-total)
 
 # filter out ASVs with fewer occurrences than the total
 unmerged_seqtab_nochim$total <- rowSums(unmerged_seqtab_nochim[,4:ncol(unmerged_seqtab_nochim)])

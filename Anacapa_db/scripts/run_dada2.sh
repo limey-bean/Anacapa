@@ -11,6 +11,7 @@ MIN_ASV=""
 MULTITHREAD=""
 
 while getopts "o:d:m:t:e:b:j:" opt; do
+
     case $opt in
         o) OUT="$OPTARG" # path to desired Anacapa output
         ;;
@@ -26,6 +27,7 @@ while getopts "o:d:m:t:e:b:j:" opt; do
         ;;
 		j) MULTITHREAD="$OPTARG"
 		;;
+
     esac
 done
 ####################################script & software
@@ -54,5 +56,6 @@ ${R} &> ${OUT}/Run_info/dada2_out/${MB}dada2_out_${TYP}
 ${GCC} &>> ${OUT}/Run_info/dada2_out/${MB}dada2_out_${TYP}
 
 Rscript --vanilla ${DB}/scripts/dada2_unified_script.R ${MB} ${OUT} ${length} ${TYP} ${MIN_ASV} ${MULTITHREAD} &>> ${OUT}/Run_info/dada2_out/${MB}dada2_out_${TYP}
+
 
 echo "moving on"

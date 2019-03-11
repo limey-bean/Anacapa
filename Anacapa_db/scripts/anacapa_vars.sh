@@ -1,7 +1,7 @@
-# Variables file for anacapa_release_V1		09-15-2017
-# Developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), with contributions from Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
+# Variables file for anacapa
+# Developed and written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), and Baochen Shi (biosbc@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zack.j.gold@gmail.com), with contributions from Rachel Turba (rturba@ucla.edu) and Rachel Meyer (rsmeyer@ucla.edu).
 # Developed at UCLA for the University of California Conservation Consortium's CALeDNA Program
-# Last Updated 9-15-2017
+# Last Updated 04-10-2018
 
 ###########################
 # Parameters
@@ -45,13 +45,20 @@ HS_R_TRIM="25"	# amount to trim from the 3' end of the HiSeq R read
 MIN_LEN="100"   # minimum read length to pass filter
 MIN_QUAL="35"   # minimum read quality to pass filter
 
+#####
+# Dada2
+#####
+
+MIN_ASV_ABUNDANCE="0" # Keep ASV's with minimum sequence counts above 0
+
 ######
 # BLCA Parameters
 ######
 
 BOOTSTRAP="100" # BLCA number of times to bootstrap
 MUSMATCH="1" # Muscle alignment match score
-MUSMISMATCH="2.5" # Muscle alignment mismatch score
+MUSMISMATCH="-2.5" # Muscle alignment mismatch score
 MUSGAPP="-2" # Muscle alignment gap penalty
 
 BLCAB="0.8" # percent of missmatch allowed between the qury and subject, for BLCA
+BLCAperMINlen="0.8" #min percent length of subject relative to query
