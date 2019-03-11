@@ -256,13 +256,12 @@ Arguments:
 	-e	File path to a list of minimum length(s) required for paired F and R reads to overlap
 		  (length of the locus - primer length + 20 bp). The user should take into account variability in amplicon
 		    region (e.g.The amplicon size for 18S 1389f-1510r is ~260 +/- 50 bp) and make appropriate allowances.
-        e.g.  LENGTH_16S="235"
-              LENGTH_18S="200"
-  -j  Multithreading (True/False) in dada2. Multithreading is turned on by default.
-      If the user wishes to process a single sample turn multithreading to FALSE.
-  -k  Path to file with alternate HPC job submission parameters:
-      default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh
-      modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh
+          e.g.  LENGTH_16S="235"
+                LENGTH_18S="200"
+                -j  Multithreading (True/False) in dada2. Multithreading is turned on by default.
+                -k  Path to file with alternate HPC job submission parameters:
+                  default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh
+                  modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh
 
  - Other:
 	-h	Shows program usage then quits
