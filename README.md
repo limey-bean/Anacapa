@@ -258,7 +258,6 @@ Arguments:
 		    region (e.g.The amplicon size for 18S 1389f-1510r is ~260 +/- 50 bp) and make appropriate allowances.
           e.g.  LENGTH_16S="235"
                 LENGTH_18S="200"
-                -j  Multithreading (True/False) in dada2. Multithreading is turned on by default.
                 -k  Path to file with alternate HPC job submission parameters:
                   default file = ~/Anacapa_db/scripts/Hoffman2_HPC_header.sh
                   modifiable template file = ~/Anacapa_db/scripts/anacapa_qsub_templates.sh
