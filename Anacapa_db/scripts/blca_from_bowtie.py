@@ -47,6 +47,8 @@ class SamEntry(object):
         total_match_count, total_count = self.calulate_match_count(self.md_z_flags)
         self.identity_ratio_old = total_match_count / total_count
         self.identity_ratio = total_match_count / float(len(self.seq))
+        
+        self.soft_clipped_ratio = self.cigar_total_soft_clipping() / total_count
 
         self.total_match = total_match_count
 
@@ -68,6 +70,14 @@ class SamEntry(object):
     # I am not completely sure if this is the logic that you want to use for checking unmapped at the ends
     # This function returns the max S at either end of the CIGAR score, 0  if there is no S at both ends
     def cigar_max_s(self):
+        beginning_s, ending_s = self.get_soft_clipping()
+        return max(beginning_s, ending_s)
+    
+    def cigar_total_soft_clipping(self):
+        beginning_s, ending_s = self.get_soft_clipping()
+        return beginning_s + ending_s
+
+    def get_soft_clipping(self):
         tokenizer = re.compile(r'(?:\d+)|(?:[A-Z=])')
         cigar_elements = tokenizer.findall(self.cigar)
 
@@ -81,7 +91,8 @@ class SamEntry(object):
         else:
             ending_s = 0
 
-        return max(beginning_s, ending_s)
+        return (beginning_s, ending_s)
+
 
 
 class NotAvailableHandler(object):
@@ -115,6 +126,7 @@ taxoptions = parser.add_argument_group('taxonomy profiling options [filtering of
 taxoptions.add_argument("-n","--nper",help="number of times to bootstrap. Default: 100",type=int,default=100)
 taxoptions.add_argument("-b","--iset",help="minimum identity score to include", type=float, default=0.8)
 taxoptions.add_argument('-l', '--length', help="minimum length of hit to include relative to query", type=float, default=0.5)
+taxoptions.add_argument('-s', '--softclipping', help='maximum soft clipped ratio to include', type=float, default=0.2)
 ##### Alignment control arguments #####
 alignoptions = parser.add_argument_group('alignment control arguments')
 alignoptions.add_argument("-m","--match",default=1.0,help="alignment match score. Default: 1",type=float)
@@ -141,6 +153,7 @@ outfile_name = args.outfile or (sam_file_name + '.blca.out')
 reference_fasta = args.reference
 tax = args.tax
 muscle_path = args.muscle
+max_soft_clipping_allowed = args.softclipping
 
 levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
 
@@ -279,7 +292,9 @@ with open(sam_file_name) as sam_file:
         pieces = line.strip().split('\t')
         entry = SamEntry(pieces)
 
-        if entry.identity_ratio < iset:
+        if entry.identity_ratio_old < iset:
+            possible_rejects.add(entry.qname)
+        if entry.soft_clipped_ratio > max_soft_clipping_allowed:
             possible_rejects.add(entry.qname)
         elif entry.rname not in reference_sequences:
             possible_rejects.add(entry.qname)
