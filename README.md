@@ -15,12 +15,18 @@ __Anacapa__ is an eDNA toolkit that allows users to build comprehensive referenc
 
 ## High Level overview
 
-__Anacapa__ works in four steps. 1) building reference libraries using [__CRUX__](https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools) 2) running quality control (QC) and assigning Amplicon Sequence Variants (ASV) using Dada2 (Sequence QC and ASV Parsing), 3) assigning taxonomy using Bowtie 2 and a Bowtie 2 specific Bayesian Least Common Ancestor (BLCA) (Assignment) and 4) Running exploratory data analysis and generating ecological diversity summary statistics for a set of samples (ranacapa).  
+__Anacapa__ includes four modules:
+
+1) building reference libraries using [__CRUX__](https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools)
+2) running quality control (QC) and assigning Amplicon Sequence Variants (ASV) using Dada2 (Sequence QC and ASV Parsing),   
+3) assigning taxonomy using Bowtie 2 and a Bowtie 2 specific Bayesian Least Common Ancestor (BLCA) (Assignment) and   
+4) Running exploratory data analysis and generating ecological diversity summary statistics for a set of samples using [ranacapa](https://f1000research.com/articles/7-1734/v1).  
 
 #### Step 1: CRUX: Creating Reference libraries Using eXisting tools
-For full details on building reference libraries using CRUX, please refer to the following: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools.
 
-This first part of the toolkit generates reference libraries needed for taxonomic assignment using __CRUX__.  The output of __CRUX__ consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during the BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt __CRUX__ reference libraries (12S - MiFish, 16S - EMP, 18S V4, 18S V8-9, 18S - EMP, PITS - Plant ITS2, CO1 and FITS - Fungal ITS [see Table 1] can be found at Dryad [https://datadryad.org]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta files, taxonomy files, and a Bowtie 2 index library.
+For full details on building reference libraries using CRUX, please refer to the CRUX Github Repository: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools.
+
+This first part of the Anacapa toolkit uses __CRUX__ to generate reference libraries needed for taxonomic assignment.  Briefly,the output of __CRUX__ consists of two reference libraries, either unfiltered or filtered. Unfiltered libraries contain every dereplicated read found during BLAST searches. The filtered library contains only reads with robust taxonomic assignments. Specifically we refer to robust taxonomic assignments as any reads that do not have the following in their taxonomic path: 'uncultured', 'environmental', 'sample', or 'NA;NA;NA;NA'. Prebuilt __CRUX__ reference libraries (12S - MiFish, 16S - EMP, 18S V4, 18S V8-9, 18S - EMP, PITS - Plant ITS2, CO1 and FITS - Fungal ITS) [see Table 1] can be found at Dryad [https://datadryad.org]. Each library contains unique metabarcode specific reads that correspond to NCBI accession version numbers. Libraries consist of fasta files, taxonomy files, and a Bowtie 2 index library.
 
 <p align="center">
 <img src="/figures-and-tables-for-the-Github/Table_1.png">
@@ -34,14 +40,14 @@ We acknowledge that users may wish to use their own custom sequences libraries t
 <img src="dada2_QC_flow.png" height="600" width="300">
 </p>
 
-This next step of the toolkit aims to conduct standard sequence QC and then generate amplicon sequence variants (ASV) from Illumina data using **dada2** (Callahan et al. 2016). ASVs are a novel solution to identifying biologically informative unique sequences in metabarcoding samples that replaces the operational taxonomic unit (OTU) framework. Unlike OTUs which cluster sequences using an arbitrary sequence similarity (ex 97%), ASVs are unique sequence reads determined using Bayesian probabilities of known sequencing error. These unique sequences can be as little as 2 bp different, providing improved taxonomic resolution and an increase in observed diversity. Please see (Callahan et al. 2016, Amir et al. 2017) for further discussion.
+This next step of the toolkit aims to conduct standard sequence QC and generate amplicon sequence variants (ASV) from Illumina data using **dada2** (Callahan et al. 2016). ASVs are a novel solution to identifying biologically informative unique sequences in metabarcoding samples that replaces the operational taxonomic unit (OTU) framework. Unlike OTUs, which cluster sequences using an arbitrary sequence similarity (ex 97%), ASVs are unique sequence reads determined using Bayesian probabilities of known sequencing error. These unique sequences can be as little as 2 bp different, providing improved taxonomic resolution and an increase in observed diversity. Please see (Callahan et al. 2016, Amir et al. 2017) for further discussion.
 
-An strong advantage of the __Anacapa__ toolkit is that is can simultaneously processes raw fastq reads for samples with single or multiple metabarcode targets generated on Illumina HiSeq and MiSeq machines. It is also not required that all samples contain reads for each metabarcode, thus allowing users to combine multiple projects or targets on the same sequencing run while only running the pipeline once.
+A key advantage of the __Anacapa__ toolkit is that is can simultaneously processes raw fastq reads for samples with single or multiple metabarcode targets generated on Illumina HiSeq and MiSeq machines. It is also not required that all samples contain reads for each metabarcode, thus allowing users to combine multiple projects or targets on the same sequencing run while only running the pipeline once.
 
-__Anacapa__ takes raw **demultiplexed** Illumina fastq format reads (e.g. each sample has a pair of forward and reverse fastq files) and preprocesses them to assess file corruption (**md5sum**) and uncompresses (**gunzip**) and then renames the files for readability. The QC portion of this script trims nextera and truseq adapters (**cutadapt**; Martin 2011), removes low quality reads **Fastx-toolkit**, and sorts reads by metabarcode primer sequence (**cutadapt**). Reads are trimmed using **cutadapt** (Martin 2011) to remove sequencing adapters from the 5' ends and sequencing adapters and primers from the 3' ends of reads.  **Fastx-toolkit** (Gordon and Hannon, 2010) is then used to processed for quality control. Reads are retained if they have a Q ≥ 35 and are at least 100bp after adapter and 3' primer trimming. **cutadapt** is next used to sort reads by primer, and to trim additional basepairs from the end of read to increase quality going into **dada2**. Prior to running **dada2** a custom python script sorts reads into unpaired F, unpaired R and unmerged read files.  The files are passed separately into **dada2*** where they are denoised, dereplicated, merged (where possible), and  chimeric sequences removed from the data set.  
+__Anacapa__ takes raw **demultiplexed** Illumina fastq format reads (e.g. each sample has a pair of forward and reverse fastq files) and preprocesses them to assess file corruption (md5sum) and uncompresses and renames the files for readability. The QC portion of this script trims nextera and truseq adapters, removes low quality reads, and sorts reads by metabarcode primer sequence. Reads are trimmed using **cutadapt** (Martin 2011) to remove sequencing adapters from the 5' ends and sequencing adapters and primers from the 3' ends of reads.  **Fastx-toolkit** (Gordon and Hannon, 2010) is then used to processed for quality control. Reads are retained if they have a Q ≥ 35 and are at least 100bp after adapter and 3' primer trimming. **cutadapt** is next used to sort reads by primer, and to trim additional basepairs from the end of read to increase quality going into **dada2**. Prior to running **dada2**, a custom python script sorts reads into unpaired Forward, unpaired Reverse, and unmerged read files.  The files are passed separately into **dada2**, where sequences are denoised, dereplicated, merged (where possible), and  chimeric sequences removed from the data set.  
 
 
-The input is raw Illumina metabarcode sequence data [\*.fastq.gz] reads and outputs are summary tables of ASVs and taxonomy count data for multiple samples and metabarcodes (ASV table). Successful implementation of this step requires: 1) raw illumina sequencing data and 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data.
+The input is raw Illumina metabarcode sequence data `[\*.fastq.gz]` reads, and outputs are summary tables of ASVs and taxonomy count data for multiple samples and metabarcodes (ASV table). Successful implementation of this step requires: 1) raw illumina sequencing data and 2) a set of fasta formatted forward and reverse fasta format files that include the metabarcoding primers used to generate sequence data.
 
 #### Step 3: Taxonomic Assignment using Bowtie 2 and BLCA
 
@@ -49,11 +55,13 @@ The input is raw Illumina metabarcode sequence data [\*.fastq.gz] reads and outp
 <img src="Anacapa_class_flow.png" height="400" width="400">
 </p>
 
-This next module of the pipeline assigns taxonomy to ASVs using **Bowtie 2** and a Bowtie 2 specific **Bayesian Least Common Ancestor** (**BLCA**) algorithm.
+This next module of the Anacapa toolkit assigns taxonomy to ASVs using **Bowtie 2** and a Bowtie 2 specific **Bayesian Least Common Ancestor** (**BLCA**) algorithm.
 
-The **Anacapa** toolkit determines the best taxonomic hits for an ASV using **Bowtie 2** (Langmead and Salzberg, 2012). **Anacapa** considers paired merged, paired unmerged, and unpaired sequencing reads, and thus a fast and flexible read aligner, such as Bowtie 2, is required to handle all four read types. This script uses Bowtie 2, **CRUX** reference libraries, and **BLCA** to then assign taxonomy. All reads are first globally aligned against the **CRUX** database using **Bowtie 2**. Any reads that fail to align are then aligned locally. The best hits (the top 100 **Bowtie 2** returns) are then processed with **BLCA** script to assign taxonomy. The **Bowtie 2 BLCA** algorithm was adapted from https://github.com/qunfengdong/BLCA. **BLCA** uses pairwise sequence alignment to calculate sequence similarity between query sequences and reference library hits. Taxonomy is assigned based on the lowest common ancestor of multiple reference library hits for each query sequence. The reliability of each taxonomic assignment is then evaluated through bootstrap confidence scores [Gao et al. 2017].
+The **Anacapa** toolkit determines the best taxonomic hits for an ASV using **Bowtie 2** (Langmead and Salzberg, 2012). **Anacapa** considers paired merged, paired unmerged, and unpaired sequencing reads, and thus a fast and flexible read aligner, such as Bowtie 2, is required to handle all four read types.  
 
-Successful implementation of this script requires an ASV table (summary table) with the following columns (ASV number, Sequence, Samples). The output is multiple ASV tables for each metabarcode and both global and local alignments.
+All reads are first globally aligned against the **CRUX** database using **Bowtie 2**. Any reads that fail to align are then aligned locally. The best hits (the top 100 **Bowtie 2** returns) are then processed with **BLCA** script to assign taxonomy. The **Bowtie 2 BLCA** algorithm was adapted from https://github.com/qunfengdong/BLCA. **BLCA** uses pairwise sequence alignment to calculate sequence similarity between query sequences and reference library hits. Taxonomy is assigned based on the lowest common ancestor of multiple reference library hits for each query sequence. The reliability of each taxonomic assignment is then evaluated through bootstrap confidence scores [Gao et al. 2017].
+
+Successful implementation of this script requires an ASV table (summary table) with the following columns : ASV number, Sequence, and one column for each sample in the study. The output is multiple ASV tables for each metabarcode, and both global and local alignments.
 
 
 #### Step 4: ranacapa: Data exploration
@@ -65,9 +73,7 @@ The last step of the **Anacapa** Pipeline conducts exploratory data analysis to 
 
 Anacapa Toolkit scripts for CRUX, Anacapa Sequence QC and ASV Parsing using dada2 and Taxonomic Assignment using Bowtie 2 and BLCA can be run locally on a personal computer (-l see optional arguments below), or in a High Performance Computing Environment (HPC).
 
-To install Anacapa and its dependencies see the instructions below. Alternativley to Anacapa can be downloaded with all of its dependencies in a Singularity container that was developed specifically for Anacapa by Code for Science and Society (https://codeforscience.org/).
-
- For instructions on how to run Anacapa in the Singularity container in a linux environment or on a MAC or PC in a virtual environment on see https://github.com/datproject/anacapa-container and  http://www.ucedna.com/software/.
+To install Anacapa and its dependencies see the instructions below. Alternatively, Anacapa can be downloaded with all of its dependencies in a Singularity container that was developed specifically for Anacapa by Code for Science and Society (https://codeforscience.org/).For instructions on how to run Anacapa in the Singularity container in a linux environment or on a Mac or PC in a virtual environment on see https://github.com/datproject/anacapa-container and  http://www.ucedna.com/software/.
 
  __ranacapa__ instructions and scripts can be accessed at https://github.com/gauravsk/ranacapa.
 
@@ -76,6 +82,7 @@ To install Anacapa and its dependencies see the instructions below. Alternativle
 
 ## Required Programs and Dependencies
 ### Anacapa_db folder
+
   * **anacapa_QC_dada2.sh**
 	  * _This script runs  QC and ASV generation to generate ASV tables_
   * **anacapa_classifier.sh**
@@ -163,22 +170,26 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
   install.packages("rpart")
   ```
 
-  Installing these dependencies may take a very long time so no worries...
+  Installing these dependencies may take a very long time.
 
-  If you are have problems installing RcppParallel do the following steps:
+  If you are have problems installing RcppParallel, run the following commands:
   ```
   module load R/3.4.0
   R
+  
   # at the R prompt issue:
   install.packages('BH',dependencies=TRUE)
-  # exit R and issue:
+  
+  # exit R and run:
   export tbb_os=linux
   git clone --depth 1 https://github.com/RcppCore/RcppParallel
+  
   # edit the file RcppParallel/src/tbb/build/linux.gcc.inc
   # and comment out (by adding a # symbol at the beginning of each line) the following lines:
   ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[8-9]|[5-9])"))
     RTM_KEY = -mrtm
   endif
+  
   # save the file and issue:
   R CMD build RcppParallel
   R CMD INSTALL RcppParallel_4.4.1.tar.gz
@@ -190,7 +201,7 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
   module load anaconda
   pip install biopython --user
   ```
-  "user" not your user name
+  Replace "`user`" with your Hoffman2 user name
 
 ### CRUX Databases
 Download taxonomy reference libraries from this google drive folder:
@@ -203,14 +214,15 @@ To run anacapa_classifier.sh, the CRUX formatted reference library folders must 
 
 ## Running Anacapa
 
-__Anacapa__ must be run in either local (-l) or HPC default mode (requires -u argument). Local mode is for personal computers and servers.  Default mode is for High Performance Computing environments with Univa Grid Engine or similar scheduler (e.g. Hoffman2 at UCLA).
+__Anacapa__ must be run in either local (`-l`) or HPC default mode (`-u`). Local mode is for personal computers and servers.  Default mode is for High Performance Computing environments with Univa Grid Engine or similar scheduler (e.g. Hoffman2 at UCLA).
 
 ### Preparing the anacapa_config.sh file
 
-Before running the __Anacapa__ toolkit you need to double check the anacapa_config.sh file and update the appropriate paths. For running local mode on a personal machine or virutual box set CUTADAPT ="cutadapt",and  MUSCLE="muscle"; replace all other values to "". Double check that all dependencies work in the terminal. This is the key for success.
+Before running the __Anacapa__ toolkit, please double-check the `anacapa_config.sh` file and update the appropriate paths. For running local mode on a personal machine or virutual box set `CUTADAPT ="cutadapt"`, and  `MUSCLE="muscle"`; replace all other values to `""`. Double check that all dependencies work in the terminal. This is the key for success.
 
 
 ### Running _anacapa_QC_dada2.sh_
+
 ```
 /bin/bash ~/Anacapa_db/anacapa_QC_dada2.sh -h
 
@@ -282,15 +294,15 @@ __NOTE__: Script does not check that the user provided optional argument are wit
 #### The output of the anacapa_QC_dada2.sh is as follows:
   * Output directory based on user designated name
     * Subdirectories for each metabarcode target
-	   * Subdirectory for clean sorted data called "<metabarcode>\_sort_by_read_type"
-     * Subdirectory for dada2 processed data called "<metabarcode>dada2_out"
-    * Subdirectory for run information called "Run_info"
-      * Subdirectory for cutadapt logs called "cutadapt_out"
-      * Subdirectory for cutadapt primers and adapters called "cutadapt_primers_and_adapters"
-      * Subdirectory for dada2 logs called "dada2_out"
+	   * Subdirectory for clean sorted data called "`<metabarcode>\_sort_by_read_type`"
+     * Subdirectory for dada2 processed data called "`<metabarcode>dada2_out`"
+    * Subdirectory for run information called "`Run_info`"
+      * Subdirectory for cutadapt logs called "`cutadapt_out`"
+      * Subdirectory for cutadapt primers and adapters called "`cutadapt_primers_and_adapters`"
+      * Subdirectory for dada2 logs called "`dada2_out`"
       * the .md5sum file for the raw sequences
-      * Subdirectory for general Anacapa run logs called  "run_logs"
-      * Subdirectory Anacapa run scripts called "runscripts"
+      * Subdirectory for general Anacapa run logs called  "`run_logs`"
+      * Subdirectory Anacapa run scripts called "`runscripts`"
 
 ### Running _anacapa_classifier.sh_
 ```
@@ -349,7 +361,7 @@ __NOTE__: Script does not check that the user provided optional argument are wit
 #### The output of the anacapa_classifier.sh is as follows:
   * In the output directory based on user designated name
     * In the subdirectories for each metabarcode target
-      * Subdirectory containing the the taxonomy output files called <metabarcode>\_taxonomy_tables
+      * Subdirectory containing the the taxonomy output files called `<metabarcode>\_taxonomy_tables`
         * Two files that summaries of the taxonomic classification
           * The Brief file contains for each ASV: ASV number, the counts per read, full taxonomic path, the bootstrap confidence for each taxonomic rank, and the NCBI accession numbers for all reads included generating the taxonomic classification
           * The Detailed file contains for each ASV: ASV number, ASV sequence(s),  the counts per read, whether the Bowtie 2 found a single or multiple hits, the type of Bowtie 2 alignment (global/end-to-end or local), the best percent id for a Bowtie 2 hit, the length of the input sequence, full taxonomic path, the bootstrap confidence for each taxonomic rank, and the NCBI accession numbers for all reads included generating the taxonomic classification
