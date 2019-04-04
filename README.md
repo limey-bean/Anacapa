@@ -214,7 +214,9 @@ To run anacapa_classifier.sh, the CRUX formatted reference library folders must 
 
 ## Running Anacapa
 
-__Anacapa__ must be run in either local (`-l`) or HPC default mode (`-u`). Local mode is for personal computers and servers.  Default mode is for High Performance Computing environments with Univa Grid Engine or similar scheduler (e.g. Hoffman2 at UCLA).
+*Note*: A complete set of input files required for Anacapa and the output files produced by Anacapa are available [here](https://github.com/limey-bean/Anacapa/tree/New-Master/Example_data).
+
+__Anacapa__ can be run in either local (`-l`) or HPC default mode (`-u`). Local mode is for personal computers and servers.  Default mode is for High Performance Computing environments with Univa Grid Engine or similar scheduler (e.g. Hoffman2 at UCLA).
 
 ### Preparing the anacapa_config.sh file
 
