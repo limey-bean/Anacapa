@@ -176,20 +176,20 @@ To run __Anacapa__, you need to install or be able to load (in the case of an HP
   ```
   module load R/3.4.0
   R
-  
+
   # at the R prompt issue:
   install.packages('BH',dependencies=TRUE)
-  
+
   # exit R and run:
   export tbb_os=linux
   git clone --depth 1 https://github.com/RcppCore/RcppParallel
-  
+
   # edit the file RcppParallel/src/tbb/build/linux.gcc.inc
   # and comment out (by adding a # symbol at the beginning of each line) the following lines:
   ifneq (,$(shell gcc -dumpversion | egrep  "^(4\.[8-9]|[5-9])"))
     RTM_KEY = -mrtm
   endif
-  
+
   # save the file and issue:
   R CMD build RcppParallel
   R CMD INSTALL RcppParallel_4.4.1.tar.gz
@@ -239,7 +239,7 @@ The purpose of these script is to process raw fastq or fastq.gz files from an Il
 
 Arguments:
 - Required for either mode:
-	-i	path to .fastq.gz files, if files are already compressed use flag -g (see below)
+	-i	path to .fastq.gz files, if files are already uncompressed use flag -g (see below)
 	-o	path to output directory
 	-d	path to Anacapa_db
 	-a	Illumina adapter type: nextera, truseq, or NEBnext
