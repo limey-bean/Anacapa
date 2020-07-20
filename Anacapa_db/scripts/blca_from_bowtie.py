@@ -4,7 +4,6 @@
 # Example usage:
 # python blca_from_bowtie.py -i take_3_local.sam -r CO1_labeled_taxonomy.txt -q CO1_.fasta -b 0.8 -p path/to/muscle
 from __future__ import print_function, division
-import time
 
 import sys
 import os
@@ -316,14 +315,9 @@ with open(sam_file_name) as sam_file:
 rejects = possible_rejects.difference(set(input_sequences))
 print("> 3 > Read in bowtie2 output!")
 
-start_time = time.time()
 count = 0
 outfile = open(outfile_name, 'w')
-muscle_time = 0.0
-vote_time = 0.0
 for seqn, info in input_sequences.items():
-    if time.time() - start_time > 15:
-        break
     count += 1
 
     if seqn in acc2tax:
@@ -344,14 +338,12 @@ for seqn, info in input_sequences.items():
     fifsa = "\n".join(fifsa)
     # os.system("rm " + seqn + ".dblist")
     ### Run muscle ###
-    muscle_start = time.time()
     proc = subprocess.Popen([muscle_path, '-quiet', '-clw', '-maxiters', '16'], stdout=subprocess.PIPE,
                             stdin=subprocess.PIPE)
     outs, errs = proc.communicate(fifsa.encode('utf-8'))
     # print outs
     # print errs
     # print StringIO.StringIO(outs)
-    muscle_time += time.time() - muscle_start
     alndic = get_dic_from_aln(StringIO(outs.decode('utf-8')))
     # os.system("rm " + seqn + ".hits.fsa")
     # os.system("rm " + seqn + ".muscle")
@@ -363,7 +355,7 @@ for seqn, info in input_sequences.items():
     ### start bootstrap ###
     perdict = {}  # record alignmet score for each iteration
     pervote = {}  # record vote after nper bootstrap
-    vote_start = time.time()
+
     for j in range(nper):
         random_scores = random_aln_score(trunc_alndic, seqn, match, mismatch, ngap)
         perdict[j] = random_scores
@@ -375,7 +367,6 @@ for seqn, info in input_sequences.items():
                 pervote[hit] += vote_share
             else:
                 pervote[hit] = vote_share
-    vote_time += time.time() - vote_start
 
     ### normalize vote by total votes ###
     ttlvote = sum(pervote.values())
@@ -419,8 +410,3 @@ for seqn in rejects:
     outfile.write(seqn + "\tUnclassified\n")
 
 outfile.close()
-print(">> Taxonomy file generated!!")
-print("We did " + str(count))
-print("muscle time " + str(muscle_time))
-print("vote time " + str(vote_time))
-print("ratio " + str(vote_time/muscle_time))
