@@ -3,9 +3,16 @@
 
 # Example usage:
 # python blca_from_bowtie.py -i take_3_local.sam -r CO1_labeled_taxonomy.txt -q CO1_.fasta -b 0.8 -p path/to/muscle
+from __future__ import print_function, division
+import time
+
 import sys
 import os
-import StringIO
+
+if sys.version_info < (3, 0):
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 try:
     from Bio import AlignIO, SeqIO
@@ -47,7 +54,7 @@ class SamEntry(object):
         total_match_count, total_count = self.calulate_match_count(self.md_z_flags)
         self.identity_ratio_old = total_match_count / total_count
         self.identity_ratio = total_match_count / float(len(self.seq))
-        
+
         self.soft_clipped_ratio = self.cigar_total_soft_clipping() / total_count
 
         self.total_match = total_match_count
@@ -72,7 +79,7 @@ class SamEntry(object):
     def cigar_max_s(self):
         beginning_s, ending_s = self.get_soft_clipping()
         return max(beginning_s, ending_s)
-    
+
     def cigar_total_soft_clipping(self):
         beginning_s, ending_s = self.get_soft_clipping()
         return beginning_s + ending_s
@@ -92,7 +99,6 @@ class SamEntry(object):
             ending_s = 0
 
         return (beginning_s, ending_s)
-
 
 
 class NotAvailableHandler(object):
@@ -117,25 +123,27 @@ class NotAvailableHandler(object):
 parser = argparse.ArgumentParser(description='Bayesian-based LCA taxonomic classification method')
 ##### Required arguments #####
 required = parser.add_argument_group('required arguments')
-required.add_argument("-i","--sam", help="Input SAM file",type=str, required=True)
+required.add_argument("-i", "--sam", help="Input SAM file", type=str, required=True)
 required.add_argument('-q', '--reference', help="Reference fasta file", type=str, required=True)
-required.add_argument("-r","--tax", help="reference taxonomy file for the Database",type=str, required=True)
+required.add_argument("-r", "--tax", help="reference taxonomy file for the Database", type=str, required=True)
 
 ##### Taxonomy filtering arguments #####
 taxoptions = parser.add_argument_group('taxonomy profiling options [filtering of hits]')
-taxoptions.add_argument("-n","--nper",help="number of times to bootstrap. Default: 100",type=int,default=100)
-taxoptions.add_argument("-b","--iset",help="minimum identity score to include", type=float, default=0.8)
-taxoptions.add_argument('-l', '--length', help="minimum length of hit to include relative to query", type=float, default=0.5)
+taxoptions.add_argument("-n", "--nper", help="number of times to bootstrap. Default: 100", type=int, default=100)
+taxoptions.add_argument("-b", "--iset", help="minimum identity score to include", type=float, default=0.8)
+taxoptions.add_argument('-l', '--length', help="minimum length of hit to include relative to query", type=float,
+                        default=0.5)
 taxoptions.add_argument('-s', '--softclipping', help='maximum soft clipped ratio to include', type=float, default=0.2)
 ##### Alignment control arguments #####
 alignoptions = parser.add_argument_group('alignment control arguments')
-alignoptions.add_argument("-m","--match",default=1.0,help="alignment match score. Default: 1",type=float)
-alignoptions.add_argument("-f","--mismatch",default=-2.5,help="alignment mismatch penalty. Default: -2.5",type=float)
-alignoptions.add_argument("-g","--ngap",default=-2.0,help="alignment gap penalty. Default: -2",type=float)
+alignoptions.add_argument("-m", "--match", default=1.0, help="alignment match score. Default: 1", type=float)
+alignoptions.add_argument("-f", "--mismatch", default=-2.5, help="alignment mismatch penalty. Default: -2.5",
+                          type=float)
+alignoptions.add_argument("-g", "--ngap", default=-2.0, help="alignment gap penalty. Default: -2", type=float)
 ##### Other arguments #####
 optional = parser.add_argument_group('other arguments')
 optional.add_argument('-p', '--muscle', help='Path to call muscle default: muscle', default='muscle')
-optional.add_argument("-o","--outfile",help="output file name. Default: <fasta>.blca.out",type=str)
+optional.add_argument("-o", "--outfile", help="output file name. Default: <fasta>.blca.out", type=str)
 ##### parse arguments #####
 args = parser.parse_args()
 
@@ -157,13 +165,14 @@ max_soft_clipping_allowed = args.softclipping
 
 levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
 
+
 def check_program(prgname):
     '''Check whether a program has been installed and put in the PATH'''
     path = os.popen("which " + prgname).read().rstrip()
     if len(path) > 0 and os.path.exists(path):
-        print prgname + " is located in your PATH!"
+        print(prgname + " is located in your PATH!")
     else:
-        print "ERROR: " + prgname + " is NOT in your PATH, please set up " + prgname + "!"
+        print("ERROR: " + prgname + " is NOT in your PATH, please set up " + prgname + "!")
         sys.exit(1)
 
 
@@ -204,8 +213,9 @@ def random_aln_score(alndic, query, match, mismatch, ngap):
     '''Randomize the alignment, and calculate the score'''
     nt = ["A", "C", "T", "G", "g", "a", "c", "t"]
     idx = []
-    for i in range(len(alndic.values()[0])):
-        idx.append(random.choice(range(len(alndic.values()[0]))))
+    for i in range(len(list(alndic.values())[0])):
+        idx.append(random.choice(range(len(list(alndic.values())[0]))))
+
     hitscore = {}
     for k, v in alndic.items():
         if k != query:
@@ -220,7 +230,6 @@ def random_aln_score(alndic, query, match, mismatch, ngap):
                 elif (alndic[query][i] in nt) and (v[i] in nt) and (alndic[query][i] != v[i]):
                     hitscore[k] += float(ngap)
     return hitscore
-
 
 def get_gap_pos(query, alndic):
     '''Get the gap position in the alignment'''
@@ -273,15 +282,14 @@ def read_tax_acc(taxfile, not_available_handler):
 ### read in pre-formatted lineage information ###
 na_handler = NotAvailableHandler()
 acc2tax = read_tax_acc(tax, na_handler)
-print "> 1 > Read in taxonomy information!"
+print("> 1 > Read in taxonomy information!")
 
 reference_sequences = {}
 with open(reference_fasta) as f:
     for r in SeqIO.parse(f, "fasta"):
         reference_sequences[r.id] = str(r.seq)
 
-print "> 2 > Read in reference db"
-
+print("> 2 > Read in reference db")
 
 SequenceInfo = namedtuple('SequenceInfo', ['seq', 'hits'])
 ### read in input fasta file ###
@@ -298,7 +306,7 @@ with open(sam_file_name) as sam_file:
             possible_rejects.add(entry.qname)
         elif entry.rname not in reference_sequences:
             possible_rejects.add(entry.qname)
-        elif len(reference_sequences[entry.rname])/float(len(entry.seq)) < min_length:
+        elif len(reference_sequences[entry.rname]) / float(len(entry.seq)) < min_length:
             possible_rejects.add(entry.qname)
         elif entry.qname not in input_sequences:
             input_sequences[entry.qname] = SequenceInfo(seq=entry.seq, hits=[entry.rname])
@@ -306,14 +314,21 @@ with open(sam_file_name) as sam_file:
             input_sequences[entry.qname].hits.append(entry.rname)
 
 rejects = possible_rejects.difference(set(input_sequences))
-print "> 3 > Read in bowtie2 output!"
+print("> 3 > Read in bowtie2 output!")
 
-
+start_time = time.time()
+count = 0
 outfile = open(outfile_name, 'w')
+muscle_time = 0.0
+vote_time = 0.0
 for seqn, info in input_sequences.items():
+    if time.time() - start_time > 15:
+        break
+    count += 1
+
     if seqn in acc2tax:
-        print "[WARNING] Your sequence " + seqn + " has the same ID as the reference database! Please correct it!"
-        print "...Skipping sequence " + seqn + " ......"
+        print("[WARNING] Your sequence " + seqn + " has the same ID as the reference database! Please correct it!")
+        print("...Skipping sequence " + seqn + " ......")
         outfile.write(seqn + "\tSkipped\n")
         continue
 
@@ -322,19 +337,22 @@ for seqn, info in input_sequences.items():
     fifsa = []
     for hit in info.hits:
         if hit not in reference_sequences:
-            print "Missing reference sequence for " + hit
+            print("Missing reference sequence for " + hit)
             continue
         fifsa.append(">{}\n{}\n".format(hit, reference_sequences[hit]))
     fifsa.append(">" + seqn + "\n" + info.seq)
     fifsa = "\n".join(fifsa)
     # os.system("rm " + seqn + ".dblist")
     ### Run muscle ###
-    proc = subprocess.Popen([muscle_path, '-quiet', '-clw'], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-    outs, errs = proc.communicate(fifsa)
+    muscle_start = time.time()
+    proc = subprocess.Popen([muscle_path, '-quiet', '-clw', '-maxiters', '16'], stdout=subprocess.PIPE,
+                            stdin=subprocess.PIPE)
+    outs, errs = proc.communicate(fifsa.encode('utf-8'))
     # print outs
     # print errs
     # print StringIO.StringIO(outs)
-    alndic = get_dic_from_aln(StringIO.StringIO(outs))
+    muscle_time += time.time() - muscle_start
+    alndic = get_dic_from_aln(StringIO(outs.decode('utf-8')))
     # os.system("rm " + seqn + ".hits.fsa")
     # os.system("rm " + seqn + ".muscle")
     #    	print "Processing:",k1
@@ -345,17 +363,19 @@ for seqn, info in input_sequences.items():
     ### start bootstrap ###
     perdict = {}  # record alignmet score for each iteration
     pervote = {}  # record vote after nper bootstrap
+    vote_start = time.time()
     for j in range(nper):
         random_scores = random_aln_score(trunc_alndic, seqn, match, mismatch, ngap)
         perdict[j] = random_scores
         max_score = max(random_scores.values())
         hits_with_max_score = [k3 for k3, v3 in random_scores.items() if v3 == max_score]
-        vote_share = 1.0/len(hits_with_max_score)
+        vote_share = 1.0 / len(hits_with_max_score)
         for hit in hits_with_max_score:
             if hit in pervote:
                 pervote[hit] += vote_share
             else:
                 pervote[hit] = vote_share
+    vote_time += time.time() - vote_start
 
     ### normalize vote by total votes ###
     ttlvote = sum(pervote.values())
@@ -370,7 +390,7 @@ for seqn, info in input_sequences.items():
     for hit in orgscore.keys():
         short_hit_name = hit.split(".")[0]
         if short_hit_name not in acc2tax:
-            print "Missing taxonomy info for ", short_hit_name
+            print("Missing taxonomy info for ", short_hit_name)
             continue
         hit_taxonomy = acc2tax[short_hit_name]
         for level in levels:
@@ -399,4 +419,8 @@ for seqn in rejects:
     outfile.write(seqn + "\tUnclassified\n")
 
 outfile.close()
-print ">> Taxonomy file generated!!"
+print(">> Taxonomy file generated!!")
+print("We did " + str(count))
+print("muscle time " + str(muscle_time))
+print("vote time " + str(vote_time))
+print("ratio " + str(vote_time/muscle_time))
