@@ -143,6 +143,9 @@ alignoptions.add_argument("-g", "--ngap", default=-2.0, help="alignment gap pena
 optional = parser.add_argument_group('other arguments')
 optional.add_argument('-p', '--muscle', help='Path to call muscle default: muscle', default='muscle')
 optional.add_argument("-o", "--outfile", help="output file name. Default: <fasta>.blca.out", type=str)
+optional.add_argument("--muscle_use_diags", help="pass the diag argument to muscle", action='store_true')
+optional.add_argument("--muscle_max_iterations", help="set the max number of iterations for muscle", type=int, default=16)
+
 ##### parse arguments #####
 args = parser.parse_args()
 
@@ -161,6 +164,8 @@ reference_fasta = args.reference
 tax = args.tax
 muscle_path = args.muscle
 max_soft_clipping_allowed = args.softclipping
+muscle_use_diags = args.muscle_use_diags
+muscle_max_iterations = args.muscle_max_iterations
 
 levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
 
@@ -338,9 +343,12 @@ for seqn, info in input_sequences.items():
     fifsa = "\n".join(fifsa)
     # os.system("rm " + seqn + ".dblist")
     ### Run muscle ###
-    proc = subprocess.Popen([muscle_path, '-quiet', '-clw', '-maxiters', '16'], stdout=subprocess.PIPE,
-                            stdin=subprocess.PIPE)
+    muscle_call = [muscle_path, '-quiet', '-clw', '-maxiters',  str(muscle_max_iterations)]
+    if muscle_use_diags:
+        muscle_call.append('-diags')
+    proc = subprocess.Popen(muscle_call, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     outs, errs = proc.communicate(fifsa.encode('utf-8'))
+
     # print outs
     # print errs
     # print StringIO.StringIO(outs)
