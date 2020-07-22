@@ -31,7 +31,7 @@ library("stringr")
 df <- read_delim(inputfile, delim = "\t" )
 
 # ignore the first column and for each row with the same taxonomic path, sum the counts per column
-by_taxon <- df %>% mutate(sum.taxonomy = stringr::str_replace_all(as.character(`sum taxonomy`), ";;", ";NA;")) %>% 
+by_taxon <- df %>% mutate(sum.taxonomy = stringr::str_replace_all(as.character(`sum.taxonomy`), ";;", ";NA;")) %>%
   group_by(sum.taxonomy) %>% summarize_if(is.numeric, sum)
 
 # export summarized file

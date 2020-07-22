@@ -26,7 +26,7 @@ def reformat_summary(summary_file_name, output_file_name, cutoff):
     previous_header = summary[0].strip().split('\t')
     taxonomy_index = previous_header.index('taxonomy')
     confidence_index = previous_header.index('taxonomy_confidence')
-    header = previous_header[:taxonomy_index] + ['sum taxonomy']
+    header = previous_header[:taxonomy_index] + ['sum.taxonomy']
     output = open(output_file_name + '.tmp', 'w')
     output.write('\t'.join(header) + '\n')
 
