@@ -136,6 +136,7 @@ alignoptions.add_argument("-g","--ngap",default=-2.0,help="alignment gap penalty
 optional = parser.add_argument_group('other arguments')
 optional.add_argument('-p', '--muscle', help='Path to call muscle default: muscle', default='muscle')
 optional.add_argument("-o","--outfile",help="output file name. Default: <fasta>.blca.out",type=str)
+optional.add_argument('--continue_mode', help="continue from a previous run by appending to the same output file", action='store_true')
 ##### parse arguments #####
 args = parser.parse_args()
 
@@ -154,6 +155,7 @@ reference_fasta = args.reference
 tax = args.tax
 muscle_path = args.muscle
 max_soft_clipping_allowed = args.softclipping
+continue_mode = args.continue_mode
 
 levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
 
@@ -308,9 +310,19 @@ with open(sam_file_name) as sam_file:
 rejects = possible_rejects.difference(set(input_sequences))
 print "> 3 > Read in bowtie2 output!"
 
+already_assigned = set()
+if continue_mode:
+    for line in open(outfile_name):
+        already_assigned.add(line.split('\t')[0])
 
-outfile = open(outfile_name, 'w')
+    outfile = open(outfile_name, 'a')
+else:
+    outfile = open(outfile_name, 'w')
+
 for seqn, info in input_sequences.items():
+    if seqn in already_assigned:
+        continue
+
     if seqn in acc2tax:
         print "[WARNING] Your sequence " + seqn + " has the same ID as the reference database! Please correct it!"
         print "...Skipping sequence " + seqn + " ......"
