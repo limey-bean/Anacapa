@@ -142,7 +142,9 @@ alignoptions.add_argument("-g", "--ngap", default=-2.0, help="alignment gap pena
 ##### Other arguments #####
 optional = parser.add_argument_group('other arguments')
 optional.add_argument('-p', '--muscle', help='Path to call muscle default: muscle', default='muscle')
-optional.add_argument("-o", "--outfile", help="output file name. Default: <fasta>.blca.out", type=str)
+
+optional.add_argument("-o","--outfile",help="output file name. Default: <fasta>.blca.out",type=str)
+optional.add_argument('--continue_mode', help="continue from a previous run by appending to the same output file", action='store_true')
 optional.add_argument("--muscle_use_diags", help="pass the diag argument to muscle", action='store_true')
 optional.add_argument("--muscle_max_iterations", help="set the max number of iterations for muscle", type=int, default=16)
 
@@ -164,8 +166,10 @@ reference_fasta = args.reference
 tax = args.tax
 muscle_path = args.muscle
 max_soft_clipping_allowed = args.softclipping
+continue_mode = args.continue_mode
 muscle_use_diags = args.muscle_use_diags
 muscle_max_iterations = args.muscle_max_iterations
+
 
 levels = ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]
 
@@ -318,6 +322,23 @@ with open(sam_file_name) as sam_file:
             input_sequences[entry.qname].hits.append(entry.rname)
 
 rejects = possible_rejects.difference(set(input_sequences))
+
+
+print "> 3 > Read in bowtie2 output!"
+
+already_assigned = set()
+if continue_mode:
+    for line in open(outfile_name):
+        already_assigned.add(line.split('\t')[0])
+
+    outfile = open(outfile_name, 'a')
+else:
+    outfile = open(outfile_name, 'w')
+
+for seqn, info in input_sequences.items():
+    if seqn in already_assigned:
+        continue
+
 print("> 3 > Read in bowtie2 output!")
 
 count = 0
