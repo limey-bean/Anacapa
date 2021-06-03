@@ -3,7 +3,6 @@
 </p>
 
 # The Anacapa Toolkit
-
 ### last updated 11-06-2018
 
 #### Written by Emily Curd (eecurd@g.ucla.edu), Jesse Gomer (jessegomer@gmail.com), Gaurav Kandlikar (gkandlikar@ucla.edu), Zack Gold (zjgold@ucla.edu), Max Ogden (max@maxogden.com), Lenore Pipes lpipes@berkeley.edu), and Baochen Shi (biosbc@gmail.com).
@@ -371,3 +370,7 @@ __NOTE__: Script does not check that the user provided optional argument are wit
         * Within each subdirectory there are two files
           * A raw taxonomy file that gives the ASV number, the count per sample and the taxonomic path to the bootstrap confidence indicated
           * A summary taxonomy file that gives the taxonomic path to the bootstrap confidence indicated and the count of that taxonomic path per sample
+
+
+#### Using an alternative adapter type
+Currently, Anacapa is set up to handle the following Illumina adapter types: nextera, truseq, or NEBnext. However, the scripts can be modified to accept any adapter type. First, users must update the forward and reverse adapter.txt files in Anacapa_db/adapters_and_PrimAdapt_rc/ (G_insertprimername_Reverse_adapter.txt, and g_insertprimername_Forward_adapter.txt). Second, users must update Anacapa_db/scripts/anacapa_format_primers_cutadapt.py to include the reverse and forward compliments of the adapter following the same formatting as the other primers in the script.
