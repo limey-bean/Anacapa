@@ -21,6 +21,11 @@ __Anacapa__ includes four modules:
 3) assigning taxonomy using Bowtie 2 and a Bowtie 2 specific Bayesian Least Common Ancestor (BLCA) (Assignment) and   
 4) Running exploratory data analysis and generating ecological diversity summary statistics for a set of samples using [ranacapa](https://f1000research.com/articles/7-1734/v1).  
 
+
+<p align="center">
+<img src="Anacapa_hex copy.png" height="250" width="250">
+</p>
+
 #### Step 1: CRUX: Creating Reference libraries Using eXisting tools
 
 For full details on building reference libraries using CRUX, please refer to the CRUX Github Repository: https://github.com/limey-bean/CRUX_Creating-Reference-libraries-Using-eXisting-tools.
